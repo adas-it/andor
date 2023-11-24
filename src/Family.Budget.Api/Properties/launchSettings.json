@@ -1,0 +1,58 @@
+{
+  "profiles": {
+    "Family.Budget.Api": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ENVIRONMENT_CONFIG": "Development",
+        "AppConfig": "Endpoint=https://appfamilybudget.azconfig.io;Id=FP9e;Secret=6Oa+WkcKsVAh+ZiKINJ/sUxkz8weHeU5Lw5xQyKvbGI="
+      },
+      "applicationUrl": "https://localhost:5001",
+      "dotnetRunMessages": true
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": false,
+      "launchUrl": "",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ENVIRONMENT_CONFIG": "Development",
+        "AppConfig": ""
+      }
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "launchBrowser": true,
+      "launchUrl": "https://localhost:44349",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ENVIRONMENT_CONFIG": "Development",
+        "ASPNETCORE_URLS": "https://localhost:44349",
+        "AppConfig": ""
+      },
+      "distributionName": ""
+    },
+    "Docker (1)": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "publishAllPorts": true,
+      "launchBrowser": true,
+      "useSSL": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ENVIRONMENT_CONFIG": "Docker",
+        "AppConfig": ""
+      }
+    }
+  },
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:53079",
+      "sslPort": 44379
+    }
+  }
+}

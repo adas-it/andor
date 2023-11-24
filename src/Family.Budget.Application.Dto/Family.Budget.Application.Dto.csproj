@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Configurations>Debug;Release;Docker</Configurations>
+		<Description>Contains all data contracts for the integration between external systems and the Coaches Api</Description>
+		<Copyright>Adas It</Copyright>
+		<RepositoryUrl>https://gitlab.adasit.com.br/family-budget/andor.git</RepositoryUrl>
+		<PackageTags>Contracts Family Budget Application</PackageTags>
+		<PackageVersion>1.0.0</PackageVersion>
+		<PackageId>Family.Budget.Application.Dto</PackageId>
+		<Authors>Family.Budget.Application.Dto</Authors>
+		<LangVersion>10.0</LangVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Remove="SportsConsultancies\**" />
+		<EmbeddedResource Remove="SportsConsultancies\**" />
+		<None Remove="SportsConsultancies\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="CashFlows\ApplicationsErrors\" />
+		<Folder Include="CashFlows\IntegrationEvents\" />
+		<Folder Include="CashFlows\Requests\" />
+		<Folder Include="Currencies\IntegrationEvents\" />
+		<Folder Include="PaymentMethods\IntegrationEvents\" />
+		<Folder Include="SubCategories\IntegrationEvents\" />
+		<Folder Include="Users\IntegrationEvents\" />
+	</ItemGroup>
+
+</Project>

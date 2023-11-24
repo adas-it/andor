@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: andor
+  name: andor-familybudget
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: andor-familybudget
+  template:
+    metadata:
+      labels:
+        app: andor-familybudget
+    spec:
+      containers:
+        - name: andor-familybudget
+          image: andor-familybudget
+          ports:
+            - containerPort: 80
+              name: http
