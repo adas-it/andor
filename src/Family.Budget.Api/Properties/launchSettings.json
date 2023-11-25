@@ -6,7 +6,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ENVIRONMENT_CONFIG": "Development",
-        "AppConfig": "Endpoint=https://appfamilybudget.azconfig.io;Id=FP9e;Secret=6Oa+WkcKsVAh+ZiKINJ/sUxkz8weHeU5Lw5xQyKvbGI="
+        "AppConfig": ""
       },
       "applicationUrl": "https://localhost:5001",
       "dotnetRunMessages": true
