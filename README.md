@@ -1,4 +1,4 @@
-[![Quality gate](https://adasit-sonarqube.azurewebsites.net/api/project_badges/quality_gate?project=family-budget2_andor_AYu45Nw-2heiiOTRiDWP&token=sqb_3f6d84b2c42ae8c356deba1bb302c53a32c22eb1)](https://adasit-sonarqube.azurewebsites.net/dashboard?id=family-budget2_andor_AYu45Nw-2heiiOTRiDWP)
+[![Quality gate](https://adasit-sonarqube.azurewebsites.net/api/project_badges/quality_gate?project=family-budget_andor&token=sqb_bd77ed704cede43222314c67ac3715256b91b0cb)](https://adasit-sonarqube.azurewebsites.net/dashboard?id=family-budget_andor)
 
 # Introduction
 
