@@ -5,6 +5,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ENVIRONMENT_CONFIG=Release
+      - AppConfig=Endpoint=https://appfamilybudget.azconfig.io;Id=FP9e;Secret=6Oa+WkcKsVAh+ZiKINJ/sUxkz8weHeU5Lw5xQyKvbGI=
     ports:
       - "80"
       - "443"

@@ -12,13 +12,19 @@ using Family.Budget.Application.Common.Interfaces;
 using Unleash;
 using Unleash.ClientFactory;
 using Family.Budget.Application.Models.Authorization;
+using Family.Budget.Application.Common;
+using Microsoft.Extensions.Options;
 
 public class FeatureFlagService : IFeatureFlagService
 {
     private readonly ICurrentUserService _currentUserService;
-    public FeatureFlagService(ICurrentUserService currentUserService)
+    private readonly Unleash _unleashConfig;
+
+    public FeatureFlagService(ICurrentUserService currentUserService
+        ,IOptions<ApplicationSettings> appConfig)
     {
         _currentUserService = currentUserService;
+        _unleashConfig = appConfig?.Value?.Unleash ?? new Unleash();
     }
 
     public async Task<bool> IsEnabledAsync(CurrentFeatures feature)
@@ -44,11 +50,11 @@ public class FeatureFlagService : IFeatureFlagService
         {
             var settings = new UnleashSettings()
             {
-                AppName = "Default",
-                UnleashApi = new Uri("https://adasit-unleash.azurewebsites.net/api"),
+                AppName = _unleashConfig.AppName,
+                UnleashApi = new Uri(_unleashConfig?.UnleashApi ?? ""),
                 CustomHttpHeaders = new Dictionary<string, string>()
                 {
-                    {"Authorization","default:development.27578642cb03f21ae8661c9c86e49899ad44a592357660cf19e43b24" }
+                    {"Authorization",_unleashConfig?.Authorization ?? "" }
                 }
             };
 

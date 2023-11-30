@@ -7,11 +7,19 @@
         public Rabbitmq? Rabbitmq { get; init; }
         public Cors? Cors { get; init; }
         public Keycloack? Keycloack { get; init; }
+        public Unleash? Unleash { get; init; }
     }
 
     public class Cors
     {
         public List<string>? AllowedOrigins { get; set; }
+    }
+
+    public class Unleash
+    {
+        public string? AppName { get; set; }
+        public string? UnleashApi { get; set; }
+        public string? Authorization { get; set; }
     }
 
     public class HangfireDashboard
