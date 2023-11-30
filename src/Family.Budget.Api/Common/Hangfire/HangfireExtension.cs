@@ -13,10 +13,10 @@ public static class HangfireExtension
         , IConfiguration configuration
         , string env)
     {
-        if (env != "Test")
-        {
-            var conn = configuration.GetConnectionString("HangfireConnection");
+        var conn = configuration.GetConnectionString("HangfireConnection");
 
+        if (env != "Test" && conn is not null)
+        {
             services.AddHangfire(configuration => configuration
             .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
             .UseSimpleAssemblyNameTypeSerializer()

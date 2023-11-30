@@ -12,7 +12,7 @@ public static class SwaggerExtension
 {
     public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration configuration)
     {
-        var authOptions = configuration.GetSection("IdentityProvider").Get<IdentityProvider>();
+        var authOptions = configuration.GetSection("IdentityProvider").Get<IdentityProvider>() ?? new IdentityProvider();
 
         var scopes = authOptions.Scopes is not null ? authOptions.Scopes.ToDictionary(scope => scope) : null;
 

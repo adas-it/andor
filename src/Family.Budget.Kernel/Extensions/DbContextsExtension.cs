@@ -30,7 +30,7 @@ public static class DbContextsExtension
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        var conn = configuration.GetConnectionString("PrincipalDatabase");
+        var conn = configuration.GetConnectionString("PrincipalDatabase") ?? "inmemory";
 
         services.AddDbContext<PrincipalContext>(options =>
         {

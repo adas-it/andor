@@ -1,0 +1,29 @@
+version: '3.4'
+
+services:
+  family.budget.api:
+    image: ${DOCKER_REGISTRY-}familybudgetapi
+    build:
+      context: .
+      dockerfile: src/Family.Budget.Api/Dockerfile
+    networks:
+      - family-budget
+
+  postgres:
+    container_name: postgres
+    image: postgres:14.7
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=P@55w0rd
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    networks:
+      - family-budget
+
+networks:
+  family-budget:
+    name: family-budget
+    driver: bridge
