@@ -8,4 +8,4 @@ namespace: prod
 images:
 - name: andor-familybudget
   newName: adasit/andor-familybudget
-  newTag: e6c288f1963cb1a8321e2ad70d760c12e17792c7
+  newTag: 31f6edb472aff7a5fa91a2021a15f9b6a9876710
