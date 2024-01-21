@@ -6,7 +6,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ENVIRONMENT_CONFIG": "Development",
-        "AppConfig": "Endpoint=https://appfamilybudget.azconfig.io;Id=FP9e;Secret=6Oa+WkcKsVAh+ZiKINJ/sUxkz8weHeU5Lw5xQyKvbGI="
+        "AppConfig": ""
       },
       "applicationUrl": "https://localhost:5001",
       "dotnetRunMessages": true
@@ -21,29 +21,16 @@
         "AppConfig": ""
       }
     },
-    "WSL": {
-      "commandName": "WSL2",
+    "Docker": {
+      "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "https://localhost:44349",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ENVIRONMENT_CONFIG": "Development",
-        "ASPNETCORE_URLS": "https://localhost:44349",
-        "AppConfig": ""
-      },
-      "distributionName": ""
-    },
-    "Docker (1)": {
-      "commandName": "Docker",
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
-      "publishAllPorts": true,
-      "launchBrowser": true,
-      "useSSL": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ENVIRONMENT_CONFIG": "Docker",
         "AppConfig": ""
-      }
+      },
+      "applicationUrl": "https://localhost:5001",
+      "dotnetRunMessages": true
     }
   },
   "$schema": "https://json.schemastore.org/launchsettings.json",

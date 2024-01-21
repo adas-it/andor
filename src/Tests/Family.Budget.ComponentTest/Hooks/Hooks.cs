@@ -15,24 +15,21 @@ using System.Threading.Tasks;
 using TechTalk.SpecFlow;
 using Xunit;
 using Family.Budget.Application.Dto.Common.ApplicationsErrors.Models;
-using System.Security.Claims;
+using System;
 
 [Binding]
 public class Hook : BaseFixture, IClassFixture<WebApplicationFactory<Startup>>
 {
     private readonly CustomWebApplicationFactory<Startup> factory;
-    public readonly string microserviceName;
     public TopicMessageTestHelper message;
-    public string apiKey;
+    protected readonly string microserviceName;
 
     public Hook(CustomWebApplicationFactory<Startup> factory)
     {
         this.factory = factory;
 
         this.message = factory.message;
-
-        this.microserviceName = "Bootstrap.Api";
-        this.apiKey = "836041c5-936a-4978-b3c2-f8e5b8c01445";
+        this.microserviceName = "";
     }
 
     [BeforeTestRun]
@@ -48,19 +45,33 @@ public class Hook : BaseFixture, IClassFixture<WebApplicationFactory<Startup>>
         WireMockServer?.Stop();
         WireMockServer?.Dispose();
     }
-
+    
     public HttpClient CreateAuthorizedClient()
     {
-        return CreateAuthorizedClient(apiKey, null!);
-    }
-    public HttpClient CreateAuthorizedClient(string token)
-    {
-        return CreateAuthorizedClient(token, null!);
+        return CreateAuthorizedClient(string.Empty, new Dictionary<string, object>());
     }
 
-    public HttpClient CreateAuthorizedClient(string token, string language)
+    public HttpClient CreateAuthorizedClient(string language)
     {
-        HttpClient client = factory.CreateClient();
+        return CreateAuthorizedClient(language, new Dictionary<string, object>());
+    }
+
+    public HttpClient CreateAuthorizedClient(Dictionary<string, object> keyValuePairs)
+    {
+        return CreateAuthorizedClient(string.Empty, keyValuePairs);
+    }
+
+    public HttpClient CreateAuthorizedClient(string language, Dictionary<string, object> keyValuePairs)
+    {
+        HttpClient client = null;
+        try
+        {
+            client = factory.CreateClient();
+        }
+        catch(Exception ex)
+        {
+
+        }
 
         if (!string.IsNullOrEmpty(language))
         {
@@ -71,15 +82,7 @@ public class Hook : BaseFixture, IClassFixture<WebApplicationFactory<Startup>>
             client.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.5");
         }
 
-        if (!string.IsNullOrEmpty(token))
-        {
-            client.DefaultRequestHeaders.Add("apiKey", token);
-        }
-
-        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", MockJwtTokens.GenerateJwtToken(new Dictionary<string, object>()
-        {
-            {"Role","Fodao" }
-        }));
+        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", MockJwtTokens.GenerateJwtToken(keyValuePairs));
 
         return client;
     }

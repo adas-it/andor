@@ -30,23 +30,24 @@ public static class DbContextsExtension
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        var conn = configuration.GetConnectionString("PrincipalDatabase") ?? "inmemory";
+        var conn = configuration.GetConnectionString("PrincipalDatabase");
 
-        services.AddDbContext<PrincipalContext>(options =>
+        if(string.IsNullOrEmpty(conn) is false)
         {
-            options.EnableDetailedErrors();
-            options.EnableSensitiveDataLogging();
-            options.UseNpgsql(conn!);
-        });
+            services.AddDbContext<PrincipalContext>(options =>
+            {
+                options.EnableDetailedErrors();
+                options.EnableSensitiveDataLogging();
+                options.UseNpgsql(conn!);
+            });
 
-        if (conn!.Equals("inmemory") is false)
-        {
-            var serviceProvider = services.BuildServiceProvider();
-            using var scope = serviceProvider.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<PrincipalContext>();
-            db.Database.Migrate();
+        var serviceProvider = services.BuildServiceProvider();
+        using var scope = serviceProvider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<PrincipalContext>();
+        db.Database.Migrate();
+        
         }
-
+        
         services.AddScoped<IConfigurationRepository, ConfigurationRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<ISubCategoryRepository, SubCategoryRepository>();

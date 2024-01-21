@@ -10,6 +10,7 @@ using Org.BouncyCastle.Security;
 using Org.BouncyCastle.X509;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Security.Cryptography;
 using Xunit;
 
@@ -19,7 +20,7 @@ public static class MockJwtTokens
     {
         using (var rsa = RSA.Create(2048))
         {
-            var privateKeyBytes = Convert.FromBase64String("MIIEogIBAAKCAQEAmJ/SnE1PIreoOf0Or8AeK4l3LuQDsdd9+s/qNnGAmZ+UOUh9RHFohZa6HtqogbBA6BGkFPZD/A4h5P1qxv54hDOyflcC3DQwZ0VDQ8OJXKBFAWVzIBkohVqEaMWG4G7xIJcz+guCqQmJ5i2YhZbwMyt4AwHYu9xqXHG14WIFvbmRbvLEUtWVbhrtMLio9vWvZ7okuQVZGL3Z7icUWkQiMoaKABkiW6qvzKECBcKkgLTfACmbdH7ZbjWv8i/+KUy7SNLtt7ja2fO3wykarOk18FA5heGCBBJ9n1BnOZ6wog20femVioXEYwou1i4na7gaWzulJgGjtEWBcTQSf8oJVwIDAQABAoIBAAa7jiPc+S+z4FTmh95S4EHVZ4+G+W6/7cvBnjhWm3CrbHN2cigxxIWYF4/C34oRB1v1Y0KVdnxI90/NqgcrNI/IZAhUuEiUeMolcQktOAMBAupD2mdBFNuFGbAxfniqDDL+2IkgNtxUEmQ4ALFr7h6jvUCMtU3cNEjtrzNJCq3Kz2E7og3uYtl+PR5ddfdBNMAjDAZ/t1vYsnHj6zZOJqYVY/hd/kwcooezQnxzgUibQheNwNgs4tYi8KKdCWN9MqreG6/Aa6Fx13yy8lhUf8rOI4e3g6F32k5Hq1ifP67uPwCdosSD56zycBU7iuqMNVwdaS8od/DYLr6xB7r36okCgYEAyZY7PEOCLVSIc6PIbPxC1RQx1Hhmr01LXuzLZWOWXFiCwxt0LiEdoBul4iwJdQbaClTKf0vARYz0ozH4pY7L8aSmuP+ko991BaKmCNgZ3lK6yDHBI3I4FlNWKsMvUGxS+YaUJsOAkjSA4QGQI1CU7ua+ygq0AbnFA2+vNTz4NG0CgYEAwdJAZ8cHicKE31SRogPN3D55sDFpdPf7tU7ldZAa3xFa/pzr6a6O89tTqJkrtHgf1qJaYa2BegVnDuplNxW2s39xq00DAIgiV+89Sa6oi9Vgda4ttbSFrjbQ6ocHp+uHuyfNj+HKpao7SclQ4A7RW2u901o0eb+xf0G899OK8lMCgYBq33vuGjhUwgFJlaZ3qVHhV8CHTYHbJJZ18AJxcVfRA5fnypFQt3vWW3IZs5Eb+xLz8ToePNHlzbIRJzgUxdz38nv1josB2kFXSIDQJYmpZaDi7AXiPfbgVzRSnYJjF9rxsViwKGvsl2tQXxzErD8ZXTn/Mad3Vr7NcJOqHPXWDQKBgCtjdNWGgZJ+QB56oQtizJ/EQJuHxDLSHL/uxIE33DwZd4RN/qXWVNwUOjsg5t7EkWQL/i2lmLmHIhX9tODK9JZkLj8Jw2VIFGAZB2BKQCLlhm1xq3vkyJRCYyxNRBJ8MGteMq9F/YZugE05SuiNiKJtkRYSOHMUzZhOUA4uhglPAoGAPK2/IwY7MEAL8NNBhalR4gLbymZqSmJo9x4PRHMUl/t4KWYT2tnKIsuBo1laTf1Qku4Niu1mJTxhZ/JIdSlj96FNlqstkySnBbbEMrBvgor4G4urINQ/2bTSxKbTtqztHoujNFtc1KZEEp32C1atSyeIwOaGl4SZb4dVr1N6ZV4=");
+            var privateKeyBytes = Convert.FromBase64String("MIIEpAIBAAKCAQEArUR9uO3SYpoCPZIw90H241kz4aSVdUGAMv/vLnT9Rnk7lFuHXrz6NWWrO5RQtHfKCriVKf/TIJtJcEeuh3oUQBanGwLAwcWSvvzB0gunfPAVCqGHA7J7nNhnGHl8lWp2tSkSMMD1UDDGSRpc7uF6nNUMtp9b748X3VFBS9+PHGLu6sFIZTWSmT3pIbAWSMsNwmflTpO7RKnzYOpCXANG1mO57DLs4n/Y2MevuI0wQLhgKT8x/FhdDPNJtbzHYI21LvYQNNXIIvuaVOB+VCHUWRhHFuRiLsCMej/0+gMZZdTTNloVPN+109auuQBvqz4jnxK2eGc/qJdo045BOYZb4wIDAQABAoIBAE3ckeyo/pptn+UgTV3HaFVZEB3tknY7RYtlhIupaemh8BqmmOoDXSLiubSP3UaD8CiqMunJOwyTi8hnhe/+dZwpMdXLAmjxSpUFy2mC8DSORL5ewOfx7GeavZV7fnc8fPTC7Jg5FeP/zxMpxCpa6/kPKmPkr/EyqeQ8L+4TG+ICeeRfXH/l8rUWCLmxVUyjZoclnTaqX8Prz9j2hocxLczq+kxIeAMVp6jUvLXbjgKrutkg51UIyew/9gxJDMgjQkjCLymkpSh5LQyZmFJiROgFM5tAxIRSyHi/fKEXU4y7pmI0lgO9jpv4xEzBUEOTACfXKI2aGq3n0GfEJaA04PECgYEA9TeaOVnglhkoavbKZaANjyD+MUWmg0p5mEsDXvU2QCQqNMerLv7Lu6lV2YSagr545ZhxBOM9ZmjUii6Zeke+wdz94Q3Tcc9VTft+a9OURoe3agACMrQ/6t80YUHhXJaCiL42UkSOJeC5dbQoHjq/iqYZeGEdc/3dYomcqJDwcbECgYEAtOL0fsw8z7mFsY9waiHi9mMsSYkfpiuTMBKJ+3yatrcV89/2CN3aHryw23y3IW5B4dEndkkZpreTNnUNXE6ncGxaBQDyNJ/sgOFUOcizSSuX1HMLBmsgiFTvkPwahGPsWRUt+lAI1l4mpb7DwFpfwAIBvHB1ndtoy1gNIYPt19MCgYEA7poY1b8veb2nB1V1oSb4qpFm5VipakzYPiiXchlVnVnTO6IhXkwMv2BIqauOkLN3fag0KJZYU0KjtIUdT89pvMckvYyvdqlQjt2sqIyqVWqPPHQfr2iWXRqspAnvmCDXiOjUgH42doLQ0sfm1WtCn015sRmGCCw38z6FkbveSjECgYBNi/7FXUm0xBRMyvGmjmB+wIV8AQ1Qb93p/gipiAHL0zHWG22e331jMAGiFxVrf5k+9iu0yiH1Fz5FWmkf6Zhe2hS9kGpFpUn+9prlKuWxuL6elbNkTQjlaYRK48l6eFwa1LmhVi5zuGlZJS9Gh3gFGNclshC6XBXRFy6J78VHgQKBgQDMCWYq72A7++h8YQniNp7YVi6FaKob1FVRracMG+dxKGfKrxJ/1CY7ps460ZvbrqLu4Au9ql8TpRj2uI7UFAabdUqmcd29RJBTJ6RlE/s9wISDlFd1nnzd/l59c26EL1x+53gddmw86H3J3z7quNVDmnMcQOYah+T35HoN+J0tnA==");
 
             rsa.ImportRSAPrivateKey(privateKeyBytes, out _);
 
@@ -68,6 +69,25 @@ public class MockJwtTokensTests
             var privateKey = Convert.ToBase64String(pkcs2Der);
 
             var publicKey = Convert.ToBase64String(serializedPublicBytes);
+
+            string path = Path.Combine("..",
+                                       "..",
+                                       "..",
+                                       "..",
+                                       "Family.Budget.ComponentTest",
+                                       "pacts",
+                                       "MyTest.txt");
+            if (!File.Exists(path))
+            {
+                // Create a file to write to.
+                using (StreamWriter sw = File.CreateText(path))
+                {
+                    sw.WriteLine("privateKey");
+                    sw.WriteLine(privateKey);
+                    sw.WriteLine("publicKey");
+                    sw.WriteLine(publicKey);
+                }	
+            }
 
             var privateKeyBytes = Convert.FromBase64String(privateKey);
 

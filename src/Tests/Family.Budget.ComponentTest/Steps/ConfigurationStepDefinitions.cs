@@ -23,6 +23,7 @@ public sealed class ConfigurationStepDefinitions : Hook
     {
         Data = new();
         Result = new();
+        factory.InitializeAsync().GetAwaiter().GetResult();
     }
 
     [Given("a valid configuration")]
@@ -44,7 +45,7 @@ public sealed class ConfigurationStepDefinitions : Hook
         Result = await PostWithValidations<ConfigurationOutput>(url, Data);
     }
 
-    [Then(@"the id should not be null")]
+    [Then("the id should not be null")]
     public void ThenTheIdShouldNotBeNull()
     {
         Result?.Id.Should().NotBeEmpty();

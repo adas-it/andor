@@ -1,7 +1,6 @@
 ﻿namespace Family.Budget.Api.Common.Hangfire;
 
 using global::Hangfire;
-using global::Hangfire.MemoryStorage;
 using global::Hangfire.PostgreSql;
 using Microsoft.Extensions.Options;
 using Family.Budget.Application.Common;
@@ -10,28 +9,18 @@ using Family.Budget.Api.Middlewares;
 public static class HangfireExtension
 {
     public static IServiceCollection AddHangfire(this IServiceCollection services
-        , IConfiguration configuration
-        , string env)
+        , IConfiguration configuration)
     {
         var conn = configuration.GetConnectionString("HangfireConnection");
 
-        if (env != "Test" && conn is not null)
+        if(string.IsNullOrEmpty(conn) is false)
         {
             services.AddHangfire(configuration => configuration
-            .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-            .UseSimpleAssemblyNameTypeSerializer()
-            .UseRecommendedSerializerSettings()
-            .UsePostgreSqlStorage(conn, new PostgreSqlStorageOptions
-            {
-                QueuePollInterval = TimeSpan.FromSeconds(10),
-            }));
-        }
-        else
-        {
-            services.AddHangfire(config =>
-            {
-                config.UseMemoryStorage();
-            });
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UsePostgreSqlStorage( option => 
+                    option.UseNpgsqlConnection(conn)));
         }
 
         services.AddHangfireServer();

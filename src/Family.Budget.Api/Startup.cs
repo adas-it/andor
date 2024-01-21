@@ -61,7 +61,7 @@ public class Startup
             .AddHttpContextAccessor()
             .AddServices()
             .AddOpenTelemetry(_configuration)
-            .AddHangfire(_configuration, env)
+            .AddHangfire(_configuration)
             .AddControllers(options => { })
             .AddJsonOptions(opts =>
                 opts.JsonSerializerOptions.Converters.Add(new ErrorCodeConverter()));
