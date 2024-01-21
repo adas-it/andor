@@ -11,7 +11,6 @@ using Family.Budget.Domain.Entities.Admin;
 using Family.Budget.Domain.Entities.Admin.Repository;
 using Family.Budget.UnitTest.UnitTests.Domain.Configurations;
 using FluentAssertions;
-using MediatR;
 using Moq;
 using System;
 using System.Collections.Generic;

@@ -3,7 +3,6 @@
 using Family.Budget.Domain.Entities.Registrations.DomainEvents;
 using Family.Budget.Domain.SeedWork;
 using Family.Budget.Domain.Validation;
-using MediatR;
 using System;
 using System.Linq;
 

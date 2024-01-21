@@ -2,7 +2,6 @@
 using Family.Budget.Application.Models;
 using Family.Budget.Domain.Entities.CashFlow;
 using Family.Budget.Domain.Entities.CashFlow.Repository;
-using Family.Budget.Domain.SeedWork;
 using MediatR;
 
 namespace Family.Budget.Application.MonthlyCashFlow.Commands;

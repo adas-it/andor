@@ -1,7 +1,6 @@
 ﻿namespace Family.Budget.Application._Common.Behaviours;
 
 using Family.Budget.Application._Common.Exceptions;
-using Family.Budget.Application.Dto.Accounts.Errors;
 using Family.Budget.Application.Dto.Common.ApplicationsErrors.Models;
 using Family.Budget.Application.Dto.Models.Errors;
 using Family.Budget.Domain.Exceptions;
@@ -9,8 +8,6 @@ using MediatR;
 
 public class RequestExceptionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
 {
-
-
     public Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         try

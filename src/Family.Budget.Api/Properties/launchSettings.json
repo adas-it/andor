@@ -23,7 +23,7 @@
     },
     "Docker": {
       "commandName": "Project",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ENVIRONMENT_CONFIG": "Docker",

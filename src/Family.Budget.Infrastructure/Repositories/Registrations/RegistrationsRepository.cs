@@ -65,6 +65,7 @@ public class RegistrationsRepository : QueryHelper<Registration>, IRegistrationR
 
     public async Task<Registration?> GetByEmail(string email, CancellationToken cancellationToken)
         => await _dbSet
+            .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
 
     public Task<List<Registration>> GetOldRegistrations(DateTimeOffset dateTimeOffset, CancellationToken cancellationToken)

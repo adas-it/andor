@@ -1,5 +1,6 @@
 ﻿namespace Family.Budget.Kernel.Extensions;
 
+using Family.Budget.Application;
 using Family.Budget.Application._Common.Behaviours;
 using Family.Budget.Application.Administrations.Commands;
 using Family.Budget.Application.Administrations.Services;
@@ -25,6 +26,7 @@ public static class UseCasesExtension
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestExceptionBehavior<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingPipelineBehavior<,>));
 
         services.AddTransient<IDateValidationServices, DateValidationServices>();
         services.AddTransient<ICategoryServices, CategoryServices>();

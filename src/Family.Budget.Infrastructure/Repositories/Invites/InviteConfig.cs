@@ -1,7 +1,6 @@
 ﻿using Family.Budget.Domain.Entities.Accounts;
 using Family.Budget.Domain.Entities.Accounts.ValueObject;
 using Family.Budget.Infrastructure.Repositories.Common;
-using Family.Budget.Infrastructure.Repositories.SubCategories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;

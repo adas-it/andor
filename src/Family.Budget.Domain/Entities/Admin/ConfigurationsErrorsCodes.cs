@@ -1,6 +1,5 @@
 ﻿namespace Family.Budget.Domain.Entities.Admin;
 
-using Family.Budget.Domain.Common;
 using Family.Budget.Domain.Common.ValuesObjects;
 
 public sealed record ConfigurationsErrorsCodes : DomainErrorCode

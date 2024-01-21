@@ -1,6 +1,4 @@
 ﻿using Family.Budget.Application._Common.Exceptions;
-using Family.Budget.Application.Common.Exceptions;
-using Family.Budget.Application.Dto.Common.ApplicationsErrors.Models;
 using Family.Budget.Application.Dto.Models;
 using Family.Budget.Application.Dto.Models.Errors;
 using Microsoft.EntityFrameworkCore;

@@ -6,7 +6,6 @@ using FluentAssertions;
 using System;
 using Xunit;
 using DomainEntity = Family.Budget.Domain.Entities.Admin;
-using Family.Budget.Domain.Common.ValuesObjects;
 
 [Collection(nameof(ConfigurationTestFixture))]
 public class ConfigurationTests

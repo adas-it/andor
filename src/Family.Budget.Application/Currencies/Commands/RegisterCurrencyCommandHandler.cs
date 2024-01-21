@@ -8,7 +8,6 @@ using Family.Budget.Application.Dto.Currencies.Responses;
 using Family.Budget.Application.Models;
 using Family.Budget.Domain.Entities.Currencies;
 using Family.Budget.Domain.Entities.Currencies.Repository;
-using Family.Budget.Domain.Exceptions;
 using MediatR;
 
 public record RegisterCurrencyCommand : BaseCurrency, IRequest<CurrencyOutput>

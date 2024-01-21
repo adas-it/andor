@@ -1,5 +1,4 @@
-﻿using Family.Budget.Application.Dto.Currencies.Responses;
-using Family.Budget.Application.Dto.MovementStatuses;
+﻿using Family.Budget.Application.Dto.MovementStatuses;
 using Family.Budget.Application.Dto.MovementTypes;
 using Family.Budget.Application.Dto.PaymentMethods.Responses;
 using Family.Budget.Application.Dto.SubCategories.Responses;

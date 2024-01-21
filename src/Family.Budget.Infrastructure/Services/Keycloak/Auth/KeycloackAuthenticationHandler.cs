@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 public class KeycloackAuthenticationHandler : DelegatingHandler
 {
-    private readonly IKeycloackClient _keycloackClient;
+    private readonly IKeycloakAuthClient _keycloackClient;
     private readonly IOptions<ApplicationSettings> _configuration;
 
-    public KeycloackAuthenticationHandler(IKeycloackClient keycloackClient, IOptions<ApplicationSettings> configuration)
+    public KeycloackAuthenticationHandler(IKeycloakAuthClient keycloackClient, IOptions<ApplicationSettings> configuration)
     {
         _keycloackClient = keycloackClient;
         _configuration = configuration;
@@ -31,16 +31,12 @@ public class KeycloackAuthenticationHandler : DelegatingHandler
         var clientSecret = _configuration?.Value?.Keycloack?.ClientSecret;
         var grantType = _configuration?.Value?.Keycloack?.GrantType;
         var realm = _configuration?.Value?.Keycloack?.Realm;
-        var username = _configuration?.Value?.Keycloack?.Username;
-        var password = _configuration?.Value?.Keycloack?.Password;
 
         var contentKey = new List<KeyValuePair<string, string>>
         {
             new KeyValuePair<string, string>("client_id", clientId!),
             new KeyValuePair<string, string>("client_secret", clientSecret!),
-            new KeyValuePair<string, string>("grant_type", grantType!),
-            new KeyValuePair<string, string>("username", username!),
-            new KeyValuePair<string, string>("password", password!)
+            new KeyValuePair<string, string>("grant_type", grantType!)
         };
 
         var content = new FormUrlEncodedContent(contentKey);

@@ -1,6 +1,4 @@
 ﻿namespace Family.Budget.Application.Currencies.Commands;
-using System;
-
 public abstract record BaseCurrency
 {
     protected BaseCurrency() { }

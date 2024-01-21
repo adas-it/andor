@@ -1,6 +1,4 @@
 ﻿namespace Family.Budget.Application.Dto.CashFlows.Responses;
-using System;
-
 public class CashFlowOutput
 {
     public int Year { get; set; }

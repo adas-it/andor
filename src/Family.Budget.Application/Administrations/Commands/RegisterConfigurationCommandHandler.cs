@@ -8,7 +8,6 @@ using Family.Budget.Application.Models;
 using Family.Budget.Application.Models.Authorization;
 using Family.Budget.Domain.Entities.Admin;
 using Family.Budget.Domain.Entities.Admin.Repository;
-using Family.Budget.Domain.Exceptions;
 using Mapster;
 using MediatR;
 

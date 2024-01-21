@@ -1,6 +1,7 @@
 ﻿namespace Family.Budget.Kernel.Extensions;
 
 using Family.Budget.Application.Models.Config;
+using Family.Budget.Infrastructure;
 using Family.Budget.Infrastructure.Services.Keycloak;
 using Family.Budget.Infrastructure.Services.Keycloak.Auth;
 using Microsoft.Extensions.Configuration;
@@ -15,9 +16,15 @@ public static class HttpClientsExtension
 {
     public static IServiceCollection AddHttpClientsAsync(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddTransient<KeycloackAuthenticationHandler>();
-
         string keyCloackUrl = configuration["Keycloack:Url"]!;
+
+        services
+            .AddRefitClient<IKeycloakAuthClient>()
+            .ConfigureHttpClient(c => c.BaseAddress = new Uri(keyCloackUrl))
+            .AddPolicyHandler(GetRetryPolicy(configuration))
+            .AddPolicyHandler(GetCircuitBreakerPolicy(configuration));
+
+        services.AddTransient<KeycloackAuthenticationHandler>();
 
         services
             .AddRefitClient<IKeycloackClient>()

@@ -1,6 +1,7 @@
 ﻿namespace Family.Budget.Application.Registration.Commands;
 
 using Family.Budget.Application._Common;
+using Family.Budget.Application.Common.Attributes;
 using Family.Budget.Application.Common.Interfaces;
 using Family.Budget.Application.Dto.Registrations.Errors;
 using Family.Budget.Application.Models;
@@ -12,8 +13,12 @@ using System.Threading.Tasks;
 
 public record RegisterCommand : IRequest<Unit>
 {
+
+    [SensitiveData]
     public string FirstName { get; set; }
     public string LastName { get; set; }
+
+    [SensitiveData]
     public string Email { get; set; }
 }
 
@@ -59,6 +64,8 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Unit>
         _keycloackService = keycloackService;
     }
 
+    [Log]
+    [Transaction]
     public async Task<Unit> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
         var item = await _repository.GetByEmail(request.Email, cancellationToken);

@@ -26,7 +26,6 @@ public class TransactionBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequ
         _outerHandler = outerHandler;
     }
 
-
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         var transactionAttr = _outerHandler
@@ -37,11 +36,11 @@ public class TransactionBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequ
 
         if (transactionAttr != null && transactionAttr.Length < 1)
         {
-            _logger.LogInformation($"Handled {typeof(TRequest).FullName}");
+            _logger.LogInformation("Handled {request}", typeof(TRequest).FullName);
             return await next();
         }
 
-        _logger.LogInformation($"Opening transaction for {typeof(TRequest)}.");
+        _logger.LogInformation("Opening transaction for {request}", typeof(TRequest));
 
         var strategy = _db.Database.CreateExecutionStrategy();
 
@@ -49,14 +48,23 @@ public class TransactionBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequ
         {
             await using var transaction = _db.Database.BeginTransaction(IsolationLevel.ReadCommitted);
 
-            _logger.LogInformation($"Executing the {typeof(TRequest).FullName} request.");
+            try
+            {
+                _logger.LogInformation("Executing the {request} request.", typeof(TRequest).FullName);
 
-            var response = await next();
+                var response = await next();
 
-            await transaction.CommitAsync(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
 
-            _logger.LogInformation($"Handled {typeof(TRequest).FullName}");
-            return response;
+                _logger.LogInformation("Commit {request}", typeof(TRequest).FullName);
+                return response;
+            }
+            catch
+            {
+                _logger.LogInformation("Rollback {request}", typeof(TRequest).FullName);
+                await transaction.RollbackAsync(cancellationToken);
+                throw;
+            }
         });
     }
 }

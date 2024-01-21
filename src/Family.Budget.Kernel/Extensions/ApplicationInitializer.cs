@@ -1,7 +1,6 @@
 ﻿namespace Family.Budget.Kernel.Extensions;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using MediatR;
 
 public static class ApplicationInitializer
 {

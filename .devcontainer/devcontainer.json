@@ -23,13 +23,14 @@
                 "ms-dotnettools.csdevkit",
                 "ms-dotnettools.vscodeintellicode-csharp",
                 "alexkrechik.cucumberautocomplete",
-                "patcx.vscode-nuget-gallery"
+                "patcx.vscode-nuget-gallery",
+                "jtlowe.vscode-icon-theme"
             ]
 		}
 	},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [5000, 5001, 5432],
+	"forwardPorts": [5000, 5001],
 	"portsAttributes": {
 			"5001": {
 				"protocol": "https"

@@ -3,7 +3,6 @@
 using Family.Budget.Application.Models;
 using Family.Budget.Domain.Entities.FinancialMovement;
 using Family.Budget.Domain.Entities.FinancialMovement.Repository;
-using System.Linq;
 using System.Threading.Tasks;
 
 public class FinancialMovementservices : IFinancialMovementservices
