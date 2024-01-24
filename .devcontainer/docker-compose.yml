@@ -2,38 +2,49 @@ version: '3.8'
 
 services:
   app:
+    container_name: andor
     build:
       context: .
       dockerfile: Dockerfile
-
     volumes:
       - ../..:/workspaces:cached
-
-    # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
+    ports:
+      - 5000:5000
+      - 5001:5001
+    networks:
+      - custom-budget
 
-    # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
-    network_mode: host
-    
-    # Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-    # user: root
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prom_data:/prometheus
+    networks:
+      - custom-budget
 
-    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
-    # (Adding the "ports" property to this file will not forward from a Codespace.)
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 9091:3000
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=P@55w0rd
+    volumes:
+      - ./grafana:/etc/grafana/provisioning/datasources
+    networks:
+      - custom-budget
 
-#  postgres:
-#    container_name: postgres
-#    image: postgres:14.3
-#    restart: unless-stopped
-#    volumes:
-#      - postgres-data:/var/lib/postgresql/data
-#    environment:
-#      POSTGRES_PASSWORD: P@55w0rd
-#      POSTGRES_USER: postgres
-#      POSTGRES_DB: postgres
-      
-    # Add "forwardPorts": ["5432"] to **devcontainer.json** to forward PostgreSQL locally.
-    # (Adding the "ports" property to this file will not forward from a Codespace.)
-
-#volumes:
-#  postgres-data:
+volumes:
+  prom_data:
+networks:
+  custom-budget:
+    driver: bridge

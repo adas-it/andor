@@ -18,6 +18,7 @@ public static class AddOpenTelemetryExtension
                 .AddMeter("Andor")
                 .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(SourceName).AddTelemetrySdk())
                 .AddConsoleExporter()
+                .AddPrometheusExporter()
                 /*.AddOtlpExporter(opt =>
                 {
                     opt.Endpoint = new Uri("/metrics");
@@ -38,7 +39,7 @@ public static class AddOpenTelemetryExtension
                     options.Filter = (req) => !req.Request.Path.ToUriComponent().Contains("index.html", StringComparison.OrdinalIgnoreCase)
                         && !req.Request.Path.ToUriComponent().Contains("swagger", StringComparison.OrdinalIgnoreCase);
                 })
-                .AddHttpClientInstrumentation()        
+                .AddHttpClientInstrumentation()
                 .AddConsoleExporter()
                 /*.AddOtlpExporter(opt =>
                 {

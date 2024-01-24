@@ -26,6 +26,7 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.0.0-rc9.14" />
     <PackageReference Include="Refit" Version="7.0.0" />
     <PackageReference Include="Refit.HttpClientFactory" Version="7.0.0" />
+    <PackageReference Include="SharpAbp.Abp.OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="2.9.5" />
     <PackageReference Include="Unleash.Client" Version="4.0.0" />
   </ItemGroup>
 

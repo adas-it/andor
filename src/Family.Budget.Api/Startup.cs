@@ -68,7 +68,7 @@ public class Startup
 
         services
             .ConfigureJWT(_configuration, _currentEnvironment.IsDevelopment(), _currentEnvironment);
-        
+
         services
             .AddHttpClientsAsync(_configuration);
 
@@ -115,6 +115,7 @@ public class Startup
         app.UseRouting();
 
         app.UseAuthorization();
+        app.UseOpenTelemetryPrometheusScrapingEndpoint();
 
         app.UseEndpoints(endpoints =>
         {
