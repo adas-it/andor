@@ -1,50 +1,26 @@
-version: '3.8'
-
+version: '3.4'
 services:
-  app:
-    container_name: andor
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ../..:/workspaces:cached
-    command: sleep infinity
-    ports:
-      - 5000:5000
-      - 5001:5001
-    networks:
-      - custom-budget
+  # Update this to the name of the service you want to work with in your docker-compose.yml file
+  family.budget.api:
+    # Uncomment if you want to override the service's Dockerfile to one in the .devcontainer 
+    # folder. Note that the path of the Dockerfile and context is relative to the *primary* 
+    # docker-compose.yml file (the first in the devcontainer.json "dockerComposeFile"
+    # array). The sample below assumes your primary file is in the root of your project.
+    #
+    # build:
+    #   context: .
+    #   dockerfile: .devcontainer/Dockerfile
 
-  prometheus:
-    image: prom/prometheus
-    container_name: prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-    ports:
-      - 9090:9090
-    restart: unless-stopped
     volumes:
-      - ./prometheus:/etc/prometheus
-      - prom_data:/prometheus
-    networks:
-      - custom-budget
+      # Update this to wherever you want VS Code to mount the folder of your project
+      - ..:/workspaces:cached
 
-  grafana:
-    image: grafana/grafana
-    container_name: grafana
-    ports:
-      - 9091:3000
-    restart: unless-stopped
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=P@55w0rd
-    volumes:
-      - ./grafana:/etc/grafana/provisioning/datasources
-    networks:
-      - custom-budget
+    # Uncomment the next four lines if you will use a ptrace-based debugger like C++, Go, and Rust.
+    # cap_add:
+    #   - SYS_PTRACE
+    # security_opt:
+    #   - seccomp:unconfined
 
-volumes:
-  prom_data:
-networks:
-  custom-budget:
-    driver: bridge
+    # Overrides default command so things don't shut down after the process ends.
+    command: /bin/sh -c "while sleep 1000; do :; done"
+ 
