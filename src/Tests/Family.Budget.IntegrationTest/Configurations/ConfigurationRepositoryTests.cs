@@ -82,7 +82,7 @@ public class ConfigurationRepositoryTests
         var newDescription = fixture.GetStringRigthSize(10, 100);
 
         //Act
-        var entity = item;//.Projection();
+        var entity = item;
 
         entity.ChangeConfiguration(
             item.Name,
