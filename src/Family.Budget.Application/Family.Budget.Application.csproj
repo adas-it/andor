@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;Docker</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.8.0" />
+    <PackageReference Include="Hangfire.Core" Version="1.8.6" />
+    <PackageReference Include="Mapster" Version="7.4.0" />
+    <PackageReference Include="MediatR" Version="12.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="7.0.13" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="7.0.13" />
+    <PackageReference Include="Microsoft.Identity.Web.TokenAcquisition" Version="2.15.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Family.Budget.Application.Dto\Family.Budget.Application.Dto.csproj" />
+    <ProjectReference Include="..\Family.Budget.Domain\Family.Budget.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Notifications\Commands\" />
+    <Folder Include="SubCategories\Adapters\" />
+  </ItemGroup>
+
+</Project>
