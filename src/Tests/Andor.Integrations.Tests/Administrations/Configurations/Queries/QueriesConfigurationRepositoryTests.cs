@@ -34,7 +34,7 @@ public class QueriesConfigurationRepositoryTests(ConfigurationTestFixture fixtur
 
         await GetListConfigurations(name);
 
-        var result = await repository.GetAllByNameAsync(name, [ConfigurationState.Awaiting], CancellationToken.None);
+        var result = await repository.GetByNameAndStatusAsync(new (name, [ConfigurationState.Awaiting]), CancellationToken.None);
 
         result.Should().HaveCount(1);
     }

@@ -3,10 +3,13 @@ using Andor.Application.Administrations.Configurations.Services;
 using Andor.Application.Common.Attributes;
 using Andor.Application.Common.Extensions;
 using Andor.Application.Common.Interfaces;
+using Andor.Application.Common.Models;
 using Andor.Application.Dto.Administrations.Configurations.Responses;
 using Andor.Application.Dto.Common.Responses;
 using Andor.Domain.Entities.Admin.Configurations;
 using Andor.Domain.Entities.Admin.Configurations.Repository;
+using Andor.Domain.Entities.Admin.Configurations.ValueObjects;
+using FluentValidation;
 using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.JsonPatch;
@@ -16,6 +19,20 @@ namespace Andor.Application.Administrations.Configurations.Commands.ModifyConfig
 
 public record ModifyConfigurationCommand(ConfigurationId Id,
     JsonPatchDocument<Dto.Administrations.Configurations.Requests.BaseConfiguration> PatchDocument) : IRequest<ApplicationResult<ConfigurationOutput>>;
+
+public class ModifyConfigurationCommandValidator : AbstractValidator<ModifyConfigurationCommand>
+{
+    public ModifyConfigurationCommandValidator()
+    {
+        RuleFor(x => x.Id)
+            .NotEmpty()
+            .WithMessage(ValidationConstant.RequiredField);
+
+        RuleFor(x => x.PatchDocument)
+            .NotEmpty()
+            .WithMessage(ValidationConstant.RequiredField);
+    }
+}
 
 public class ModifyConfigurationCommandHandler(ICommandsConfigurationRepository repository,
     IUnitOfWork unitOfWork,

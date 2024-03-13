@@ -1,5 +1,4 @@
 ﻿using Andor.Infrastructure.Repositories.Context;
-using Google.Protobuf.WellKnownTypes;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;

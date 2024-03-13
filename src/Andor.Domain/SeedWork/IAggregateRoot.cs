@@ -2,7 +2,7 @@
 
 public interface IAggregateRoot
 {
-    IReadOnlyCollection<DomainEventBase> Events { get; }
+    IReadOnlyCollection<IDomainEventBase> Events { get; }
 
     void ClearEvents();
 }

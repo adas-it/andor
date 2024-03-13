@@ -1,14 +1,26 @@
 ﻿using Andor.Application.Administrations.Configurations.Errors;
 using Andor.Application.Common.Attributes;
 using Andor.Application.Common.Interfaces;
+using Andor.Application.Common.Models;
 using Andor.Application.Dto.Common.Responses;
-using Andor.Domain.Entities.Admin.Configurations;
 using Andor.Domain.Entities.Admin.Configurations.Repository;
+using Andor.Domain.Entities.Admin.Configurations.ValueObjects;
+using FluentValidation;
 using MediatR;
 
 namespace Andor.Application.Administrations.Configurations.Commands.RemoveConfiguration;
 
 public record RemoveConfigurationCommand(ConfigurationId Id) : IRequest<ApplicationResult<object>>;
+
+public class RemoveConfigurationCommandValidator : AbstractValidator<RemoveConfigurationCommand>
+{
+    public RemoveConfigurationCommandValidator()
+    {
+        RuleFor(x => x.Id)
+            .NotEmpty()
+            .WithMessage(ValidationConstant.RequiredField);
+    }
+}
 
 public class RemoveConfigurationCommandHandler(ICommandsConfigurationRepository repository,
     IUnitOfWork unitOfWork) : IRequestHandler<RemoveConfigurationCommand, ApplicationResult<object>>

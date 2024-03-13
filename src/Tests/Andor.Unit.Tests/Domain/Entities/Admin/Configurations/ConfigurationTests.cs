@@ -29,7 +29,7 @@ public class ConfigurationTests()
         config.Should().NotBeNull();
 
         // Assert
-        config!.Events.Should().Contain(x => x.EventName == nameof(ConfigurationCreatedDomainEvent),
+        config!.Events.Should().Contain(x => x.EventName == nameof(ConfigurationDomainEvent),
             "New configuration should raise Created Domain Event");
     }
 

@@ -1,10 +1,12 @@
 ﻿using Andor.Application.Common;
 using Andor.Application.Common.Interfaces;
 using Andor.Domain.Entities.Admin.Configurations.Repository;
+using Andor.Domain.Entities.Onboarding.Registrations.Repositories;
 using Andor.Infrastructure;
 using Andor.Infrastructure.Repositories.Common;
 using Andor.Infrastructure.Repositories.Configurations;
 using Andor.Infrastructure.Repositories.Context;
+using Andor.Infrastructure.Repositories.Onboarding.Registrations;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -43,6 +45,10 @@ public static class DbExtension
 
         builder.Services.AddScoped<ICommandsConfigurationRepository, CommandsConfigurationRepository>();
         builder.Services.AddScoped<IQueriesConfigurationRepository, QueriesConfigurationRepository>();
+
+        builder.Services.AddScoped<ICommandsRegistrationRepository, CommandsRegistrationRepository>();
+        builder.Services.AddScoped<IQueriesRegistrationRepository, QueriesRegistrationRepository>();
+
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return builder;

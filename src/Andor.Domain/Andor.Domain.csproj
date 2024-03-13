@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Entities\Languages\DomainEvents\" />
+    <Folder Include="Entities\Languages\Errors\" />
+    <Folder Include="Entities\Languages\Repositories\" />
+  </ItemGroup>
+
 </Project>

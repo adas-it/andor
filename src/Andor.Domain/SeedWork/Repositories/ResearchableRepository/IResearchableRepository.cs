@@ -6,5 +6,6 @@ public interface IResearchableRepository<TEntity, TEntityId, TSearchInput>
     where TEntityId : IEquatable<TEntityId>
 {
     Task<TEntity?> GetByIdAsync(TEntityId id, CancellationToken cancellationToken);
+    
     Task<SearchOutput<TEntity>> SearchAsync(TSearchInput input, CancellationToken cancellationToken);
 }

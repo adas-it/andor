@@ -11,7 +11,7 @@ public static class ConfigurationsPublisherDomainEventHandlersConfig
         config.Send<ConfigurationCreatedDomainEvent>(x =>
         {
             x.UseRoutingKeyFormatter(context => context.Message.EventName);
-            x.UseCorrelationId(context => context.Id);
+            x.UseCorrelationId(context => context.Context.Id);
         });
 
         config.Message<ConfigurationCreatedDomainEvent>(x => x.SetEntityName(TopicNames.CONFIGURATION_DOMAIN_TOPIC));
@@ -20,7 +20,7 @@ public static class ConfigurationsPublisherDomainEventHandlersConfig
         config.Send<ConfigurationDeletedDomainEvent>(x =>
         {
             x.UseRoutingKeyFormatter(context => context.Message.EventName);
-            x.UseCorrelationId(context => context.Id);
+            x.UseCorrelationId(context => context.Context.Id);
         });
 
         config.Message<ConfigurationDeletedDomainEvent>(x => x.SetEntityName(TopicNames.CONFIGURATION_DOMAIN_TOPIC));

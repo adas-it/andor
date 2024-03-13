@@ -1,43 +1,11 @@
 ﻿using Andor.Domain.Common;
 using Andor.Domain.Common.ValuesObjects;
 using Andor.Domain.Entities.Admin.Configurations.Events;
+using Andor.Domain.Entities.Admin.Configurations.ValueObjects;
 using Andor.Domain.SeedWork;
 using Andor.Domain.Validation;
 
 namespace Andor.Domain.Entities.Admin.Configurations;
-
-public record struct ConfigurationId(Guid Value)
-{
-    public static ConfigurationId New() => new(Guid.NewGuid());
-
-    public static ConfigurationId Load(string value)
-    {
-        if (!Guid.TryParse(value, out Guid guid))
-        {
-            throw new ArgumentException("The value provided is not a valid GUID.", nameof(value));
-        }
-        return new ConfigurationId(guid);
-    }
-
-    public static ConfigurationId Load(Guid value) => new(value);
-
-    public override readonly string ToString() => Value.ToString();
-
-    public static implicit operator ConfigurationId(Guid value) => new(value);
-
-    public static implicit operator Guid(ConfigurationId id) => id.Value;
-}
-public record ConfigurationState : Enumeration<int>
-{
-    private ConfigurationState(int id, string name) : base(id, name)
-    {
-    }
-
-    public static readonly ConfigurationState Undefined = new(0, nameof(Undefined));
-    public static readonly ConfigurationState Awaiting = new(1, nameof(Awaiting));
-    public static readonly ConfigurationState Active = new(2, nameof(Active));
-    public static readonly ConfigurationState Expired = new(3, nameof(Expired));
-}
 
 public class Configuration : AggregateRoot<ConfigurationId>, ISoftDeletableEntity
 {
@@ -63,7 +31,7 @@ public class Configuration : AggregateRoot<ConfigurationId>, ISoftDeletableEntit
             return ConfigurationState.Awaiting;
         }
 
-        if (_expireDate.HasValue is false || _expireDate.Value > DateTime.UtcNow)
+        if (_startDate < DateTime.UtcNow && (_expireDate.HasValue is false || _expireDate.Value > DateTime.UtcNow))
         {
             return ConfigurationState.Active;
         }
@@ -123,7 +91,7 @@ public class Configuration : AggregateRoot<ConfigurationId>, ISoftDeletableEntit
             return (result, null);
         }
 
-        entity.RaiseDomainEvent(ConfigurationCreatedDomainEvent.FromConfiguration(entity));
+        entity.RaiseDomainEvent(new ConfigurationCreatedDomainEvent(entity));
 
         return (result, entity);
     }
@@ -199,7 +167,7 @@ public class Configuration : AggregateRoot<ConfigurationId>, ISoftDeletableEntit
             return result;
         }
 
-        RaiseDomainEvent(ConfigurationUpdatedDomainEvent.FromConfiguration(this));
+        RaiseDomainEvent(new ConfigurationUpdatedDomainEvent(this));
 
         return result;
     }
@@ -227,7 +195,7 @@ public class Configuration : AggregateRoot<ConfigurationId>, ISoftDeletableEntit
         {
             IsDeleted = true;
 
-            RaiseDomainEvent(ConfigurationDeletedDomainEvent.FromConfiguration(this));
+            RaiseDomainEvent(new ConfigurationDeletedDomainEvent(this));
         }
 
         return Validate();

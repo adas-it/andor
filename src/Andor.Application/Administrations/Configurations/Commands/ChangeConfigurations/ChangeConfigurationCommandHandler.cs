@@ -5,8 +5,9 @@ using Andor.Application.Common.Interfaces;
 using Andor.Application.Common.Models;
 using Andor.Application.Dto.Administrations.Configurations.Responses;
 using Andor.Application.Dto.Common.Responses;
-using Andor.Domain.Entities.Admin.Configurations;
 using Andor.Domain.Entities.Admin.Configurations.Repository;
+using Andor.Domain.Entities.Admin.Configurations.ValueObjects;
+using FluentValidation;
 using Mapster;
 using MediatR;
 using _dto = Andor.Application.Dto.Administrations.Configurations.Requests;
@@ -15,6 +16,24 @@ namespace Andor.Application.Administrations.Configurations.Commands.ChangeConfig
 
 public record ChangeConfigurationCommand(ConfigurationId Id, _dto.BaseConfiguration BaseConfiguration)
     : BaseConfiguration(BaseConfiguration), IRequest<ApplicationResult<ConfigurationOutput>>;
+
+public class ChangeConfigurationCommandValidator : AbstractValidator<ChangeConfigurationCommand>
+{
+    public ChangeConfigurationCommandValidator()
+    {
+        RuleFor(x => x.Id)
+            .NotEmpty()
+            .WithMessage(ValidationConstant.RequiredField);
+
+        RuleFor(x => x.Name)
+            .NotEmpty()
+            .WithMessage(ValidationConstant.RequiredField);
+
+        RuleFor(x => x.Value)
+            .NotEmpty()
+            .WithMessage(ValidationConstant.RequiredField);
+    }
+}
 
 public class ChangeConfigurationCommandHandler(ICommandsConfigurationRepository repository,
     IUnitOfWork unitOfWork,

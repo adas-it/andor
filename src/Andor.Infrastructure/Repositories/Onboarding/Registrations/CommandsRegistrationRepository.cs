@@ -1,0 +1,12 @@
+﻿using Andor.Domain.Entities.Onboarding.Registrations;
+using Andor.Domain.Entities.Onboarding.Registrations.Repositories;
+using Andor.Infrastructure.Repositories.Common;
+using Andor.Infrastructure.Repositories.Context;
+
+namespace Andor.Infrastructure.Repositories.Onboarding.Registrations;
+
+public class CommandsRegistrationRepository(PrincipalContext context) :
+    CommandsBaseRepository<Registration, RegistrationId>(context),
+    ICommandsRegistrationRepository
+{
+}

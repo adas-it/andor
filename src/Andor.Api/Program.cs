@@ -5,6 +5,7 @@ using Andor.Application.Dto.Common.ApplicationsErrors.Models;
 using Andor.Kernel.Extensions;
 using Andor.Kernel.Extensions.Api;
 using Andor.Kernel.Extensions.Infrastructures;
+using Andor.Kernel.Extensions.Services;
 using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -22,12 +23,12 @@ builder.Services
     .AddNewtonsoftJson();
 
 builder.AddDbExtension()
-    .AddDbMessagingExtension();
-builder.AddApplicationExtensionServices();
-builder.AddApiExtensionServices();
+    .AddDbMessagingExtension()
+    .AddApplicationExtensionServices()
+    .AddApiExtensionServices()
+    .AddServicesExtensionServices()
+    .ConfigureHealthChecks();
 
-
-builder.ConfigureHealthChecks();
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(opts =>
                 opts.SerializerOptions.Converters.Add(new ErrorCodeConverter()));
 builder.Services.AddTransient<GlobalExceptionHandlerMiddleware>();

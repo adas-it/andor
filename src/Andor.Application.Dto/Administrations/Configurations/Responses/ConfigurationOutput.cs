@@ -5,4 +5,5 @@ public record ConfigurationOutput(Guid Id,
         string Value,
         string Description,
         DateTime StartDate,
-        DateTime? ExpireDate);
+        DateTime? ExpireDate,
+        string Status);

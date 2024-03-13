@@ -22,5 +22,9 @@
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
 </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Users\DomainEvents\" />
+    <Folder Include="Users\ValuesObject\" />
+  </ItemGroup>
 
 </Project>

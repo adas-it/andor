@@ -2,6 +2,7 @@
 using Andor.Application.Dto.Common.Responses;
 using Andor.Domain.Entities.Admin.Configurations;
 using Andor.Domain.Entities.Admin.Configurations.Repository;
+using Andor.Domain.Entities.Onboarding.Registrations.Repositories.Models;
 
 namespace Andor.Application.Administrations.Configurations.Services;
 public class ConfigurationServices(IQueriesConfigurationRepository configurationRepository)
@@ -11,7 +12,9 @@ public class ConfigurationServices(IQueriesConfigurationRepository configuration
     {
         var response = ApplicationResult<ConfigurationOutput>.Success();
 
-        var listWithSameName = await configurationRepository.GetAllByNameAsync(entity.Name, [ConfigurationState.Active, ConfigurationState.Awaiting], cancellationToken);
+        var listWithSameName = await configurationRepository.GetByNameAndStatusAsync(
+            new SearchConfigurationInput(entity.Name, [ConfigurationState.Active, ConfigurationState.Awaiting]),
+            cancellationToken);
 
         if (listWithSameName is not null && listWithSameName.Exists(x => x.Id != entity.Id))
         {

@@ -1,4 +1,4 @@
-﻿using Andor.Application.Dto.Administrations.Configurations.ApplicationsErrors;
+﻿using Andor.Application.Dto.Common.ApplicationsErrors;
 using Andor.Application.Dto.Common.ApplicationsErrors.Models;
 using Andor.Application.Dto.Common.Responses;
 using Andor.Domain.Common.ValuesObjects;

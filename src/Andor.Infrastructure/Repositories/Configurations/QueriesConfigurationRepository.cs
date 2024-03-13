@@ -1,5 +1,7 @@
 ﻿using Andor.Domain.Entities.Admin.Configurations;
 using Andor.Domain.Entities.Admin.Configurations.Repository;
+using Andor.Domain.Entities.Admin.Configurations.ValueObjects;
+using Andor.Domain.Entities.Onboarding.Registrations.Repositories.Models;
 using Andor.Domain.SeedWork.Repository.ISearchableRepository;
 using Andor.Infrastructure.Repositories.Common;
 using Andor.Infrastructure.Repositories.Context;
@@ -12,17 +14,12 @@ public class QueriesConfigurationRepository(PrincipalContext context) :
     QueryHelper<Configuration, ConfigurationId>(context), 
     IQueriesConfigurationRepository
 {
-    public async Task<Configuration?> GetByIdAsync(ConfigurationId id, CancellationToken cancellationToken)
-    => await _dbSet
-        .AsNoTracking()
-        .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-
     public Task<SearchOutput<Configuration>> SearchAsync(SearchInput input, CancellationToken cancellationToken)
     {
         Expression<Func<Configuration, bool>> where = x => x.IsDeleted == false;
 
         if (!string.IsNullOrWhiteSpace(input.Search))
-            where = x => x.IsDeleted == false && x.Name.Contains(input.Search, StringComparison.CurrentCultureIgnoreCase);
+            where = x => x.Name.Contains(input.Search, StringComparison.CurrentCultureIgnoreCase);
 
         var items = GetManyPaginated(where,
             input.OrderBy,
@@ -35,17 +32,45 @@ public class QueriesConfigurationRepository(PrincipalContext context) :
         return Task.FromResult(new SearchOutput<Configuration>(input.Page, input.PerPage, total, items!));
     }
 
-    public Task<List<Configuration>> GetAllByNameAsync(string name, ConfigurationState[] statuses, CancellationToken cancellationToken)
-        => Task.FromResult(GetMany(x => x.Name.Equals(name) 
-            && x.IsDeleted == false )
-            .AsEnumerable()
-            .Where(x => statuses.Contains(x.State))
-            .ToList());
+    public async Task<List<Configuration>> GetByNameAndStatusAsync(SearchConfigurationInput search, CancellationToken cancellationToken)
+    {
+        var query = _dbSet.AsNoTracking();
+        query = GetWhere(query, search);
 
-    public async Task<Configuration?> GetByNameAsync(string name, ConfigurationState[] statuses, CancellationToken cancellationToken)
-    => await _dbSet.AsNoTracking().FirstOrDefaultAsync(x => x.Name.Equals(name) &&
-        statuses.Contains(x.State) &&
-        x.StartDate <= DateTime.UtcNow &&
-        (x.ExpireDate == null || x.ExpireDate != null && x.ExpireDate >= DateTime.UtcNow), cancellationToken);
+        return await query.ToListAsync(cancellationToken);
+    }
+
+    public async Task<Configuration?> GetActiveByNameAsync(string name, CancellationToken cancellationToken)
+    {
+        var query = _dbSet.AsNoTracking();
+        query = GetWhere(query, new SearchConfigurationInput(name, [ConfigurationState.Active]));
+
+        return await query.FirstOrDefaultAsync(cancellationToken);
+    }
+
+    private static IQueryable<Configuration> GetWhere(IQueryable<Configuration> sourceQuery, SearchConfigurationInput search)
+    {
+        if (!string.IsNullOrEmpty(search.Name))
+        {
+            sourceQuery = sourceQuery.Where(x => x.Name.Equals(search.Name));
+        }
+
+        if (search.States.Contains(ConfigurationState.Expired))
+        {
+            sourceQuery = sourceQuery.Where(x => x.ExpireDate > DateTime.UtcNow);
+        }
+
+        if (!search.States.Contains(ConfigurationState.Awaiting))
+        {
+            sourceQuery = sourceQuery.Where(x => x.StartDate < DateTime.UtcNow);
+        }
+
+        if (!search.States.Contains(ConfigurationState.Active))
+        {
+            sourceQuery = sourceQuery.Where(x => x.StartDate < DateTime.UtcNow && (x.ExpireDate == null || x.ExpireDate > DateTime.UtcNow));
+        }
+
+        return sourceQuery;
+    }
 }
 

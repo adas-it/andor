@@ -2,6 +2,7 @@
 using Andor.Application.Administrations.Configurations.Services;
 using Andor.Domain.Entities.Admin.Configurations;
 using Andor.Domain.Entities.Admin.Configurations.Repository;
+using Andor.Domain.Entities.Onboarding.Registrations.Repositories.Models;
 using Andor.TestsUtil;
 using Andor.Unit.Tests.Domain.Entities.Admin.Configurations;
 using FluentAssertions;
@@ -37,8 +38,7 @@ public class ConfigurationServicesTests
     {
         var validData = ConfigurationFixture.GetValidConfiguration();
 
-        _configurationRepository.GetAllByNameAsync(Arg.Is<string>(name => name == validData.Name),
-            Arg.Is<ConfigurationState[]>(statuses => statuses.Contains(ConfigurationState.Active) || statuses.Contains(ConfigurationState.Awaiting)),
+        _configurationRepository.GetByNameAndStatusAsync(Arg.Is<SearchConfigurationInput>(name => name.Name == validData.Name),
             Arg.Any<CancellationToken>()).Returns([]);
 
         var app = GetApp();
@@ -62,8 +62,7 @@ public class ConfigurationServicesTests
             ExpireDate: validData.ExpireDate.Value.AddDays(20)
         ));
 
-        _configurationRepository.GetAllByNameAsync(Arg.Is<string>(name => name == validData.Name),
-            Arg.Is<ConfigurationState[]>(statuses => statuses.Contains(ConfigurationState.Active) || statuses.Contains(ConfigurationState.Awaiting)),
+        _configurationRepository.GetByNameAndStatusAsync(Arg.Is<SearchConfigurationInput>(name => name.Name == validData.Name),
             Arg.Any<CancellationToken>()).Returns([beforeConfig]);
 
         var app = GetApp();
@@ -87,8 +86,7 @@ public class ConfigurationServicesTests
             ExpireDate: validData.StartDate.AddDays(1)
         ));
 
-        _configurationRepository.GetAllByNameAsync(Arg.Is<string>(name => name == validData.Name),
-            Arg.Is<ConfigurationState[]>(statuses => statuses.Contains(ConfigurationState.Active) || statuses.Contains(ConfigurationState.Awaiting)),
+        _configurationRepository.GetByNameAndStatusAsync(Arg.Is<SearchConfigurationInput>(name => name.Name == validData.Name),
             Arg.Any<CancellationToken>()).Returns([beforeConfig]);
 
         var app = GetApp();
@@ -113,8 +111,7 @@ public class ConfigurationServicesTests
             ExpireDate: validData!.ExpireDate!.Value.AddDays(1)
         ));
 
-        _configurationRepository.GetAllByNameAsync(Arg.Is<string>(name => name == validData.Name),
-            Arg.Is<ConfigurationState[]>(statuses => statuses.Contains(ConfigurationState.Active) || statuses.Contains(ConfigurationState.Awaiting)),
+        _configurationRepository.GetByNameAndStatusAsync(Arg.Is<SearchConfigurationInput>(name => name.Name == validData.Name),
             Arg.Any<CancellationToken>()).Returns([beforeConfig]);
 
         var app = GetApp();
@@ -139,8 +136,7 @@ public class ConfigurationServicesTests
             ExpireDate: validData!.ExpireDate!.Value.AddDays(3)
         ));
 
-        _configurationRepository.GetAllByNameAsync(Arg.Is<string>(name => name == validData.Name),
-            Arg.Is<ConfigurationState[]>(statuses => statuses.Contains(ConfigurationState.Active) || statuses.Contains(ConfigurationState.Awaiting)),
+        _configurationRepository.GetByNameAndStatusAsync(Arg.Is<SearchConfigurationInput>(name => name.Name == validData.Name),
             Arg.Any<CancellationToken>()).Returns([beforeConfig]);
 
         var app = GetApp();
