@@ -32,7 +32,8 @@ public class QueriesConfigurationRepository(PrincipalContext context) :
         return Task.FromResult(new SearchOutput<Configuration>(input.Page, input.PerPage, total, items!));
     }
 
-    public async Task<List<Configuration>> GetByNameAndStatusAsync(SearchConfigurationInput search, CancellationToken cancellationToken)
+    public async Task<List<Configuration>> GetByNameAndStatusAsync(SearchConfigurationInput search, 
+        CancellationToken cancellationToken)
     {
         var query = _dbSet.AsNoTracking();
         query = GetWhere(query, search);

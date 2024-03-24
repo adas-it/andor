@@ -45,7 +45,7 @@ public class CheckCodeEmailCommandHandler(IQueriesRegistrationRepository _querie
 
         var email = new MailAddress(request.Email);
 
-        var registration = await _queriesRepository.GetByEmail(email, cancellationToken);
+        var registration = await _queriesRepository.GetByEmailAsync(email, cancellationToken);
 
         if (registration is null)
         {

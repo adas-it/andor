@@ -6,7 +6,6 @@ using Andor.Application.Dto.Common.Responses;
 using Andor.Application.Dto.Onboarding.Registrations.Responses;
 using Andor.Domain.Entities.Onboarding.Registrations;
 using Andor.Domain.Entities.Onboarding.Registrations.Repositories;
-using Andor.Domain.Entities.Onboarding.Registrations.ValueObjects;
 using FluentValidation;
 using MediatR;
 using System.Net.Mail;
@@ -43,7 +42,6 @@ public class RegistrationValidator : AbstractValidator<RegisterCommand>
             .WithMessage(ValidationConstant.RequiredField)
             .EmailAddress()
             .WithMessage(ValidationConstant.InvalidParameter);
-
     }
 }
 
@@ -63,7 +61,7 @@ public class RegisterCommandHandler(
 
         var email = new MailAddress(request.Email);
 
-        var item = await _queriesRepository.GetByEmail(email, cancellationToken);
+        var item = await _queriesRepository.GetByEmailAsync(email, cancellationToken);
 
         if (item != null && item.IsComplete())
         {

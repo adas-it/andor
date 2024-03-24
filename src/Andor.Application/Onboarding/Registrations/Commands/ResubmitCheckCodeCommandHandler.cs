@@ -2,15 +2,11 @@
 using Andor.Application.Common.Models;
 using Andor.Application.Dto.Common.ApplicationsErrors;
 using Andor.Application.Dto.Common.Responses;
-using Andor.Application.Dto.Onboarding.Registrations.Requests;
 using Andor.Application.Dto.Onboarding.Registrations.Responses;
+using Andor.Domain.Entities.Onboarding.Registrations.Repositories;
 using FluentValidation;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net.Mail;
 
 namespace Andor.Application.Onboarding.Registrations.Commands;
 
@@ -28,53 +24,48 @@ public class CoachRegistrationResubmitEmailInputValidator : AbstractValidator<Re
     }
 }
 
-public class ResubmitCheckCodeCommandHandler()
-    : IRequestHandler<ResubmitCheckCodeCommand, Unit>
+public class ResubmitCheckCodeCommandHandler
+    : IRequestHandler<ResubmitCheckCodeCommand, ApplicationResult<RegistrationOutput>>
 {
-    private readonly IRegistrationRepository _repository;
+    private readonly ICommandsRegistrationRepository _repository;
+    private readonly IQueriesRegistrationRepository _queriesRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IRequestRegistrationComunication _requestRegistrationComunication;
-    private readonly Notifier _notifier;
-    private readonly IKeycloackService _keycloackService;
-    public ResubmitCheckCodeCommandHandler(IRegistrationRepository repository,
+
+    public ResubmitCheckCodeCommandHandler(ICommandsRegistrationRepository repository,
         IUnitOfWork unitOfWork,
-        IRequestRegistrationComunication requestRegistrationComunication,
-        Notifier notifier,
-        IKeycloackService keycloackService)
+        IQueriesRegistrationRepository queriesRepository)
     {
         _repository = repository;
         _unitOfWork = unitOfWork;
-        _requestRegistrationComunication = requestRegistrationComunication;
-        _notifier = notifier;
-        _keycloackService = keycloackService;
+        _queriesRepository = queriesRepository;
     }
 
-    public async Task<Unit> Handle(ResubmitCheckCodeCommand request, CancellationToken cancellationToken)
+    public async Task<ApplicationResult<RegistrationOutput>> Handle(ResubmitCheckCodeCommand request, CancellationToken cancellationToken)
     {
-        var item = await _repository.GetByEmail(request.Email, cancellationToken);
+        var response = ApplicationResult<RegistrationOutput>.Success();
+
+        var item = await _queriesRepository.GetByEmailAsync(new MailAddress(request.Email), cancellationToken);
 
         if (item == null)
         {
-            _notifier.Erros.Add(Errors.RegistrationNotFound());
+            response.AddError(Errors.RegistrationNotFound());
 
-            return Unit.Value;
+            return response;
         }
 
-        var userEmail = await _keycloackService.GetUserByEmail(request.Email, cancellationToken);
-
-        if (userEmail != null)
+        if (item.IsComplete())
         {
-            _notifier.Erros.Add(Errors.EmailInUse());
+            response.AddError(Errors.EmailInUse());
 
-            return Unit.Value;
+            return response;
         }
 
         item.SetNewCode();
 
-        await _repository.Update(item, cancellationToken);
+        await _repository.UpdateAsync(item, cancellationToken);
 
         await _unitOfWork.CommitAsync(cancellationToken);
 
-        return Unit.Value;
+        return response;
     }
 }

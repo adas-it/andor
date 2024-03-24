@@ -38,8 +38,8 @@ public record RegistrationConfig : IEntityTypeConfiguration<Registration>
 
         entity.Property(k => k.State)
         .HasConversion(
-            State => State,
-            value => RegistrationState.GetByKey(value.Key)
+            State => State.Key,
+            value => RegistrationState.GetByKey<RegistrationState>(value)
         );
     }
 }
