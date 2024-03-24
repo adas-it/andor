@@ -1,5 +1,4 @@
-﻿using Andor.Application.Common;
-using Andor.Application.Common.Interfaces;
+﻿using Andor.Application.Common.Interfaces;
 using Andor.Domain.Entities.Admin.Configurations.Repository;
 using Andor.Domain.Entities.Onboarding.Registrations.Repositories;
 using Andor.Infrastructure;

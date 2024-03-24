@@ -1,10 +1,10 @@
 ﻿using Andor.Application.Common.Models;
-using Andor.Application.Dto.Common.ApplicationsErrors;
 using Andor.Application.Dto.Common.Responses;
 using Andor.Application.Dto.Onboarding.Registrations.Responses;
 using Andor.Domain.Entities.Onboarding.Registrations.Repositories;
 using Andor.Domain.Entities.Onboarding.Registrations.ValueObjects;
 using FluentValidation;
+using Mapster;
 using MediatR;
 using System.Net.Mail;
 
@@ -12,8 +12,8 @@ namespace Andor.Application.Onboarding.Registrations.Commands;
 
 public record CheckCodeEmailCommand : IRequest<ApplicationResult<RegistrationOutput>>
 {
-    public string Email { get; set; }
-    public string Code { get; set; }
+    public string Email { get; set; } = "";
+    public string Code { get; set; } = "";
 }
 
 public class RegistrationCheckEmailValidator : AbstractValidator<CheckCodeEmailCommand>
@@ -32,14 +32,14 @@ public class RegistrationCheckEmailValidator : AbstractValidator<CheckCodeEmailC
             .WithMessage(ValidationConstant.RequiredField)
             .EmailAddress()
             .WithMessage(ValidationConstant.InvalidParameter);
-
     }
 }
 
 public class CheckCodeEmailCommandHandler(IQueriesRegistrationRepository _queriesRepository)
     : IRequestHandler<CheckCodeEmailCommand, ApplicationResult<RegistrationOutput>>
 {
-    public async Task<ApplicationResult<RegistrationOutput>> Handle(CheckCodeEmailCommand request, CancellationToken cancellationToken)
+    public async Task<ApplicationResult<RegistrationOutput>> Handle(CheckCodeEmailCommand request,
+        CancellationToken cancellationToken)
     {
         var response = ApplicationResult<RegistrationOutput>.Success();
 
@@ -49,17 +49,19 @@ public class CheckCodeEmailCommandHandler(IQueriesRegistrationRepository _querie
 
         if (registration is null)
         {
-            response.AddError(Errors.RegistrationNotFound());
+            response.AddError(Dto.Common.ApplicationsErrors.Errors.RegistrationNotFound());
 
             return response;
         }
 
-        if (!registration.IsTheRightCheckCode(request.Code))
+        if (!registration.IsTheRightCode(request.Code))
         {
-            response.AddError(Errors.WrongCode());
+            response.AddError(Dto.Common.ApplicationsErrors.Errors.WrongCode());
 
             return response;
         }
+
+        response.SetData(registration.Adapt<RegistrationOutput>());
 
         return response;
     }

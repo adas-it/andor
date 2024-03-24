@@ -1,5 +1,4 @@
 ﻿using Andor.Application.Dto.Administrations.Configurations.Requests;
-using Andor.Domain.Entities.Admin.Configurations;
 using Andor.TestsUtil;
 
 namespace Andor.Unit.Tests.Domain.Entities.Admin.Configurations;
@@ -10,7 +9,7 @@ public class ConfigurationTestFixture
         => GetBaseConfiguration(name, null!, null!, null!, null!);
     public static BaseConfiguration GetBaseConfiguration(string? name, string? value)
         => GetBaseConfiguration(name, value, null!, null!, null!);
-    public static BaseConfiguration GetBaseConfiguration(string? name, 
+    public static BaseConfiguration GetBaseConfiguration(string? name,
         string? value,
         string? description,
         DateTime? startDate,

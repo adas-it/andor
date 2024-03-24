@@ -1,6 +1,4 @@
-﻿using Andor.Domain.SeedWork;
-
-namespace Andor.Application.Common.Interfaces;
+﻿namespace Andor.Application.Common.Interfaces;
 
 public interface IMessageSenderInterface
 {

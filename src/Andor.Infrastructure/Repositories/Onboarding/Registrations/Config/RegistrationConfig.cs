@@ -24,7 +24,7 @@ public record RegistrationConfig : IEntityTypeConfiguration<Registration>
             value => RegistrationId.Load(value)
         );
 
-        entity.Property(k => k.CheckCode)
+        entity.Property(k => k.Code)
         .HasConversion(
             CheckCode => CheckCode!.Value,
             value => CheckCode.Load(value)

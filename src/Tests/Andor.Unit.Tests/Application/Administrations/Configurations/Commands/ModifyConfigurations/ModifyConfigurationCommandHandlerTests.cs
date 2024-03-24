@@ -1,8 +1,6 @@
 ﻿using Andor.Application.Administrations.Configurations.Commands.ModifyConfiguration;
 using Andor.Application.Administrations.Configurations.Services;
 using Andor.Application.Common.Interfaces;
-using Andor.Application.Common.Models;
-using Andor.Application.Dto.Administrations.Configurations.ApplicationsErrors;
 using Andor.Domain.Entities.Admin.Configurations;
 using Andor.Domain.Entities.Admin.Configurations.Repository;
 using Andor.TestsUtil;
@@ -62,7 +60,7 @@ public class ModifyConfigurationCommandHandlerTests
         await _configurationServices.Received(1).Handle(Arg.Any<Configuration>(), Arg.Any<CancellationToken>());
         await _unitOfWork.Received(1).CommitAsync(Arg.Any<CancellationToken>());
         await _configurationRepository.Received(1).UpdateAsync(
-            Arg.Is<Configuration>(config => config.Name == newConfig.Name && 
+            Arg.Is<Configuration>(config => config.Name == newConfig.Name &&
             config.Value == newConfig.Value &&
             config.Description == newConfig.Description &&
             config.StartDate == newConfig.StartDate &&

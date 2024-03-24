@@ -9,7 +9,7 @@ public record RegistrationState : Enumeration<int>
     }
 
     public static readonly RegistrationState Undefined = new(0, nameof(Undefined));
-    public static readonly RegistrationState GeneratedCode = new (1, nameof(GeneratedCode));
+    public static readonly RegistrationState GeneratedCode = new(1, nameof(GeneratedCode));
     public static readonly RegistrationState Notified = new(2, nameof(Notified));
     public static readonly RegistrationState Completed = new(3, nameof(Completed));
 }

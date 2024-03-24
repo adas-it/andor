@@ -1,8 +1,6 @@
 ﻿// Ignore Spelling: Validator
 
 using Andor.Application.Administrations.Configurations.Commands.ChangeConfiguration;
-using Andor.Application.Administrations.Configurations.Commands.ModifyConfiguration;
-using Andor.Domain.Entities.Admin.Configurations;
 using Andor.TestsUtil;
 using Andor.Unit.Tests.Domain.Entities.Admin.Configurations;
 using FluentAssertions;

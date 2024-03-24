@@ -36,7 +36,7 @@ public static class ConfigurationFixture
         return GeneralFixture.CreateInstanceAndSetProperties<Configuration>(propertyValues);
     }
 
-    public static Configuration GetValidConfigurationAtDatabase(DbContextOptions<PrincipalContext> dbOptions, 
+    public static Configuration GetValidConfigurationAtDatabase(DbContextOptions<PrincipalContext> dbOptions,
         ConfigurationState Status,
         Guid UserId)
     {

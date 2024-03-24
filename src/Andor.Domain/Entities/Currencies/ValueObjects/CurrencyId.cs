@@ -4,7 +4,7 @@ namespace Andor.Domain.Entities.Currencies.ValueObjects;
 
 public record struct CurrencyId
 {
-    public Guid Value {  get; private set; }
+    public Guid Value { get; private set; }
     public static CurrencyId New() => new CurrencyId() with { Value = Guid.NewGuid() };
 
     public static CurrencyId Load(string value)

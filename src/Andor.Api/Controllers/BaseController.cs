@@ -11,8 +11,8 @@ public class BaseController() : ControllerBase
     {
         var traceId = Activity.Current?.TraceId.ToString() ?? string.Empty;
 
-        if (response.Data is null 
-            && response.Warnings.Count == 0 
+        if (response.Data is null
+            && response.Warnings.Count == 0
             && response.Errors.Count == 0
             && response.Infos.Count == 0)
         {

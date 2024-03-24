@@ -1,5 +1,4 @@
-﻿using Andor.Domain.Entities.Onboarding.Registrations;
-using Andor.Domain.SeedWork;
+﻿using Andor.Domain.SeedWork;
 
 namespace Andor.Domain.Entities.Onboarding.Registrations.DomainEvents;
 

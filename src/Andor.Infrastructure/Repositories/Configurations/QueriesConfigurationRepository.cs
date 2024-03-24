@@ -10,8 +10,8 @@ using System.Linq.Expressions;
 
 namespace Andor.Infrastructure.Repositories.Configurations;
 
-public class QueriesConfigurationRepository(PrincipalContext context) : 
-    QueryHelper<Configuration, ConfigurationId>(context), 
+public class QueriesConfigurationRepository(PrincipalContext context) :
+    QueryHelper<Configuration, ConfigurationId>(context),
     IQueriesConfigurationRepository
 {
     public Task<SearchOutput<Configuration>> SearchAsync(SearchInput input, CancellationToken cancellationToken)
@@ -32,7 +32,7 @@ public class QueriesConfigurationRepository(PrincipalContext context) :
         return Task.FromResult(new SearchOutput<Configuration>(input.Page, input.PerPage, total, items!));
     }
 
-    public async Task<List<Configuration>> GetByNameAndStatusAsync(SearchConfigurationInput search, 
+    public async Task<List<Configuration>?> GetByNameAndStatusAsync(SearchConfigurationInput search,
         CancellationToken cancellationToken)
     {
         var query = _dbSet.AsNoTracking();

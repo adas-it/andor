@@ -26,11 +26,11 @@ public sealed class DomainResult
     }
 
     public static DomainResult Success(
-        ICollection<Notification>? warnings = null, 
+        ICollection<Notification>? warnings = null,
         ICollection<Notification>? infos = null) => new(null, warnings, infos);
 
     public static DomainResult Failure(
-        ICollection<Notification>? errors = null, 
-        ICollection<Notification>? warnings = null, 
+        ICollection<Notification>? errors = null,
+        ICollection<Notification>? warnings = null,
         ICollection<Notification>? infos = null) => new(errors, warnings, infos);
 }

@@ -22,7 +22,7 @@ public static class HealthChecksExtension
 
         builder.Services.AddHealthChecksUI(opt =>
         {
-            opt.SetEvaluationTimeInSeconds(10); 
+            opt.SetEvaluationTimeInSeconds(10);
             opt.MaximumHistoryEntriesPerEndpoint(60);
             opt.SetApiMaxActiveRequests(1);
             opt.AddHealthCheckEndpoint("Andor api", "/health");

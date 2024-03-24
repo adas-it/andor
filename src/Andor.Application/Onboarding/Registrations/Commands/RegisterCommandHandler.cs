@@ -1,7 +1,6 @@
 ﻿using Andor.Application.Common.Attributes;
 using Andor.Application.Common.Interfaces;
 using Andor.Application.Common.Models;
-using Andor.Application.Dto.Common.ApplicationsErrors;
 using Andor.Application.Dto.Common.Responses;
 using Andor.Application.Dto.Onboarding.Registrations.Responses;
 using Andor.Domain.Entities.Onboarding.Registrations;
@@ -61,25 +60,31 @@ public class RegisterCommandHandler(
 
         var email = new MailAddress(request.Email);
 
-        var item = await _queriesRepository.GetByEmailAsync(email, cancellationToken);
+        var entity = await _queriesRepository.GetByEmailAsync(email, cancellationToken);
 
-        if (item != null && item.IsComplete())
+        if (entity != null && entity.IsComplete())
         {
-            response.AddError(Errors.EmailInUse());
+            response.AddError(Dto.Common.ApplicationsErrors.Errors.EmailInUse());
             return response;
         }
 
-        if (item != null && !item.IsComplete())
+        if (entity != null && !entity.IsComplete())
         {
-            response.AddError(Errors.DuplicateRegistration());
+            response.AddError(Dto.Common.ApplicationsErrors.Errors.DuplicateRegistration());
             return response;
         }
 
-        item = Registration.New(request.FirstName,
+        var (result, registration) = Registration.New(request.FirstName,
             request.LastName,
             email);
 
-        await _repository.InsertAsync(item, cancellationToken);
+        if (result.IsFailure || registration is null)
+        {
+            await Errors.HandleRegistrationsResult.HandleResultConfiguration(result, response);
+            return response;
+        }
+
+        await _repository.InsertAsync(registration, cancellationToken);
 
         await _unitOfWork.CommitAsync(cancellationToken);
 

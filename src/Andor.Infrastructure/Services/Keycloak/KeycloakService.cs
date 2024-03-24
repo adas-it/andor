@@ -42,7 +42,7 @@ public class KeycloakService : IKeycloakService
         LastName,
         new List<Credentials>() { new Credentials("password", Password, false) },
         new Attributes(
-            new string[] { JsonConvert.SerializeObject(DefaultCurrency) }, 
+            new string[] { JsonConvert.SerializeObject(DefaultCurrency) },
             new string[] { JsonConvert.SerializeObject(DefaultLanguage) },
             new string[] { Avatar ?? string.Empty },
             new string[] { DateTime.UtcNow.ToString() },

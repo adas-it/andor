@@ -5,7 +5,6 @@ using Andor.Application.Onboarding.Registrations.Commands;
 using Asp.Versioning;
 using Mapster;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 
@@ -58,7 +57,7 @@ public class RegistrationController(IMediator mediator) : BaseController
 
         return Result(output);
     }
-    
+
     [HttpPost("check")]
     [MapToApiVersion("1.0")]
     [ProducesResponseType(typeof(DefaultResponse<RegistrationOutput>), StatusCodes.Status200OK)]

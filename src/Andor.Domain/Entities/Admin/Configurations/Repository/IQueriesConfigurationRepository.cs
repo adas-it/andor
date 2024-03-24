@@ -4,7 +4,7 @@ using Andor.Domain.SeedWork.Repository.ISearchableRepository;
 
 namespace Andor.Domain.Entities.Admin.Configurations.Repository;
 
-public interface IQueriesConfigurationRepository : 
+public interface IQueriesConfigurationRepository :
     IResearchableRepository<Configuration, ConfigurationId, SearchInput>
 {
     Task<List<Configuration>?> GetByNameAndStatusAsync(SearchConfigurationInput search,

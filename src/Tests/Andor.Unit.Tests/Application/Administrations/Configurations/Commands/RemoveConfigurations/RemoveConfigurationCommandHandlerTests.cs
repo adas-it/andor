@@ -1,6 +1,5 @@
 ﻿using Andor.Application.Administrations.Configurations.Commands.RemoveConfiguration;
 using Andor.Application.Common.Interfaces;
-using Andor.Application.Dto.Administrations.Configurations.ApplicationsErrors;
 using Andor.Domain.Entities.Admin.Configurations;
 using Andor.Domain.Entities.Admin.Configurations.Repository;
 using Andor.Unit.Tests.Domain.Entities.Admin.Configurations;

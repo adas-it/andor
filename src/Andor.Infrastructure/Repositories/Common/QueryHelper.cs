@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
 
-public class QueryHelper<TEntity, TEntityId>(PrincipalContext context) 
+public class QueryHelper<TEntity, TEntityId>(PrincipalContext context)
     where TEntity : Entity<TEntityId>
     where TEntityId : IEquatable<TEntityId>
 {
@@ -108,7 +108,7 @@ public class QueryHelper<TEntity, TEntityId>(PrincipalContext context)
             }
         }
 
-        if(page.HasValue && perPage.HasValue)
+        if (page.HasValue && perPage.HasValue)
         {
             return query.Skip(page.Value * perPage.Value).Take(perPage.Value);
         }

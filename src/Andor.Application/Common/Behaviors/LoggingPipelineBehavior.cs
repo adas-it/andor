@@ -1,6 +1,4 @@
 ﻿using Andor.Application.Common.Attributes;
-using Andor.Application.Dto.Common.Responses;
-using Azure;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;

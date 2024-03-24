@@ -5,7 +5,7 @@ using Andor.Application.Dto.Common.ApplicationsErrors.Models;
 using FluentValidation;
 using MediatR;
 
-public class RequestValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators) 
+public class RequestValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators)
     : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators = validators;

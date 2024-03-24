@@ -1,6 +1,5 @@
 ﻿using Andor.Application.Common.Interfaces;
 using Andor.Application.Common.Models;
-using Andor.Application.Dto.Common.ApplicationsErrors;
 using Andor.Application.Dto.Common.Responses;
 using Andor.Application.Dto.Onboarding.Registrations.Responses;
 using Andor.Domain.Entities.Onboarding.Registrations.Repositories;
@@ -12,9 +11,9 @@ namespace Andor.Application.Onboarding.Registrations.Commands;
 
 public record ResubmitCheckCodeCommand(string Email) : IRequest<ApplicationResult<RegistrationOutput>>;
 
-public class CoachRegistrationResubmitEmailInputValidator : AbstractValidator<ResubmitCheckCodeCommand>
+public class ResubmitCheckCodeCommandValidator : AbstractValidator<ResubmitCheckCodeCommand>
 {
-    public CoachRegistrationResubmitEmailInputValidator()
+    public ResubmitCheckCodeCommandValidator()
     {
         RuleFor(x => x.Email)
             .NotEmpty()
@@ -24,21 +23,14 @@ public class CoachRegistrationResubmitEmailInputValidator : AbstractValidator<Re
     }
 }
 
-public class ResubmitCheckCodeCommandHandler
-    : IRequestHandler<ResubmitCheckCodeCommand, ApplicationResult<RegistrationOutput>>
+public class ResubmitCheckCodeCommandHandler(ICommandsRegistrationRepository repository,
+    IUnitOfWork unitOfWork,
+    IQueriesRegistrationRepository queriesRepository)
+        : IRequestHandler<ResubmitCheckCodeCommand, ApplicationResult<RegistrationOutput>>
 {
-    private readonly ICommandsRegistrationRepository _repository;
-    private readonly IQueriesRegistrationRepository _queriesRepository;
-    private readonly IUnitOfWork _unitOfWork;
-
-    public ResubmitCheckCodeCommandHandler(ICommandsRegistrationRepository repository,
-        IUnitOfWork unitOfWork,
-        IQueriesRegistrationRepository queriesRepository)
-    {
-        _repository = repository;
-        _unitOfWork = unitOfWork;
-        _queriesRepository = queriesRepository;
-    }
+    private readonly ICommandsRegistrationRepository _repository = repository;
+    private readonly IQueriesRegistrationRepository _queriesRepository = queriesRepository;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     public async Task<ApplicationResult<RegistrationOutput>> Handle(ResubmitCheckCodeCommand request, CancellationToken cancellationToken)
     {

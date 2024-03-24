@@ -20,7 +20,7 @@ public class CommandsConfigurationRepositoryTests
     {
         var (_, repository) = GetGenericRepositoryTest();
 
-        var result = await repository.CreateEntityAsync(() => 
+        var result = await repository.CreateEntityAsync(() =>
             ConfigurationFixture.GetValidConfiguration());
 
         result.Should().BeTrue();
@@ -32,7 +32,7 @@ public class CommandsConfigurationRepositoryTests
     {
         var (config, repository) = GetGenericRepositoryTest();
 
-        var result = await repository.GetEntityByIdAsync(() => 
+        var result = await repository.GetEntityByIdAsync(() =>
             ConfigurationFixture.GetValidConfigurationAtDatabase(
                 config,
                 ConfigurationState.Awaiting,
@@ -47,7 +47,7 @@ public class CommandsConfigurationRepositoryTests
     {
         var (config, repository) = GetGenericRepositoryTest();
 
-        var result = await repository.DeleteEntityAsync(() => 
+        var result = await repository.DeleteEntityAsync(() =>
             ConfigurationFixture.GetValidConfigurationAtDatabase(
                 config,
                 ConfigurationState.Awaiting,

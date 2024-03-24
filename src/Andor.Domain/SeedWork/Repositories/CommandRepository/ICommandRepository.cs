@@ -1,7 +1,7 @@
 ﻿namespace Andor.Domain.SeedWork.Repository.CommandRepository;
 
-public interface ICommandRepository<TEntity, TEntityId> 
-    where TEntity : Entity<TEntityId> 
+public interface ICommandRepository<TEntity, TEntityId>
+    where TEntity : Entity<TEntityId>
     where TEntityId : IEquatable<TEntityId>
 {
     Task InsertAsync(TEntity entity, CancellationToken cancellationToken);

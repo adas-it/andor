@@ -20,7 +20,7 @@ public static class AddOpenTelemetryExtension
         var configs = builder.Configuration
             .GetSection(nameof(OpenTelemetryConfig))
             .Get<OpenTelemetryConfig>();
-        
+
         if (configs == null)
         {
             return builder;
