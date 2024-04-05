@@ -29,7 +29,7 @@ public static class ApplicationExtension
         builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
         builder.Services.AddScoped<IPartner, InHousePartner>();
 
-        builder.Services.AddScoped<ISMTP, SMTP>();
+        builder.Services.AddScoped<ISMTP, Smtp>();
 
         return builder;
     }
