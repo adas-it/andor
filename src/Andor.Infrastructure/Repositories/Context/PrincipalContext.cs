@@ -2,6 +2,9 @@
 
 using Andor.Domain.Common;
 using Andor.Domain.Entities.Admin.Configurations;
+using Andor.Domain.Entities.Communications;
+using Andor.Domain.Entities.Communications.Users;
+using Andor.Domain.Entities.Onboarding.Registrations;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -25,9 +28,18 @@ public class PrincipalContextFactory : IDesignTimeDbContextFactory<PrincipalCont
 public partial class PrincipalContext(DbContextOptions<PrincipalContext> options) : DbContext(options)
 {
     public DbSet<Configuration> Configuration => Set<Configuration>();
+    public DbSet<Registration> Registration => Set<Registration>();
+    public DbSet<Template> Template => Set<Template>();
+    public DbSet<Rule> Rule => Set<Rule>();
+    public DbSet<Permission> Permission => Set<Permission>();
+    public DbSet<Recipient> Recipient => Set<Recipient>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.AddInboxStateEntity();
+        modelBuilder.AddOutboxStateEntity();
+        modelBuilder.AddOutboxMessageEntity();
+
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
             entityType.GetForeignKeys()
@@ -53,10 +65,6 @@ public partial class PrincipalContext(DbContextOptions<PrincipalContext> options
         }
 
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-
-        modelBuilder.AddInboxStateEntity();
-        modelBuilder.AddOutboxStateEntity();
-        modelBuilder.AddOutboxMessageEntity();
     }
 
     public void Upsert<T>(T entity) where T : class

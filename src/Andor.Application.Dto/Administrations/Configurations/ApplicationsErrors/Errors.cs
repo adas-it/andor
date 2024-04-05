@@ -1,6 +1,6 @@
-﻿#pragma warning disable IDE0130 // Namespace does not match folder structure
-using Andor.Application.Dto.Common.ApplicationsErrors.Models;
+﻿using Andor.Application.Dto.Common.ApplicationsErrors.Models;
 
+#pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace Andor.Application.Dto.Common.ApplicationsErrors;
 public sealed record ConfigurationErrorCodes : ApplicationErrorCode
 {

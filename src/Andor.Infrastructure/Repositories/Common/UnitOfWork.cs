@@ -38,7 +38,7 @@ public class UnitOfWork(PrincipalContext context, IMessageSenderInterface messag
         domainEntities.ToList()
             .ForEach(entity => entity.Entity.ClearEvents());
 
-        foreach (var domainEvent in domainEvents.OrderBy(x => x.EventDateUTC))
+        foreach (var domainEvent in domainEvents)
         {
             _messageSenderInterface.PubSubSendAsync(domainEvent, cancellationToken);
         }

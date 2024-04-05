@@ -6,20 +6,20 @@ public abstract class AggregateRoot<T> : Entity<T>, IAggregateRoot where T : IEq
 {
     protected AggregateRoot()
     {
-        _events = new HashSet<IDomainEventBase>();
+        _events = new HashSet<object>();
     }
 
 
-    private readonly ICollection<IDomainEventBase> _events;
+    private readonly ICollection<object> _events;
 
-    public IReadOnlyCollection<IDomainEventBase> Events => _events.ToImmutableArray();
+    public IReadOnlyCollection<object> Events => _events.ToImmutableArray();
 
     public void ClearEvents()
     {
         _events.Clear();
     }
 
-    internal void RaiseDomainEvent(IDomainEventBase @event)
+    internal void RaiseDomainEvent(object @event)
     {
         _events.Add(@event);
     }

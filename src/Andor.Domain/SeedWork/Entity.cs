@@ -7,11 +7,11 @@ namespace Andor.Domain.SeedWork;
 public abstract class Entity<TEntityId> where TEntityId : IEquatable<TEntityId>
 {
     public TEntityId Id { get; protected set; }
+
     protected readonly ICollection<Notification> _notifications;
-
     protected IReadOnlyCollection<Notification> Notifications => _notifications.ToImmutableArray();
-    protected readonly ICollection<Notification> _warnings;
 
+    protected readonly ICollection<Notification> _warnings;
     protected IReadOnlyCollection<Notification> Warnings => _warnings.ToImmutableArray();
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.

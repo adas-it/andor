@@ -1,4 +1,5 @@
-﻿using Andor.Application.Common.Models;
+﻿using Andor.Application.Common.Attributes;
+using Andor.Application.Common.Models;
 using Andor.Application.Dto.Common.Responses;
 using Andor.Application.Dto.Onboarding.Registrations.Responses;
 using Andor.Domain.Entities.Onboarding.Registrations.Repositories;
@@ -12,6 +13,7 @@ namespace Andor.Application.Onboarding.Registrations.Commands;
 
 public record CheckCodeEmailCommand : IRequest<ApplicationResult<RegistrationOutput>>
 {
+    [SensitiveData]
     public string Email { get; set; } = "";
     public string Code { get; set; } = "";
 }
@@ -38,6 +40,9 @@ public class RegistrationCheckEmailValidator : AbstractValidator<CheckCodeEmailC
 public class CheckCodeEmailCommandHandler(IQueriesRegistrationRepository _queriesRepository)
     : IRequestHandler<CheckCodeEmailCommand, ApplicationResult<RegistrationOutput>>
 {
+
+    [Log]
+    [Transaction]
     public async Task<ApplicationResult<RegistrationOutput>> Handle(CheckCodeEmailCommand request,
         CancellationToken cancellationToken)
     {

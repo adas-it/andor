@@ -65,10 +65,111 @@ namespace Andor.Infrastructure.Migrations
 
                     b.HasIndex("IsDeleted");
 
-                    b.ToTable("Configuration", "Andor");
+                    b.ToTable("Configuration", "Administration");
                 });
 
-            modelBuilder.Entity("Andor.Domain.Entities.Registrations.Registration", b =>
+            modelBuilder.Entity("Andor.Domain.Entities.Communications.Permission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Consented")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("RecipientId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipientId");
+
+                    b.ToTable("Permission", "Communication");
+                });
+
+            modelBuilder.Entity("Andor.Domain.Entities.Communications.Rule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(70)
+                        .HasColumnType("character varying(70)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Rule", "Communication");
+                });
+
+            modelBuilder.Entity("Andor.Domain.Entities.Communications.Template", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ContentLanguage")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Partner")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("RuleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RuleId");
+
+                    b.ToTable("Template", "Communication");
+                });
+
+            modelBuilder.Entity("Andor.Domain.Entities.Communications.Users.Recipient", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(70)
+                        .HasColumnType("character varying(70)");
+
+                    b.Property<string>("PreferredEmail")
+                        .IsRequired()
+                        .HasMaxLength(70)
+                        .HasColumnType("character varying(70)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Recipient", "Communication");
+                });
+
+            modelBuilder.Entity("Andor.Domain.Entities.Onboarding.Registrations.Registration", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -93,6 +194,9 @@ namespace Andor.Infrastructure.Migrations
 
                     b.Property<DateTime>("RegisterDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("State")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -158,12 +262,13 @@ namespace Andor.Infrastructure.Migrations
 
                     b.Property<string>("Body")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("ContentType")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<Guid?>("ConversationId")
                         .HasColumnType("uuid");
@@ -186,7 +291,8 @@ namespace Andor.Infrastructure.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.Property<string>("Headers")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<Guid?>("InboxConsumerId")
                         .HasColumnType("uuid");
@@ -202,13 +308,15 @@ namespace Andor.Infrastructure.Migrations
 
                     b.Property<string>("MessageType")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<Guid?>("OutboxId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Properties")
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<Guid?>("RequestId")
                         .HasColumnType("uuid");
@@ -267,6 +375,38 @@ namespace Andor.Infrastructure.Migrations
                     b.HasIndex("Created");
 
                     b.ToTable("OutboxState");
+                });
+
+            modelBuilder.Entity("Andor.Domain.Entities.Communications.Permission", b =>
+                {
+                    b.HasOne("Andor.Domain.Entities.Communications.Users.Recipient", "Recipient")
+                        .WithMany("Permissions")
+                        .HasForeignKey("RecipientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Recipient");
+                });
+
+            modelBuilder.Entity("Andor.Domain.Entities.Communications.Template", b =>
+                {
+                    b.HasOne("Andor.Domain.Entities.Communications.Rule", "Rule")
+                        .WithMany("Templates")
+                        .HasForeignKey("RuleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Rule");
+                });
+
+            modelBuilder.Entity("Andor.Domain.Entities.Communications.Rule", b =>
+                {
+                    b.Navigation("Templates");
+                });
+
+            modelBuilder.Entity("Andor.Domain.Entities.Communications.Users.Recipient", b =>
+                {
+                    b.Navigation("Permissions");
                 });
 #pragma warning restore 612, 618
         }

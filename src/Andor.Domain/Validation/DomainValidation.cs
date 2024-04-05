@@ -58,7 +58,7 @@ public static class DomainValidation
     }
 
     public static Notification? NotDefaultDateTime(this DateTime? target,
-                          [CallerArgumentExpression("target")] string fieldName = "")
+                          [CallerArgumentExpression(nameof(target))] string fieldName = "")
     {
         Notification? notification = null;
 

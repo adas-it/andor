@@ -54,6 +54,20 @@ var configs = app.Services.GetRequiredService<IOptions<ApplicationSettings>>();
 app.UseCustomSwagger(configs,
     app.Services.GetRequiredService<IApiVersionDescriptionProvider>());
 
+
+if (configs.Value?.Cors != null)
+{
+    app.UseCors(options =>
+    {
+        options
+            .WithOrigins(configs.Value?.Cors?.AllowedOrigins?.ToArray()!)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+            .WithExposedHeaders("Content-Language");
+    });
+}
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

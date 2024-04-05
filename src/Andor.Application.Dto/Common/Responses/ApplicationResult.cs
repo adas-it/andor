@@ -1,5 +1,4 @@
 ﻿using Andor.Application.Dto.Common.ApplicationsErrors.Models;
-using System.Collections.Immutable;
 
 namespace Andor.Application.Dto.Common.Responses;
 
@@ -10,13 +9,13 @@ public class ApplicationResult<T> where T : class
     public T? Data { get; private set; }
 
     private readonly ICollection<ErrorModel> _errors;
-    public IReadOnlyCollection<ErrorModel> Errors => _errors.ToImmutableArray();
+    public IReadOnlyCollection<ErrorModel> Errors => [.. _errors];
 
     private readonly ICollection<ErrorModel> _warnings;
-    public IReadOnlyCollection<ErrorModel> Warnings => _warnings.ToImmutableArray();
+    public IReadOnlyCollection<ErrorModel> Warnings => [.. _warnings];
 
     private readonly ICollection<ErrorModel> _infos;
-    public IReadOnlyCollection<ErrorModel> Infos => _infos.ToImmutableArray();
+    public IReadOnlyCollection<ErrorModel> Infos => [.. _infos];
 
     private ApplicationResult(ICollection<ErrorModel>? errors,
         ICollection<ErrorModel>? warnings,

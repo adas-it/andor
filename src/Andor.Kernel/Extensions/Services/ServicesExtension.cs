@@ -1,7 +1,9 @@
 ﻿using Andor.Application.Common;
 using Andor.Application.Common.Interfaces;
-using Andor.Infrastructure.Services.Keycloak;
-using Andor.Infrastructure.Services.Keycloak.Auth;
+using Andor.Application.Communications.Interfaces;
+using Andor.Application.Communications.Services.PartnerHandler;
+using Andor.Infrastructure.Onboarding.Services.Keycloak;
+using Andor.Infrastructure.Onboarding.Services.Keycloak.Auth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,6 +42,7 @@ public static class ServicesExtension
             .AddPolicyHandler(GetCircuitBreakerPolicy(pllyConfigs));
 
         builder.Services.AddTransient<IKeycloakService, KeycloakService>();
+        builder.Services.AddTransient<IPartner, InHousePartner>();
 
         return builder;
     }

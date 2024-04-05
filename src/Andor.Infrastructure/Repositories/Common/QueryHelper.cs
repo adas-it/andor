@@ -45,7 +45,7 @@ public class QueryHelper<TEntity, TEntityId>(PrincipalContext context)
 
         totalPages = query.Count();
 
-        if (string.IsNullOrEmpty(orderBy) is false)
+        if (!string.IsNullOrEmpty(orderBy))
         {
             var field = typeof(TEntity).GetProperties()
                 .AsEnumerable()

@@ -20,6 +20,6 @@ public abstract record Enumeration<TKey>
 
     public static T GetByKey<T>(TKey key) where T : Enumeration<TKey>
     {
-        return GetAll<T>().First(x => x.Key.Equals(key));
+        return GetAll<T>().First(x => x.Key!.Equals(key));
     }
 }

@@ -1,9 +1,11 @@
-﻿using Andor.Application.Common;
-using Andor.Application.Common.Interfaces;
-using Andor.Infrastructure.Messaging.Consumers.Administrations.Configurations;
-using Andor.Infrastructure.Messaging.Publisher.Administrations.Configurations.DomainEventHandlersConfig;
+﻿using Andor.Application.Common.Interfaces;
+using Andor.Infrastructure.Administrations.Messaging.Consumers.Configurations;
+using Andor.Infrastructure.Administrations.Messaging.Publisher.Configurations.DomainEventHandlersConfig;
+using Andor.Infrastructure.Communication.Messages.Consumers;
+using Andor.Infrastructure.Communication.Messages.Producers;
 using Andor.Infrastructure.Messaging.RabbitMq;
-using Andor.Infrastructure.Repositories.Context;
+using Andor.Infrastructure.Onboarding.Messages.Consumers.Registrations;
+using Andor.Infrastructure.Onboarding.Messages.Producers.Registrations.DomainEventHandlersConfig;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -16,8 +18,7 @@ public static class MessagingExtension
     public static WebApplicationBuilder AddDbMessagingExtension(this WebApplicationBuilder builder)
     {
         var configs = builder.Configuration
-            .GetSection(nameof(RabbitMq))
-            .Get<RabbitMq>();
+            .GetConnectionString("ServiceBus");
 
         if (configs == null)
         {
@@ -28,29 +29,35 @@ public static class MessagingExtension
 
         builder.Services.AddMassTransit(x =>
         {
+            /*
             x.SetKebabCaseEndpointNameFormatter();
             x.AddEntityFrameworkOutbox<PrincipalContext>(o =>
             {
-                o.QueryDelay = TimeSpan.FromSeconds(200);
+                o.QueryDelay = TimeSpan.FromMilliseconds(500);
 
-                o.UsePostgres().UseBusOutbox();
+                o.UsePostgres()
+                .UseBusOutbox();
             });
+            */
+            x.AddConfigurationsConsumers()
+            .AddRegistrationsConsumers()
+            .AddCommunicationConsumers();
 
-            x.AddConfigurationsConsumers();
-
-            x.UsingRabbitMq((context, cfg) =>
+            x.UsingAzureServiceBus((context, cfg) =>
             {
-                cfg.AutoStart = true;
-
-                cfg.Host(configs.Host!, "/", h =>
-                {
-                    h.Username(configs.Username!);
-                    h.Password(configs.Password!);
-                });
+                cfg.Host(configs);
 
                 cfg
-                .AddConfigurationsPublisherDomainEventHandlersConfigs()
-                .AddConfigurationsConsumerDomainEventHandlersConfigs(context);
+                .AddConfigurationsPublisherDomainEventHandlersConfig()
+                .AddConfigurationsConsumerDomainEventHandlersConfig(context);
+                cfg
+                .AddRegistrationsPublisherDomainEventHandlerConfig()
+                .AddRegistrationConsumerDomainEventHandlerConfig(context);
+
+                cfg.AddCommunicationsPublisherEventHandlerConfig()
+                .AddCommunicationConsumerDomainEventHandlerConfig(context);
+
+                cfg.DeployPublishTopology = true;
             });
         });
 

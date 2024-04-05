@@ -12,7 +12,7 @@ public class Registration : AggregateRoot<RegistrationId>
     public string FirstName { get; private set; }
     public string LastName { get; private set; }
     public MailAddress Email { get; private set; }
-    public CheckCode Code { get; private set; }
+    public CheckCode CheckCode { get; private set; }
     public DateTime RegisterDate { get; private set; }
     public RegistrationState State { get; private set; }
 
@@ -31,28 +31,28 @@ public class Registration : AggregateRoot<RegistrationId>
         DateTime registerDate,
         RegistrationState state)
     {
-        AddNotification(FirstName.NotNullOrEmptyOrWhiteSpace());
-        AddNotification(FirstName.BetweenLength(2, 50));
+        AddNotification(firstName.NotNullOrEmptyOrWhiteSpace());
+        AddNotification(firstName.BetweenLength(2, 50));
 
-        AddNotification(LastName.NotNullOrEmptyOrWhiteSpace());
-        AddNotification(LastName.BetweenLength(2, 50));
+        AddNotification(lastName.NotNullOrEmptyOrWhiteSpace());
+        AddNotification(lastName.BetweenLength(2, 50));
 
-        AddNotification(RegisterDate.NotDefaultDateTime());
+        AddNotification(registerDate.NotDefaultDateTime());
 
-        var result = Validate();
-
-        if (result.IsFailure)
+        if (Notifications.Count > 1)
         {
-            return result;
+            return Validate();
         }
 
         Id = id;
         FirstName = firstName;
         LastName = lastName;
         Email = email;
-        Code = checkCode;
+        CheckCode = checkCode;
         RegisterDate = registerDate;
         State = state;
+
+        var result = Validate();
 
         return result;
     }
@@ -77,25 +77,45 @@ public class Registration : AggregateRoot<RegistrationId>
             return (result, null);
         }
 
-        entity.RaiseDomainEvent(new RegistrationCreatedDomainEvent(entity));
+        entity.RaiseDomainEvent(RegistrationCreatedDomainEvent.FromAggregator(entity));
 
         return (result, entity);
     }
 
+    public DomainResult Complete(string firstName,
+        string lastName)
+    {
+        var result = SetValues(Id, firstName, lastName, Email, CheckCode, RegisterDate, RegistrationState.Completed);
+
+        if (result.IsFailure)
+        {
+            return result;
+        }
+
+        RaiseDomainEvent(RegistrationCompletedDomainEvent.FromAggregator(this));
+
+        return result;
+    }
+
     public DomainResult SetNewCode()
     {
-        Code = CheckCode.New();
+        var code = CheckCode.New();
 
-        RaiseDomainEvent(new RegistrationCodeChangedDomainEvent(this));
+        var result = SetValues(Id, FirstName, LastName, Email, code, RegisterDate, State);
 
-        return Validate();
+        if (result.IsFailure)
+        {
+            return result;
+        }
+
+        RaiseDomainEvent(RegistrationCodeChangedDomainEvent.FromAggregator(this));
+
+        return result;
     }
 
     public bool IsComplete()
         => State == RegistrationState.Completed;
 
     public bool IsTheRightCode(CheckCode code)
-        => Code.Equals(code);
+        => CheckCode.Equals(code);
 }
-
-

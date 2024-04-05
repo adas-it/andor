@@ -1,4 +1,5 @@
 ﻿using Andor.Application.Administrations.Configurations.Commands;
+using Andor.Infrastructure.Administrations.Configurations;
 
 namespace Andor.Integrations.Tests.Administrations.Configurations.Queries;
 

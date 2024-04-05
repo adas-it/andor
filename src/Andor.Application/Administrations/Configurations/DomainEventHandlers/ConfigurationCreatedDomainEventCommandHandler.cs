@@ -16,7 +16,7 @@ public class ConfigurationCreatedDomainEventCommandHandler(IMessageSenderInterfa
     {
         await _messageSenderInterface.PubSubSendAsync(new ConfigurationCreated()
         {
-            Id = request.message.Context.Id,
+            Id = request.message.Id,
         }, cancellationToken);
     }
 }

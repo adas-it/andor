@@ -1,12 +1,31 @@
-﻿using Andor.Domain.SeedWork;
+﻿namespace Andor.Domain.Entities.Users.DomainEvents;
 
-namespace Andor.Domain.Entities.Users.DomainEvents;
+public record UserCreatedDomainEvent
+{
+    public Guid Id { get; init; }
+    public static UserCreatedDomainEvent FromAggregateRoot(User entity)
+        => new UserCreatedDomainEvent() with
+        {
+            Id = entity.Id
+        };
+}
 
-public record UserCreatedDomainEvent(User user)
-    : DomainEventBase<User>(nameof(UserCreatedDomainEvent), user);
+public record UserUpdatedDomainEvent
+{
+    public Guid Id { get; init; }
+    public static UserUpdatedDomainEvent FromAggregateRoot(User entity)
+        => new UserUpdatedDomainEvent() with
+        {
+            Id = entity.Id
+        };
+}
 
-public record UserUpdatedDomainEvent(User user)
-    : DomainEventBase<User>(nameof(UserUpdatedDomainEvent), user);
-
-public record UserDeletedDomainEvent(User user)
-    : DomainEventBase<User>(nameof(UserDeletedDomainEvent), user);
+public record UserDeletedDomainEvent
+{
+    public Guid Id { get; init; }
+    public static UserDeletedDomainEvent FromAggregateRoot(User entity)
+        => new UserDeletedDomainEvent() with
+        {
+            Id = entity.Id
+        };
+}

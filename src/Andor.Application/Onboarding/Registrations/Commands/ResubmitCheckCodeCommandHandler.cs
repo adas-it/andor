@@ -1,4 +1,5 @@
-﻿using Andor.Application.Common.Interfaces;
+﻿using Andor.Application.Common.Attributes;
+using Andor.Application.Common.Interfaces;
 using Andor.Application.Common.Models;
 using Andor.Application.Dto.Common.Responses;
 using Andor.Application.Dto.Onboarding.Registrations.Responses;
@@ -9,7 +10,11 @@ using System.Net.Mail;
 
 namespace Andor.Application.Onboarding.Registrations.Commands;
 
-public record ResubmitCheckCodeCommand(string Email) : IRequest<ApplicationResult<RegistrationOutput>>;
+public record ResubmitCheckCodeCommand : IRequest<ApplicationResult<RegistrationOutput>>
+{
+    [SensitiveData]
+    public string Email { get; set; } = "";
+}
 
 public class ResubmitCheckCodeCommandValidator : AbstractValidator<ResubmitCheckCodeCommand>
 {
@@ -32,6 +37,8 @@ public class ResubmitCheckCodeCommandHandler(ICommandsRegistrationRepository rep
     private readonly IQueriesRegistrationRepository _queriesRepository = queriesRepository;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
+    [Log]
+    [Transaction]
     public async Task<ApplicationResult<RegistrationOutput>> Handle(ResubmitCheckCodeCommand request, CancellationToken cancellationToken)
     {
         var response = ApplicationResult<RegistrationOutput>.Success();
@@ -40,14 +47,14 @@ public class ResubmitCheckCodeCommandHandler(ICommandsRegistrationRepository rep
 
         if (item == null)
         {
-            response.AddError(Errors.RegistrationNotFound());
+            response.AddError(Dto.Common.ApplicationsErrors.Errors.RegistrationNotFound());
 
             return response;
         }
 
         if (item.IsComplete())
         {
-            response.AddError(Errors.EmailInUse());
+            response.AddError(Dto.Common.ApplicationsErrors.Errors.EmailInUse());
 
             return response;
         }

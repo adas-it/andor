@@ -20,9 +20,9 @@ public record RegisterCommand : IRequest<ApplicationResult<RegistrationOutput>>
     [SensitiveData]
     public string Email { get; set; } = string.Empty;
 }
-public class RegistrationValidator : AbstractValidator<RegisterCommand>
+public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
 {
-    public RegistrationValidator()
+    public RegisterCommandValidator()
     {
         RuleFor(x => x.FirstName)
             .NotEmpty()
@@ -51,7 +51,6 @@ public class RegisterCommandHandler(
     )
     : IRequestHandler<RegisterCommand, ApplicationResult<RegistrationOutput>>
 {
-
     [Log]
     [Transaction]
     public async Task<ApplicationResult<RegistrationOutput>> Handle(RegisterCommand request, CancellationToken cancellationToken)

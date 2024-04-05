@@ -8,6 +8,7 @@ public record ApplicationSettings
     public Cors? Cors { get; init; }
     public OpenTelemetryConfig? OpenTelemetryConfig { get; init; }
     public Keycloak? Keycloak { get; init; }
+    public SmtpConfig? SmtpConfig { get; init; }
 }
 
 public record Cors(List<string>? AllowedOrigins);
@@ -23,11 +24,18 @@ public record IdentityProvider
 
 public record OpenTelemetryConfig(string? StatusGaugeName, string? DurationGaugeName, string? Endpoint);
 
-public record RabbitMq(string? Host, string? Username, string? Password);
-
 public record Keycloak(string? Url, string? Realm, string? ClientId, string? ClientSecret, string? GrantType);
 
 public record PollyConfigs(string Repetitions, string TimeCircuitBreak, string TimeOut)
 {
     public const string PollyConfig = "Polly";
+}
+
+public record SmtpConfig
+{
+    public string? Username { get; set; }
+    public string? Smtp { get; set; }
+    public int? Port { get; set; }
+    public string? DisplayName { get; set; }
+    public string? Password { get; set; }
 }

@@ -25,11 +25,9 @@ public class ErrorCodeConverter : JsonConverter<ApplicationErrorCode>
     {
         if (reader.TokenType == JsonTokenType.StartObject)
         {
-            using (JsonDocument doc = JsonDocument.ParseValue(ref reader))
-            {
-                int value = doc.RootElement.GetProperty("value").GetInt32();
-                return ApplicationErrorCode.New(value);
-            }
+            using JsonDocument doc = JsonDocument.ParseValue(ref reader);
+            int value = doc.RootElement.GetProperty("value").GetInt32();
+            return ApplicationErrorCode.New(value);
         }
         else if (reader.TokenType == JsonTokenType.Number)
         {

@@ -1,11 +1,14 @@
 ﻿using Andor.Application.Common.Interfaces;
 using Andor.Domain.Entities.Admin.Configurations.Repository;
+using Andor.Domain.Entities.Communications.Repositories;
 using Andor.Domain.Entities.Onboarding.Registrations.Repositories;
 using Andor.Infrastructure;
+using Andor.Infrastructure.Administrations.Configurations;
+using Andor.Infrastructure.Communication.Repositories;
+using Andor.Infrastructure.Communication.Repositories.Users;
+using Andor.Infrastructure.Onboarding.Repositories.Registrations;
 using Andor.Infrastructure.Repositories.Common;
-using Andor.Infrastructure.Repositories.Configurations;
 using Andor.Infrastructure.Repositories.Context;
-using Andor.Infrastructure.Repositories.Onboarding.Registrations;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -47,6 +50,18 @@ public static class DbExtension
 
         builder.Services.AddScoped<ICommandsRegistrationRepository, CommandsRegistrationRepository>();
         builder.Services.AddScoped<IQueriesRegistrationRepository, QueriesRegistrationRepository>();
+
+        builder.Services.AddScoped<ICommandsRecipientRepository, CommandsRecipientRepository>();
+        builder.Services.AddScoped<IQueriesRecipientRepository, QueriesRecipientRepository>();
+
+        builder.Services.AddScoped<ICommandsPermissionRepository, CommandsPermissionRepository>();
+        builder.Services.AddScoped<IQueriesPermissionRepository, QueriesPermissionRepository>();
+
+        builder.Services.AddScoped<ICommandsRuleRepository, CommandsRuleRepository>();
+        builder.Services.AddScoped<IQueriesRuleRepository, QueriesRuleRepository>();
+
+        builder.Services.AddScoped<ICommandsTemplateRepository, CommandsTemplateRepository>();
+        builder.Services.AddScoped<IQueriesTemplateRepository, QueriesTemplateRepository>();
 
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 

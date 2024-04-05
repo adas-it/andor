@@ -1,4 +1,5 @@
-﻿using Andor.Application.Common.Interfaces;
+﻿using Andor.Application.Common.Attributes;
+using Andor.Application.Common.Interfaces;
 using Andor.Application.Common.Models;
 using Andor.Application.Dto.Common.Responses;
 using Andor.Application.Dto.Onboarding.Registrations.Responses;
@@ -11,22 +12,25 @@ using System.Net.Mail;
 
 namespace Andor.Application.Onboarding.Registrations.Commands;
 
-public record RegisterUserCommand : IRequest<ApplicationResult<RegistrationOutput>>
+public record CompleteRegistrationCommand : IRequest<ApplicationResult<RegistrationOutput>>
 {
     public string UserName { get; set; } = "";
+    [SensitiveData]
     public string FirstName { get; set; } = "";
     public string LastName { get; set; } = "";
+    [SensitiveData]
     public string Email { get; set; } = "";
     public string Locale { get; set; } = "";
     public bool AcceptedTermsCondition { get; set; }
     public bool AcceptedPrivateData { get; set; }
+    [SensitiveData]
     public string Password { get; set; } = "";
     public string Code { get; set; } = "";
 }
 
-public class RegisterUserCommandValidator : AbstractValidator<RegisterUserCommand>
+public class CompleteRegistrationCommandValidator : AbstractValidator<CompleteRegistrationCommand>
 {
-    public RegisterUserCommandValidator()
+    public CompleteRegistrationCommandValidator()
     {
         RuleFor(x => x.UserName)
             .NotEmpty()
@@ -71,14 +75,16 @@ public class RegisterUserCommandValidator : AbstractValidator<RegisterUserComman
 
 public class CompleteRegistrationCommandHandler(ICommandsRegistrationRepository repository,
     IUnitOfWork unitOfWork,
-    IQueriesRegistrationRepository queriesRepository) : IRequestHandler<RegisterUserCommand,
+    IQueriesRegistrationRepository queriesRepository) : IRequestHandler<CompleteRegistrationCommand,
         ApplicationResult<RegistrationOutput>>
 {
     private readonly ICommandsRegistrationRepository _repository = repository;
     private readonly IQueriesRegistrationRepository _queriesRepository = queriesRepository;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-    public async Task<ApplicationResult<RegistrationOutput>> Handle(RegisterUserCommand request,
+    [Log]
+    [Transaction]
+    public async Task<ApplicationResult<RegistrationOutput>> Handle(CompleteRegistrationCommand request,
         CancellationToken cancellationToken)
     {
         var response = ApplicationResult<RegistrationOutput>.Success();
@@ -108,7 +114,8 @@ public class CompleteRegistrationCommandHandler(ICommandsRegistrationRepository 
             return response;
         }
 
-        //registration.Up
+        registration.Complete(firstName: request.FirstName,
+            lastName: request.LastName);
 
         await _repository.UpdateAsync(registration, cancellationToken);
 

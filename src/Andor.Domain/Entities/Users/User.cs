@@ -16,7 +16,9 @@ public class User : AggregateRoot<UserId>
     public bool EmailVerified { get; private set; }
     public string FirstName { get; private set; } = string.Empty;
     public string LastName { get; private set; } = string.Empty;
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public MailAddress Email { get; private set; }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public string Avatar { get; private set; } = string.Empty;
     public Currency? CurrencyPreferred { get; private set; }
     public Language? LanguagePreferred { get; private set; }
@@ -50,7 +52,7 @@ public class User : AggregateRoot<UserId>
             LanguagePreferred = languagePreferred,
         };
 
-        entity.RaiseDomainEvent(new UserCreatedDomainEvent(entity));
+        entity.RaiseDomainEvent(UserCreatedDomainEvent.FromAggregateRoot(entity));
 
         return entity;
     }
