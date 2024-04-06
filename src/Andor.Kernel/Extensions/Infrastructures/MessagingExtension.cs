@@ -6,6 +6,7 @@ using Andor.Infrastructure.Communication.Messages.Producers;
 using Andor.Infrastructure.Messaging.RabbitMq;
 using Andor.Infrastructure.Onboarding.Messages.Consumers.Registrations;
 using Andor.Infrastructure.Onboarding.Messages.Producers.Registrations.DomainEventHandlersConfig;
+using Andor.Infrastructure.Onboarding.Messages.Producers.Registrations.IntegrationEventConfig;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -51,7 +52,8 @@ public static class MessagingExtension
                 .AddConfigurationsPublisherDomainEventHandlersConfig()
                 .AddConfigurationsConsumerDomainEventHandlersConfig(context);
                 cfg
-                .AddRegistrationsPublisherDomainEventHandlerConfig()
+                .AddRegistrationsPublisherDomainEventConfig()
+                .AddRegistrationsPublisherEventConfig()
                 .AddRegistrationConsumerDomainEventHandlerConfig(context);
 
                 cfg.AddCommunicationsPublisherEventHandlerConfig()

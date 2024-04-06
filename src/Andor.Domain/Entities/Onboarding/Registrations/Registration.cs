@@ -82,8 +82,12 @@ public class Registration : AggregateRoot<RegistrationId>
         return (result, entity);
     }
 
-    public DomainResult Complete(string firstName,
-        string lastName)
+    public DomainResult Complete(string userName, string firstName,
+        string locale,
+        string lastName,
+        bool acceptedTermsCondition,
+        bool acceptedPrivateData,
+        string password)
     {
         var result = SetValues(Id, firstName, lastName, Email, CheckCode, RegisterDate, RegistrationState.Completed);
 
@@ -92,7 +96,8 @@ public class Registration : AggregateRoot<RegistrationId>
             return result;
         }
 
-        RaiseDomainEvent(RegistrationCompletedDomainEvent.FromAggregator(this));
+        RaiseDomainEvent(RegistrationCompletedDomainEvent.FromAggregator(this,
+            userName, locale, acceptedTermsCondition, acceptedPrivateData, password));
 
         return result;
     }

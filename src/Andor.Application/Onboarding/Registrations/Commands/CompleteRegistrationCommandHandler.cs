@@ -114,8 +114,14 @@ public class CompleteRegistrationCommandHandler(ICommandsRegistrationRepository 
             return response;
         }
 
-        registration.Complete(firstName: request.FirstName,
-            lastName: request.LastName);
+        registration.Complete(
+            userName: request.UserName,
+            firstName: request.FirstName,
+            lastName: request.LastName,
+            locale: request.Locale,
+            acceptedTermsCondition: request.AcceptedTermsCondition,
+            acceptedPrivateData: request.AcceptedPrivateData,
+            password: request.Password);
 
         await _repository.UpdateAsync(registration, cancellationToken);
 

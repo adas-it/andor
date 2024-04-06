@@ -1,7 +1,5 @@
 ﻿// Ignore Spelling: Keycloak
 
-using Andor.Domain.Entities.Currencies;
-using Andor.Domain.Entities.Languages;
 using Andor.Domain.Entities.Users;
 using System.Net.Mail;
 
@@ -14,9 +12,6 @@ public interface IKeycloakService
         string FirstName,
         string LastName,
         string Password,
-        Currency DefaultCurrency,
-        Language DefaultLanguage,
-        string? Avatar,
         CancellationToken cancellationToken);
 
     Task<List<User>?> GetUserByEmail(MailAddress email, CancellationToken cancellation);

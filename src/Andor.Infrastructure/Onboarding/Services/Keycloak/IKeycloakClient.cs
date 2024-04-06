@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 public interface IKeycloakClient
 {
     [Post("/admin/realms/{realm}/users")]
-    Task<HttpResponseMessage> CreateUser([Body(BodySerializationMethod.Serialized)] CreateUser createUser, string realm, CancellationToken cancellationToken);
+    Task<HttpResponseMessage> CreateUser([Body] CreateUser createUser, string realm, CancellationToken cancellationToken);
 
     [Get("/admin/realms/{realm}/users")]
     Task<List<UserResponse>> Get(string realm, string? email, string? username, CancellationToken cancellationToken);

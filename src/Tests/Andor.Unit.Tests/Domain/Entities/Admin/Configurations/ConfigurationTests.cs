@@ -2,6 +2,7 @@
 using Andor.Domain.Common.ValuesObjects;
 using Andor.Domain.Entities.Admin.Configurations;
 using Andor.Domain.Entities.Admin.Configurations.Events;
+using Andor.Domain.Entities.Admin.Configurations.ValueObjects;
 using Andor.TestsUtil;
 using Andor.Unit.Tests.Domain.Entities.Admin.Configurations.Helpers;
 using FluentAssertions;
@@ -29,7 +30,7 @@ public class ConfigurationTests()
         config.Should().NotBeNull();
 
         // Assert
-        config!.Events.Should().Contain(x => x.EventName == nameof(ConfigurationDomainEvent),
+        config!.Events.Should().Contain(x => x.GetType() == typeof(ConfigurationCreatedDomainEvent),
             "New configuration should raise Created Domain Event");
     }
 
@@ -101,7 +102,7 @@ public class ConfigurationTests()
             StringComparison.InvariantCultureIgnoreCase), updateWithError.Because);
 
         // Assert
-        config!.Events.Should().NotContain(x => x.EventName == nameof(ConfigurationUpdatedDomainEvent),
+        config!.Events.Should().NotContain(x => x.GetType() == typeof(ConfigurationUpdatedDomainEvent),
             "Update with error should not publish event");
     }
 
@@ -122,7 +123,7 @@ public class ConfigurationTests()
         // Assert
         config.IsDeleted.Should().BeTrue();
         result!.Errors.Should().BeEmpty();
-        config!.Events.Should().Contain(x => x.EventName == nameof(ConfigurationDeletedDomainEvent));
+        config!.Events.Should().Contain(x => x.GetType() == typeof(ConfigurationDeletedDomainEvent));
         result!.IsFailure.Should().BeFalse();
     }
 

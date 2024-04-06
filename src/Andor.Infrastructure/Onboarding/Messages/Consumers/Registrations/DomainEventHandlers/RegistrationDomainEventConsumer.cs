@@ -6,7 +6,8 @@ using MediatR;
 
 public class RegistrationDomainEventConsumer(IMediator _mediator) :
     IConsumer<RegistrationCreatedDomainEvent>,
-    IConsumer<RegistrationCodeChangedDomainEvent>
+    IConsumer<RegistrationCodeChangedDomainEvent>,
+    IConsumer<RegistrationCompletedDomainEvent>
 {
     public async Task Consume(ConsumeContext<RegistrationCreatedDomainEvent> context)
     {
@@ -20,5 +21,11 @@ public class RegistrationDomainEventConsumer(IMediator _mediator) :
         await _mediator.Send(new RequestEmailConfirmationCommand(context.Message.FirstName,
             context.Message.Email,
             context.Message.CheckCode));
+    }
+
+    public async Task Consume(ConsumeContext<RegistrationCompletedDomainEvent> context)
+    {
+        await _mediator.Send(new NotifyRegistrationCompletedCommand(context.Message));
+        await _mediator.Send(new CreateKeycloakUserCommand(context.Message));
     }
 }

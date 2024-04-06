@@ -18,13 +18,13 @@ public class KeycloakAuthenticationHandler : DelegatingHandler
     protected override async Task<HttpResponseMessage> SendAsync(
     HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        var (tokenType, token) = await KeycloackAdminLogin(cancellationToken);
+        var (tokenType, token) = await KeycloakAdminLogin(cancellationToken);
         request.Headers.Authorization = new AuthenticationHeaderValue(tokenType, token);
 
         return await base.SendAsync(request, cancellationToken);
     }
 
-    public async Task<(string, string)> KeycloackAdminLogin(CancellationToken cancellation)
+    public async Task<(string, string)> KeycloakAdminLogin(CancellationToken cancellation)
     {
         var clientId = _configuration?.Value?.Keycloak?.ClientId;
         var clientSecret = _configuration?.Value?.Keycloak?.ClientSecret;
