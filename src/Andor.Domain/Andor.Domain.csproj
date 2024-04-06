@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Entities\Languages\DomainEvents\" />
+    <Folder Include="Entities\Languages\Errors\" />
+    <Folder Include="Entities\Languages\Repositories\" />
+  </ItemGroup>
+
+</Project>
