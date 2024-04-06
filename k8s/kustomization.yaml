@@ -7,5 +7,5 @@ resources:
 namespace: prod
 images:
 - name: andor-familybudget
-  newName: adasit/andor-familybudget
-  newTag: 5d75a06323c87037214c15e25cdb5c2c19656bfc
+  newName: lucashigor/andor
+  newTag: 643e212a2d04393b149c98132b0b40129a83cbec
