@@ -28,7 +28,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: index.docker.io/${{ secrets.AzureAppService_ContainerUsername_fdb31690dc3543babcdf532687848587 }}/lucashigor/andor:${{ github.sha }}
+        tags: index.docker.io/${{ secrets.AzureAppService_ContainerUsername_fdb31690dc3543babcdf532687848587 }}/andor:${{ github.sha }}
         file: ./Dockerfile
 
       - name: Setup kustomize
