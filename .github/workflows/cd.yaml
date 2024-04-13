@@ -65,7 +65,7 @@ jobs:
           
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+    needs: push_to_registry
     environment:
       name: 'production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
