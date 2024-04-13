@@ -15,10 +15,13 @@ public static class HealthChecksExtension
     {
         var conn = builder.Configuration.GetConnectionString(nameof(PrincipalContext));
 
-        builder.Services.AddHealthChecks();
+        if (conn is not null)
+        {
+            builder.Services.AddHealthChecks();
 
-        builder.Services.AddHealthChecks()
-            .AddNpgSql(conn, healthQuery: "select 1", name: "Postgres", failureStatus: HealthStatus.Unhealthy, tags: new[] { "Database" });
+            builder.Services.AddHealthChecks()
+                .AddNpgSql(conn, healthQuery: "select 1", name: "Postgres", failureStatus: HealthStatus.Unhealthy, tags: new[] { "Database" });
+        }
 
         builder.Services.AddHealthChecksUI(opt =>
         {
