@@ -12,10 +12,15 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
-string? connectionString = builder.Configuration.GetConnectionString("AppConfig");
-if (connectionString is not null)
+string? appConfig = Environment.GetEnvironmentVariable("APP_CONFIGURATION");
+
+if (appConfig is not null)
 {
-    builder.Configuration.AddAzureAppConfiguration(connectionString);
+    builder.Configuration.AddAzureAppConfiguration(appConfig);
+}
+else
+{
+    Console.WriteLine("Tudo null");
 }
 
 builder.AddOpenTelemetry();

@@ -20,7 +20,7 @@ public static class AddOpenTelemetryExtension
             .GetSection(nameof(OpenTelemetryConfig))
             .Get<OpenTelemetryConfig>();
 
-        var _applicationInsights = builder.Configuration.GetConnectionString("ApplicationInsights");
+        var _applicationInsights = Environment.GetEnvironmentVariable("APPLICATION_INSIGHTS_CONNECTION_STRING"); ;
 
         if (configs is null || _applicationInsights is null)
         {
