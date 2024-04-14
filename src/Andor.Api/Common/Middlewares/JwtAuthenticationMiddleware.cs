@@ -31,12 +31,8 @@ public class ClaimsTransformer : IClaimsTransformation
 }
 public static class JwtAuthenticationMiddleware
 {
-    private static RsaSecurityKey BuildRSAKey(IConfiguration configuration)
+    private static RsaSecurityKey BuildRSAKey(IdentityProvider authOptions)
     {
-        var authOptions = configuration
-            .GetSection(nameof(IdentityProvider))
-            .Get<IdentityProvider>();
-
         RSA rsa = RSA.Create();
 
         rsa.ImportSubjectPublicKeyInfo(
@@ -51,11 +47,14 @@ public static class JwtAuthenticationMiddleware
     public static IServiceCollection ConfigureJWT(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddTransient<IClaimsTransformation, ClaimsTransformer>();
-
         var authOptions = configuration
             .GetSection(nameof(IdentityProvider))
             .Get<IdentityProvider>();
+
+        if (authOptions.PublicKeyJwt is null)
+            return services;
+
+        services.AddTransient<IClaimsTransformation, ClaimsTransformer>();
 
         services.AddAuthorization(o =>
         {
@@ -81,7 +80,7 @@ public static class JwtAuthenticationMiddleware
                 ValidateIssuer = true,
                 ValidIssuers = new[] { authOptions?.Authority! },
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = BuildRSAKey(configuration),
+                IssuerSigningKey = BuildRSAKey(authOptions),
                 ValidateLifetime = true
             };
             #endregion
