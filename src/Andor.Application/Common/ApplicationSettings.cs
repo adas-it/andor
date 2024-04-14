@@ -22,7 +22,7 @@ public record IdentityProvider
     public string? PublicKeyJwt { get; set; }
 }
 
-public record OpenTelemetryConfig(string? StatusGaugeName, string? DurationGaugeName, string? Endpoint);
+public record OpenTelemetryConfig(string? StatusGaugeName, string? DurationGaugeName);
 
 public record Keycloak(string? Url, string? Realm, string? ClientId, string? ClientSecret, string? GrantType);
 

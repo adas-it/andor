@@ -1,14 +1,13 @@
 ﻿namespace Andor.Kernel.Extensions.Api;
 
 using Andor.Application.Common;
+using Azure.Monitor.OpenTelemetry.Exporter;
 using HealthChecks.OpenTelemetry.Instrumentation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Npgsql;
-using OpenTelemetry.Exporter;
-using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -21,7 +20,9 @@ public static class AddOpenTelemetryExtension
             .GetSection(nameof(OpenTelemetryConfig))
             .Get<OpenTelemetryConfig>();
 
-        if (configs == null)
+        var _applicationInsights = builder.Configuration.GetConnectionString("ApplicationInsights");
+
+        if (configs is null || _applicationInsights is null)
         {
             return builder;
         }
@@ -38,10 +39,9 @@ public static class AddOpenTelemetryExtension
             tracing.AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
             .AddNpgsql()
-            .AddOtlpExporter(opt =>
+            .AddAzureMonitorTraceExporter(o =>
             {
-                opt.Endpoint = new Uri(configs.Endpoint!);
-                opt.Protocol = OtlpExportProtocol.Grpc;
+                o.ConnectionString = _applicationInsights;
             });
         })
         .WithMetrics(metrics => metrics
@@ -51,15 +51,14 @@ public static class AddOpenTelemetryExtension
             .AddProcessInstrumentation()
             .AddMeter("Microsoft.AspNetCore.Hosting")
             .AddMeter("Microsoft.AspNetCore.Server.Kestrel")
-            .AddHealthChecksInstrumentation(options =>
+            .AddHealthChecksInstrumentation(o =>
             {
-                options.StatusGaugeName = configs.StatusGaugeName!;
-                options.DurationGaugeName = configs.DurationGaugeName!;
+                o.StatusGaugeName = configs.StatusGaugeName!;
+                o.DurationGaugeName = configs.DurationGaugeName!;
             })
-            .AddOtlpExporter(opt =>
+            .AddAzureMonitorMetricExporter(o =>
             {
-                opt.Endpoint = new Uri(configs.Endpoint!);
-                opt.Protocol = OtlpExportProtocol.Grpc;
+                o.ConnectionString = _applicationInsights;
             }));
 
         builder.Logging.ClearProviders();
@@ -67,13 +66,10 @@ public static class AddOpenTelemetryExtension
         builder.Logging
         .AddOpenTelemetry(options =>
         {
-            options.AddOtlpExporter(opt =>
+            options.AddAzureMonitorLogExporter(o =>
             {
-                opt.Endpoint = new Uri(configs.Endpoint!);
-                opt.Protocol = OtlpExportProtocol.Grpc;
+                o.ConnectionString = _applicationInsights;
             });
-
-            options.AddConsoleExporter();
         });
 
 
