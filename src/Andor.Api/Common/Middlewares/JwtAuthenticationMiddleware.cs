@@ -51,7 +51,7 @@ public static class JwtAuthenticationMiddleware
             .GetSection(nameof(IdentityProvider))
             .Get<IdentityProvider>();
 
-        if (authOptions.PublicKeyJwt is null)
+        if (authOptions?.PublicKeyJwt is null)
             return services;
 
         services.AddTransient<IClaimsTransformation, ClaimsTransformer>();
