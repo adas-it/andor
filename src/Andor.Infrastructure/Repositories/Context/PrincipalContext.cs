@@ -46,11 +46,12 @@ public partial class PrincipalContext(DbContextOptions<PrincipalContext> options
                 .Where(fk => !fk.IsOwnership && fk.DeleteBehavior == DeleteBehavior.Cascade)
                 .ToList()
                 .ForEach(fk => fk.DeleteBehavior = DeleteBehavior.Restrict);
-
+            /*
             entityType.GetProperties()
                 .Where(p => p.ClrType == typeof(string))
                 .ToList()
                 .ForEach(p => p.SetMaxLength(255));
+            */
         }
 
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())

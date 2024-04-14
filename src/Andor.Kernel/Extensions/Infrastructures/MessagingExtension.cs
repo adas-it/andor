@@ -7,6 +7,7 @@ using Andor.Infrastructure.Messaging.RabbitMq;
 using Andor.Infrastructure.Onboarding.Messages.Consumers.Registrations;
 using Andor.Infrastructure.Onboarding.Messages.Producers.Registrations.DomainEventHandlersConfig;
 using Andor.Infrastructure.Onboarding.Messages.Producers.Registrations.IntegrationEventConfig;
+using Andor.Infrastructure.Repositories.Context;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -30,8 +31,8 @@ public static class MessagingExtension
 
         builder.Services.AddMassTransit(x =>
         {
-            /*
             x.SetKebabCaseEndpointNameFormatter();
+
             x.AddEntityFrameworkOutbox<PrincipalContext>(o =>
             {
                 o.QueryDelay = TimeSpan.FromMilliseconds(500);
@@ -39,10 +40,19 @@ public static class MessagingExtension
                 o.UsePostgres()
                 .UseBusOutbox();
             });
-            */
+
+            x.AddConfigureEndpointsCallback((_, cfg) =>
+            {
+                if (cfg is IServiceBusReceiveEndpointConfigurator sb)
+                {
+                    sb.ConfigureDeadLetterQueueDeadLetterTransport();
+                    sb.ConfigureDeadLetterQueueErrorTransport();
+                }
+            });
+
             x.AddConfigurationsConsumers()
-            .AddRegistrationsConsumers()
-            .AddCommunicationConsumers();
+                .AddRegistrationsConsumers()
+                .AddCommunicationConsumers();
 
             x.UsingAzureServiceBus((context, cfg) =>
             {
