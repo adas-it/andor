@@ -1,5 +1,5 @@
 ﻿using Andor.Application.Common.Interfaces;
-using Andor.Domain.Entities.Onboarding.Registrations.DomainEvents;
+using Andor.Domain.Onboarding.Registrations.DomainEvents;
 using MediatR;
 using System.Net.Mail;
 

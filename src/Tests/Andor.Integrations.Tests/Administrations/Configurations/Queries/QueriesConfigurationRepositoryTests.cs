@@ -41,12 +41,10 @@ public class QueriesConfigurationRepositoryTests(ConfigurationTestFixture fixtur
         result.Should().HaveCount(1);
     }
 
-    internal async Task GetListConfigurations(string name)
+    internal static async Task GetListConfigurations(string name)
     {
         var dbOptions = IntegrationsTestsFixture.CreateDatabase();
         using var context = new PrincipalContext(dbOptions);
-
-        var list = new List<Configuration>();
 
         var configAwaiting = ConfigurationFixture.LoadConfiguration(
             new BaseConfiguration(

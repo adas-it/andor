@@ -1,13 +1,13 @@
-﻿using Andor.Domain.Entities.Currencies;
-using Andor.Domain.Entities.Languages;
-using Andor.Domain.Entities.Users;
+﻿using Andor.Domain.Administrations.Languages;
+using Andor.Domain.Engagement.Budget.Entities.Currencies;
+using Andor.Domain.Onboarding.Users;
 using Newtonsoft.Json;
 using System.Net.Mail;
 
 namespace Andor.Infrastructure.Onboarding.Services.Keycloak.Models.Response;
 public record UserResponse(
     Guid Id,
-    long createdTimestamp,
+    long CreatedTimestamp,
     string Username,
     bool Enabled,
     string FirstName,
@@ -37,7 +37,7 @@ public static class UserResponseAdapter
             item.LastName,
             new MailAddress(item.Email),
             item.Attributes.Avatar.FirstOrDefault()!,
-            UnixTimeStampToDateTime(item.createdTimestamp),
+            UnixTimeStampToDateTime(item.CreatedTimestamp),
             bool.Parse(item.Attributes.AcceptedTermsCondition.FirstOrDefault()!),
             DateTime.Parse(item.Attributes.AcceptedTermsConditionDate.FirstOrDefault()!),
             bool.Parse(item.Attributes.AcceptedPrivateData.FirstOrDefault()!),

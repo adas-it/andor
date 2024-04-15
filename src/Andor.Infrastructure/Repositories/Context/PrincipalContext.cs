@@ -1,10 +1,10 @@
 ﻿// Ignore Spelling: Upsert
 
 using Andor.Domain.Common;
+using Andor.Domain.Communications;
+using Andor.Domain.Communications.Users;
 using Andor.Domain.Entities.Admin.Configurations;
-using Andor.Domain.Entities.Communications;
-using Andor.Domain.Entities.Communications.Users;
-using Andor.Domain.Entities.Onboarding.Registrations;
+using Andor.Domain.Onboarding.Registrations;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -46,23 +46,16 @@ public partial class PrincipalContext(DbContextOptions<PrincipalContext> options
                 .Where(fk => !fk.IsOwnership && fk.DeleteBehavior == DeleteBehavior.Cascade)
                 .ToList()
                 .ForEach(fk => fk.DeleteBehavior = DeleteBehavior.Restrict);
-            /*
-            entityType.GetProperties()
-                .Where(p => p.ClrType == typeof(string))
-                .ToList()
-                .ForEach(p => p.SetMaxLength(255));
-            */
         }
 
-        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        foreach (var entityType in from entityType in modelBuilder.Model.GetEntityTypes()
+                                   where typeof(ISoftDeletableEntity).IsAssignableFrom(entityType.ClrType)
+                                   select entityType)
         {
-            if (typeof(ISoftDeletableEntity).IsAssignableFrom(entityType.ClrType))
-            {
-                modelBuilder.Entity(entityType.ClrType)
-                    .Property<bool>(nameof(ISoftDeletableEntity.IsDeleted))
-                    .HasDefaultValue(false);
-                entityType.AddSoftDeleteQueryFilter();
-            }
+            modelBuilder.Entity(entityType.ClrType)
+                            .Property<bool>(nameof(ISoftDeletableEntity.IsDeleted))
+                            .HasDefaultValue(false);
+            entityType.AddSoftDeleteQueryFilter();
         }
 
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
@@ -93,7 +86,7 @@ public static class GlobalQueryExtensions
         var method = typeof(GlobalQueryExtensions)
             .GetMethod(nameof(GetSoftDeleteFilter), BindingFlags.NonPublic | BindingFlags.Static)
             .MakeGenericMethod(entityType.ClrType);
-        var filter = method.Invoke(null, Array.Empty<object>());
+        var filter = method.Invoke(null, []);
         entityType.SetQueryFilter((LambdaExpression)filter);
         entityType.AddIndex(entityType.FindProperty(nameof(ISoftDeletableEntity.IsDeleted)));
     }

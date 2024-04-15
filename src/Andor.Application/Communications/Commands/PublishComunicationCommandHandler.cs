@@ -1,5 +1,5 @@
 ﻿using Andor.Application.Communications.Services.Manager;
-using Andor.Domain.Entities.Communications.Repositories;
+using Andor.Domain.Communications.Repositories;
 using MediatR;
 
 namespace Andor.Application.Communications.Commands;
@@ -17,11 +17,13 @@ public class PublishCommunicationCommandHandler(IQueriesRuleRepository _queriesR
 {
     public async Task<Unit> Handle(PublishCommunicationCommand request, CancellationToken cancellationToken)
     {
-        var rule = await _queriesRuleRepository.GetByIdAsync(request.RuleId, cancellationToken);
+        var rule = await _queriesRuleRepository.GetByIdAsync(request.RuleId, cancellationToken) ??
+            throw new InvalidOperationException("Rule not found");
 
         var language = request.ContentLanguage ?? "en";
 
-        var template = rule.Templates.FirstOrDefault(x => x.ContentLanguage == language);
+        var template = rule.Templates.FirstOrDefault(x => x.ContentLanguage == language) ??
+            throw new InvalidOperationException("Template not found");
 
         var partnerHandler =
         _partnerManager.GetPartnerHandler(template.Partner);

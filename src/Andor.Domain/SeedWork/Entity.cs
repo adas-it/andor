@@ -1,6 +1,5 @@
 ﻿using Andor.Domain.Common.ValuesObjects;
 using Andor.Domain.Validation;
-using System.Collections.Immutable;
 
 namespace Andor.Domain.SeedWork;
 
@@ -9,17 +8,17 @@ public abstract class Entity<TEntityId> where TEntityId : IEquatable<TEntityId>
     public TEntityId Id { get; protected set; }
 
     protected readonly ICollection<Notification> _notifications;
-    protected IReadOnlyCollection<Notification> Notifications => _notifications.ToImmutableArray();
+    protected IReadOnlyCollection<Notification> Notifications => [.. _notifications];
 
     protected readonly ICollection<Notification> _warnings;
-    protected IReadOnlyCollection<Notification> Warnings => _warnings.ToImmutableArray();
+    protected IReadOnlyCollection<Notification> Warnings => [.. _warnings];
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     protected Entity()
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     {
-        _notifications = new HashSet<Notification>();
-        _warnings = new HashSet<Notification>();
+        _notifications = [];
+        _warnings = [];
     }
 
     protected virtual DomainResult Validate()

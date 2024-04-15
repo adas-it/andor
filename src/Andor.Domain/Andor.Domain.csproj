@@ -7,9 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Entities\Languages\DomainEvents\" />
-    <Folder Include="Entities\Languages\Errors\" />
-    <Folder Include="Entities\Languages\Repositories\" />
+    <Folder Include="Engagement\Budget\Entities\Categories\DomainEvents\" />
+    <Folder Include="Engagement\Budget\Entities\Categories\Repositories\" />
+    <Folder Include="Engagement\Budget\Entities\Currencies\Repositories\" />
+    <Folder Include="Administrations\Languages\DomainEvents\" />
+    <Folder Include="Administrations\Languages\Errors\" />
+    <Folder Include="Administrations\Languages\Repositories\" />
   </ItemGroup>
 
 </Project>

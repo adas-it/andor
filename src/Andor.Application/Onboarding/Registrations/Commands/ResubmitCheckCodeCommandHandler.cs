@@ -1,9 +1,10 @@
 ﻿using Andor.Application.Common.Attributes;
 using Andor.Application.Common.Interfaces;
 using Andor.Application.Common.Models;
+using Andor.Application.Common.Models.FeatureFlag;
 using Andor.Application.Dto.Common.Responses;
 using Andor.Application.Dto.Onboarding.Registrations.Responses;
-using Andor.Domain.Entities.Onboarding.Registrations.Repositories;
+using Andor.Domain.Onboarding.Registrations.Repositories;
 using FluentValidation;
 using MediatR;
 using System.Net.Mail;
@@ -30,18 +31,28 @@ public class ResubmitCheckCodeCommandValidator : AbstractValidator<ResubmitCheck
 
 public class ResubmitCheckCodeCommandHandler(ICommandsRegistrationRepository repository,
     IUnitOfWork unitOfWork,
-    IQueriesRegistrationRepository queriesRepository)
+    IQueriesRegistrationRepository queriesRepository,
+    IFeatureFlagService featureFlagService)
         : IRequestHandler<ResubmitCheckCodeCommand, ApplicationResult<RegistrationOutput>>
 {
     private readonly ICommandsRegistrationRepository _repository = repository;
     private readonly IQueriesRegistrationRepository _queriesRepository = queriesRepository;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly IFeatureFlagService _featureFlagService = featureFlagService;
 
     [Log]
     [Transaction]
     public async Task<ApplicationResult<RegistrationOutput>> Handle(ResubmitCheckCodeCommand request, CancellationToken cancellationToken)
     {
         var response = ApplicationResult<RegistrationOutput>.Success();
+        var result = await _featureFlagService.IsEnabledAsync(CurrentFeatures.FeatureFlagToTest);
+
+        if (!result)
+        {
+            response.AddError(Dto.Common.ApplicationsErrors.Errors.UnavailableFeatureFlag());
+
+            return response;
+        }
 
         var item = await _queriesRepository.GetByEmailAsync(new MailAddress(request.Email), cancellationToken);
 

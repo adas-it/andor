@@ -1,6 +1,6 @@
 ﻿// Ignore Spelling: Keycloak
 
-using Andor.Domain.Entities.Users;
+using Andor.Domain.Onboarding.Users;
 using System.Net.Mail;
 
 namespace Andor.Application.Common.Interfaces;

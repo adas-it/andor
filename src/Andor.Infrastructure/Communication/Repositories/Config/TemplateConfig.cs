@@ -1,5 +1,5 @@
-﻿using Andor.Domain.Entities.Communications;
-using Andor.Domain.Entities.Communications.ValueObjects;
+﻿using Andor.Domain.Communications;
+using Andor.Domain.Communications.ValueObjects;
 using Andor.Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

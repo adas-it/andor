@@ -1,6 +1,6 @@
-﻿using Andor.Domain.Entities.Communications.Repositories;
-using Andor.Domain.Entities.Communications.Users;
-using Andor.Domain.Entities.Communications.Users.ValueObjects;
+﻿using Andor.Domain.Communications.Repositories;
+using Andor.Domain.Communications.Users;
+using Andor.Domain.Communications.Users.ValueObjects;
 using Andor.Infrastructure.Repositories.Common;
 using Andor.Infrastructure.Repositories.Context;
 

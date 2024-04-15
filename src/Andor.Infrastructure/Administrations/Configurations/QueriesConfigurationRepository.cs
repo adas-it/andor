@@ -1,7 +1,7 @@
 ﻿using Andor.Domain.Entities.Admin.Configurations;
 using Andor.Domain.Entities.Admin.Configurations.Repository;
 using Andor.Domain.Entities.Admin.Configurations.ValueObjects;
-using Andor.Domain.Entities.Onboarding.Registrations.Repositories.Models;
+using Andor.Domain.Onboarding.Registrations.Repositories.Models;
 using Andor.Domain.SeedWork.Repository.ISearchableRepository;
 using Andor.Infrastructure.Repositories.Common;
 using Andor.Infrastructure.Repositories.Context;
