@@ -33,7 +33,8 @@ builder.AddDbExtension()
     .AddApplicationExtensionServices()
     .AddApiExtensionServices()
     .AddServicesExtensionServices()
-    .ConfigureHealthChecks();
+    //.ConfigureHealthChecks()
+    ;
 
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(opts =>
                 opts.SerializerOptions.Converters.Add(new ErrorCodeConverter()));
