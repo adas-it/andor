@@ -51,7 +51,7 @@ public class RegisterConfigurationCommandHandler(ICommandsConfigurationRepositor
 
         if (result.IsFailure || config is null)
         {
-            HandleConfigurationResult.HandleResultConfiguration(result, response);
+            await HandleConfigurationResult.HandleResultConfiguration(result, response);
             return response;
         }
 

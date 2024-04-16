@@ -1,6 +1,6 @@
 using Andor.Application.Communications.Interfaces;
 using Andor.Application.Communications.Services.Manager;
-using Andor.Domain.Entities.Communications.ValueObjects;
+using Andor.Domain.Communications.ValueObjects;
 using NSubstitute;
 
 namespace Andor.Unit.Tests.Application.Communications;

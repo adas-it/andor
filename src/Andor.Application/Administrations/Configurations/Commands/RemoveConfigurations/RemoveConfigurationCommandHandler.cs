@@ -44,7 +44,7 @@ public class RemoveConfigurationCommandHandler(ICommandsConfigurationRepository 
 
         var result = entity.Delete();
 
-        HandleConfigurationResult.HandleResultConfiguration(result, response);
+        await HandleConfigurationResult.HandleResultConfiguration(result, response);
 
         if (response.IsFailure)
         {

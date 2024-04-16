@@ -9,6 +9,7 @@ public record ApplicationSettings
     public OpenTelemetryConfig? OpenTelemetryConfig { get; init; }
     public Keycloak? Keycloak { get; init; }
     public SmtpConfig? SmtpConfig { get; init; }
+    public UnleashConfig? Unleash { get; init; }
 }
 
 public record Cors(List<string>? AllowedOrigins);
@@ -38,4 +39,11 @@ public record SmtpConfig
     public int? Port { get; set; }
     public string? DisplayName { get; set; }
     public string? Password { get; set; }
+}
+
+public class UnleashConfig
+{
+    public string? AppName { get; set; }
+    public string? UnleashApi { get; set; }
+    public string? Authorization { get; set; }
 }

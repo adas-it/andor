@@ -1,6 +1,6 @@
 ﻿using Andor.Application.Administrations.Configurations.Commands;
 using Andor.Domain.Entities.Admin.Configurations.ValueObjects;
-using Andor.Infrastructure.Administrations.Configurations;
+using Andor.Infrastructure.Administrations.Repositories.Configurations;
 
 namespace Andor.Integrations.Tests.Administrations.Configurations.Queries;
 
@@ -41,12 +41,10 @@ public class QueriesConfigurationRepositoryTests(ConfigurationTestFixture fixtur
         result.Should().HaveCount(1);
     }
 
-    internal async Task GetListConfigurations(string name)
+    internal static async Task GetListConfigurations(string name)
     {
         var dbOptions = IntegrationsTestsFixture.CreateDatabase();
         using var context = new PrincipalContext(dbOptions);
-
-        var list = new List<Configuration>();
 
         var configAwaiting = ConfigurationFixture.LoadConfiguration(
             new BaseConfiguration(

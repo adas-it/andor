@@ -13,14 +13,14 @@ public class Smtp(IOptions<ApplicationSettings> configuration) : ISMTP
         string Subject,
         CancellationToken cancellationToken)
     {
-        SmtpClient client = new SmtpClient(configuration.Value.SmtpConfig!.Smtp!,
+        SmtpClient client = new(configuration.Value.SmtpConfig!.Smtp!,
             configuration.Value.SmtpConfig.Port!.Value);
 
-        MailAddress from = new MailAddress(configuration.Value.SmtpConfig.Username!,
+        MailAddress from = new(configuration.Value.SmtpConfig.Username!,
            configuration.Value.SmtpConfig.DisplayName, System.Text.Encoding.UTF8);
 
-        MailAddress to = new MailAddress(recipientMail);
-        MailMessage message = new MailMessage(from, to);
+        MailAddress to = new(recipientMail);
+        MailMessage message = new(from, to);
 
         message.Body = body;
         message.BodyEncoding = System.Text.Encoding.UTF8;

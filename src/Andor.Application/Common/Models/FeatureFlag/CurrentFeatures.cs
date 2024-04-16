@@ -1,15 +1,10 @@
-﻿namespace Andor.Application.Common.Models.FeatureFlag;
+﻿using Andor.Domain.Common;
 
-public sealed record CurrentFeatures
+namespace Andor.Application.Common.Models.FeatureFlag;
+
+public sealed record CurrentFeatures : Enumeration<int>
 {
-    private CurrentFeatures(string value)
-    {
-        Value = value;
-    }
+    private CurrentFeatures(int key, string name) : base(key, name) { }
 
-    public string Value { get; init; }
-
-    public static CurrentFeatures FeatureFlagToTest = new("FeatureFlagToTest");
-
-    public override string ToString() => Value;
+    public static readonly CurrentFeatures FeatureFlagToTest = new(0, "FeatureFlagToTest");
 }

@@ -1,7 +1,7 @@
 ﻿using Andor.Application.Common.Interfaces;
 using Andor.Application.Dto.Onboarding.Registrations.IntegrationsEvents.v1;
 using Andor.Domain.Entities.Admin.Configurations.Repository;
-using Andor.Domain.Entities.Onboarding.Registrations.DomainEvents;
+using Andor.Domain.Onboarding.Registrations.DomainEvents;
 using MediatR;
 using System.Reflection;
 

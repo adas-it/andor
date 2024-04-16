@@ -1,6 +1,6 @@
-﻿using Andor.Domain.Entities.Onboarding.Registrations;
-using Andor.Domain.Entities.Onboarding.Registrations.Repositories;
-using Andor.Domain.Entities.Onboarding.Registrations.ValueObjects;
+﻿using Andor.Domain.Onboarding.Registrations;
+using Andor.Domain.Onboarding.Registrations.Repositories;
+using Andor.Domain.Onboarding.Registrations.ValueObjects;
 using Andor.Infrastructure.Repositories.Common;
 using Andor.Infrastructure.Repositories.Context;
 

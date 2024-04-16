@@ -1,7 +1,7 @@
 ﻿using Andor.Application.Common;
 using Andor.Application.Common.Interfaces;
-using Andor.Domain.Entities.Users;
-using Andor.Domain.Entities.Users.ValueObjects;
+using Andor.Domain.Onboarding.Users;
+using Andor.Domain.Onboarding.Users.ValueObjects;
 using Andor.Infrastructure.Onboarding.Services.Keycloak.Models;
 using Mapster;
 using Microsoft.Extensions.Options;
@@ -45,7 +45,7 @@ public class KeycloakService
 
         var item = User.New(UserId.Load(userId), Username!,
         true, true, FirstName, LastName, Email, string.Empty, DateTime.UtcNow,
-        true, DateTime.UtcNow, true, DateTime.UtcNow, null, null);
+        true, DateTime.UtcNow, true, DateTime.UtcNow, null!, null!);
 
         return item;
     }
@@ -56,7 +56,7 @@ public class KeycloakService
 
         var response = await _keycloakClient.Get(realm!, email.Address, null!, cancellation);
 
-        if (response.Any() is false)
+        if (response.Count != 0)
             return null;
 
         var ret = response.Select(x => x.Adapt<User>()).ToList();
@@ -70,7 +70,7 @@ public class KeycloakService
 
         var response = await _keycloakClient.Get(realm!, null!, username, cancellation);
 
-        if (response.Any() is false)
+        if (response.Count != 0)
             return null;
 
         var ret = response.Select(x => x.Adapt<User>()).ToList();
@@ -84,7 +84,7 @@ public class KeycloakService
 
         var response = await _keycloakClient.Get(realm!, userId, cancellation);
 
-        if (response.Any() is false)
+        if (response.Count != 0)
             return null;
 
         var ret = response.Select(x => x.Adapt<User>()).FirstOrDefault();

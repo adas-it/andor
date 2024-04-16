@@ -1,5 +1,5 @@
-﻿using Andor.Domain.Entities.Onboarding.Registrations;
-using Andor.Domain.Entities.Onboarding.Registrations.ValueObjects;
+﻿using Andor.Domain.Onboarding.Registrations;
+using Andor.Domain.Onboarding.Registrations.ValueObjects;
 using Andor.Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

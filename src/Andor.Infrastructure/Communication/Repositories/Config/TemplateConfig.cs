@@ -1,5 +1,5 @@
-﻿using Andor.Domain.Entities.Communications;
-using Andor.Domain.Entities.Communications.ValueObjects;
+﻿using Andor.Domain.Communications;
+using Andor.Domain.Communications.ValueObjects;
 using Andor.Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -12,6 +12,10 @@ public record TemplateConfig : IEntityTypeConfiguration<Template>
     {
         entity.ToTable(nameof(Template), SchemasNames.Communication);
         entity.HasKey(k => k.Id);
+
+        entity.Property(k => k.Value).HasMaxLength(2500);
+        entity.Property(k => k.ContentLanguage).HasMaxLength(10);
+        entity.Property(k => k.Title).HasMaxLength(70);
 
         entity.Property(k => k.Id)
         .HasConversion(

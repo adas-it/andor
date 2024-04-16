@@ -1,5 +1,5 @@
 ﻿using Andor.Application.Communications.Interfaces;
-using Andor.Domain.Entities.Communications;
+using Andor.Domain.Communications;
 
 namespace Andor.Application.Communications.Services.PartnerHandler;
 

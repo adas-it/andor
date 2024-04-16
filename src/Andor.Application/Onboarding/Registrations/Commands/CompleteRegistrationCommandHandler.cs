@@ -3,8 +3,8 @@ using Andor.Application.Common.Interfaces;
 using Andor.Application.Common.Models;
 using Andor.Application.Dto.Common.Responses;
 using Andor.Application.Dto.Onboarding.Registrations.Responses;
-using Andor.Domain.Entities.Onboarding.Registrations.Repositories;
-using Andor.Domain.Entities.Onboarding.Registrations.ValueObjects;
+using Andor.Domain.Onboarding.Registrations.Repositories;
+using Andor.Domain.Onboarding.Registrations.ValueObjects;
 using FluentValidation;
 using Mapster;
 using MediatR;
@@ -32,12 +32,6 @@ public class CompleteRegistrationCommandValidator : AbstractValidator<CompleteRe
 {
     public CompleteRegistrationCommandValidator()
     {
-        RuleFor(x => x.UserName)
-            .NotEmpty()
-            .WithMessage(ValidationConstant.RequiredField)
-            .Length(2, 50)
-            .WithMessage(ValidationConstant.LengthError);
-
         RuleFor(x => x.FirstName)
             .NotEmpty()
             .WithMessage(ValidationConstant.RequiredField)
@@ -90,6 +84,9 @@ public class CompleteRegistrationCommandHandler(ICommandsRegistrationRepository 
         var response = ApplicationResult<RegistrationOutput>.Success();
 
         var email = new MailAddress(request.Email);
+
+        request.UserName ??= email.Address;
+        request.Locale ??= "en";
 
         var registration = await _queriesRepository.GetByEmailAsync(email, cancellationToken);
 

@@ -1,9 +1,9 @@
 ﻿using Andor.Application.Common.Interfaces;
+using Andor.Domain.Communications.Repositories;
 using Andor.Domain.Entities.Admin.Configurations.Repository;
-using Andor.Domain.Entities.Communications.Repositories;
-using Andor.Domain.Entities.Onboarding.Registrations.Repositories;
+using Andor.Domain.Onboarding.Registrations.Repositories;
 using Andor.Infrastructure;
-using Andor.Infrastructure.Administrations.Configurations;
+using Andor.Infrastructure.Administrations.Repositories.Configurations;
 using Andor.Infrastructure.Communication.Repositories;
 using Andor.Infrastructure.Communication.Repositories.Users;
 using Andor.Infrastructure.Onboarding.Repositories.Registrations;

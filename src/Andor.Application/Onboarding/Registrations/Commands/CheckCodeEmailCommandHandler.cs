@@ -2,8 +2,8 @@
 using Andor.Application.Common.Models;
 using Andor.Application.Dto.Common.Responses;
 using Andor.Application.Dto.Onboarding.Registrations.Responses;
-using Andor.Domain.Entities.Onboarding.Registrations.Repositories;
-using Andor.Domain.Entities.Onboarding.Registrations.ValueObjects;
+using Andor.Domain.Onboarding.Registrations.Repositories;
+using Andor.Domain.Onboarding.Registrations.ValueObjects;
 using FluentValidation;
 using Mapster;
 using MediatR;

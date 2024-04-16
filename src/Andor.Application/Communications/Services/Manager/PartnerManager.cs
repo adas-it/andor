@@ -1,5 +1,5 @@
 ﻿using Andor.Application.Communications.Interfaces;
-using Andor.Domain.Entities.Communications.ValueObjects;
+using Andor.Domain.Communications.ValueObjects;
 
 namespace Andor.Application.Communications.Services.Manager;
 

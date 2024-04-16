@@ -85,7 +85,7 @@ public class ModifyConfigurationCommandHandler(ICommandsConfigurationRepository 
 
         if (result.IsFailure)
         {
-            HandleConfigurationResult.HandleResultConfiguration(result, response);
+            await HandleConfigurationResult.HandleResultConfiguration(result, response);
             return response;
         }
 

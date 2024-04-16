@@ -1,4 +1,4 @@
-﻿using Andor.Domain.Entities.Communications;
+﻿using Andor.Domain.Communications;
 
 namespace Andor.Application.Communications.Interfaces;
 

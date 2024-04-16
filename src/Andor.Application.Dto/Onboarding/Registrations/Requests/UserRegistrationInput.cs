@@ -9,11 +9,11 @@ public sealed record RegistrationCheckEmail(string Email,
 
 public sealed record RegistrationResubmitEmailInput(string Email);
 
-public sealed record CompleteRegistrationInput(string UserName,
+public sealed record CompleteRegistrationInput(string? UserName,
     string FirstName,
     string LastName,
     string Email,
-    string Locale,
+    string? Locale,
     bool AcceptedTermsCondition,
     bool AcceptedPrivateData,
     string Password,
