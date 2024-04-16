@@ -41,7 +41,7 @@ public class Recipient : Entity<RecipientId>
         Name = name;
         PreferredEmail = email;
         Active = active;
-        PrivatePermission = permission;
+        Permissions = permission;
 
         var result = base.Validate();
 
