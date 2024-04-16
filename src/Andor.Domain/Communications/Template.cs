@@ -13,12 +13,17 @@ public class Template : Entity<TemplateId>
     public Partner Partner { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public RuleId RuleId { get; private set; }
-    public Rule Rule { get; private set; }
+    public Rule? Rule { get; private set; }
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     protected Template()
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     {
+        Id = TemplateId.New();
+        Value = string.Empty;
+        ContentLanguage = string.Empty;
+        Title = string.Empty;
+        Partner = Partner.Undefined;
+
+        Validate();
     }
 
     private DomainResult SetValues(

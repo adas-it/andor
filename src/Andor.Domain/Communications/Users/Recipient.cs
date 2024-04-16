@@ -1,5 +1,4 @@
 ﻿using Andor.Domain.Common.ValuesObjects;
-using Andor.Domain.Communications;
 using Andor.Domain.Communications.Users.ValueObjects;
 using Andor.Domain.SeedWork;
 using Andor.Domain.Validation;
@@ -9,16 +8,18 @@ namespace Andor.Domain.Communications.Users;
 
 public class Recipient : Entity<RecipientId>
 {
-    public string Name { get; private set; } = "";
+    public string Name { get; private set; }
     public MailAddress PreferredEmail { get; private set; }
     public bool Active { get; private set; }
-    private ICollection<Permission> PrivatePermission { get; set; }
-    public IReadOnlyCollection<Permission> Permissions => [.. PrivatePermission];
+    public ICollection<Permission> Permissions { get; private set; }
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private Recipient()
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     {
+        Id = RecipientId.New();
+        Name = string.Empty;
+        PreferredEmail = new MailAddress(string.Empty);
+        Active = false;
+        Permissions = [];
     }
 
     private DomainResult SetValues(

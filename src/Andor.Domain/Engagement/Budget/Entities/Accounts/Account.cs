@@ -10,27 +10,30 @@ namespace Andor.Domain.Engagement.Budget.Entities.Accounts;
 
 public class Account : AggregateRoot<AccountId>
 {
-    public string Name { get; private set; } = "";
-    public string Description { get; private set; } = "";
+    public string Name { get; private set; }
+    public string Description { get; private set; }
     public Currency? Currency { get; private set; }
     public bool Deleted { get; private set; }
     public DateTime FirstMovement { get; private set; }
     public DateTime LastMovement { get; private set; }
 
-    public IReadOnlyCollection<AccountCategory> Categories => [.. _categories];
-    private readonly ICollection<AccountCategory> _categories = [];
+    public ICollection<AccountCategory> Categories { get; private set; }
+    public ICollection<AccountSubCategory> SubCategories { get; private set; }
+    public ICollection<AccountPaymentMethod> PaymentMethods { get; private set; }
+    public ICollection<AccountUser> UserIds { get; private set; }
+    public ICollection<Invite> Invites { get; private set; }
 
-    public IReadOnlyCollection<AccountSubCategory> SubCategories => [.. _subCategories];
-    private readonly ICollection<AccountSubCategory> _subCategories = [];
-
-    public IReadOnlyCollection<AccountPaymentMethod> PaymentMethods => [.. _paymentMethods];
-    private readonly ICollection<AccountPaymentMethod> _paymentMethods = [];
-
-    public IReadOnlyCollection<AccountUser> UserIds => [.. _userIds];
-    private readonly ICollection<AccountUser> _userIds = [];
-
-    public IReadOnlyCollection<Invite> Invites => [.. _invites];
-    private readonly ICollection<Invite> _invites = [];
+    private Account()
+    {
+        Id = AccountId.New();
+        Name = string.Empty;
+        Description = string.Empty;
+        Categories = [];
+        SubCategories = [];
+        PaymentMethods = [];
+        UserIds = [];
+        Invites = [];
+    }
 
     private DomainResult SetValues(AccountId id,
         string name)

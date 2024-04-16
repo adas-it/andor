@@ -8,17 +8,20 @@ namespace Andor.Domain.Administrations.Languages;
 
 public class Language : Entity<LanguageId>
 {
-    public string Name { get; private set; } = string.Empty;
-    public Iso Iso { get; private set; } = string.Empty;
-    public string Symbol { get; private set; } = string.Empty;
+    public string Name { get; private set; }
+    public Iso Iso { get; private set; }
+    public string Symbol { get; private set; }
 
     private Language()
     {
+        Id = LanguageId.New();
+        Name = string.Empty;
+        Symbol = string.Empty;
         Validate();
     }
 
     public static Language New(string name,
-        string iso,
+        Iso iso,
         string symbol)
     {
         var entity = new Language()

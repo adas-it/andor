@@ -7,12 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Administrations\Languages\DomainEvents\**" />
+    <Compile Remove="Administrations\Languages\Errors\**" />
+    <Compile Remove="Administrations\Languages\Repositories\**" />
+    <EmbeddedResource Remove="Administrations\Languages\DomainEvents\**" />
+    <EmbeddedResource Remove="Administrations\Languages\Errors\**" />
+    <EmbeddedResource Remove="Administrations\Languages\Repositories\**" />
+    <None Remove="Administrations\Languages\DomainEvents\**" />
+    <None Remove="Administrations\Languages\Errors\**" />
+    <None Remove="Administrations\Languages\Repositories\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Engagement\Budget\Entities\Categories\DomainEvents\" />
     <Folder Include="Engagement\Budget\Entities\Categories\Repositories\" />
     <Folder Include="Engagement\Budget\Entities\Currencies\Repositories\" />
-    <Folder Include="Administrations\Languages\DomainEvents\" />
-    <Folder Include="Administrations\Languages\Errors\" />
-    <Folder Include="Administrations\Languages\Repositories\" />
   </ItemGroup>
 
 </Project>

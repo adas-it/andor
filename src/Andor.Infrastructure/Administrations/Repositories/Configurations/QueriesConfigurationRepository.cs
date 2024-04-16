@@ -8,7 +8,7 @@ using Andor.Infrastructure.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace Andor.Infrastructure.Administrations.Configurations;
+namespace Andor.Infrastructure.Administrations.Repositories.Configurations;
 
 public class QueriesConfigurationRepository(PrincipalContext context) :
     QueryHelper<Configuration, ConfigurationId>(context),

@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Engagement\Budget\" />
+    <Folder Include="Engagement\Budget\Repositories\Config\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 
