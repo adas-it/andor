@@ -11,9 +11,17 @@ namespace Andor.Domain.Engagement.Budget.Entities.Invites;
 public class Invite : AggregateRoot<InviteId>
 {
     public MailAddress Email { get; private set; }
-    public InviteStatus Status { get; private set; } = InviteStatus.Undefined;
+    public InviteStatus Status { get; private set; }
     public AccountId AccountId { get; private set; }
     public Account? Account { get; private set; }
+
+    private Invite()
+    {
+        Id = InviteId.New();
+        Email = new MailAddress("");
+        Status = InviteStatus.Undefined;
+    }
+
     private DomainResult SetValues(InviteId id,
         MailAddress email)
     {

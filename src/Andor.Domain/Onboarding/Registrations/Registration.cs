@@ -16,10 +16,13 @@ public class Registration : AggregateRoot<RegistrationId>
     public DateTime RegisterDate { get; private set; }
     public RegistrationState State { get; private set; }
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private Registration()
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     {
+        FirstName = string.Empty;
+        LastName = string.Empty;
+        Email = new MailAddress("");
+        CheckCode = CheckCode.New();
+        State = RegistrationState.Undefined;
     }
 
     private DomainResult SetValues(

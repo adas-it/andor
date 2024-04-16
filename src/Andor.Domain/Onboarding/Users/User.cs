@@ -11,15 +11,13 @@ namespace Andor.Domain.Onboarding.Users;
 
 public class User : AggregateRoot<UserId>
 {
-    public string UserName { get; private set; } = string.Empty;
+    public string UserName { get; private set; }
     public bool Enabled { get; private set; }
     public bool EmailVerified { get; private set; }
-    public string FirstName { get; private set; } = string.Empty;
-    public string LastName { get; private set; } = string.Empty;
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    public string FirstName { get; private set; }
+    public string LastName { get; private set; }
     public MailAddress Email { get; private set; }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    public string Avatar { get; private set; } = string.Empty;
+    public string Avatar { get; private set; }
     public Currency? CurrencyPreferred { get; private set; }
     public Language? LanguagePreferred { get; private set; }
     public DateTime CreatedAt { get; private set; }
@@ -27,6 +25,15 @@ public class User : AggregateRoot<UserId>
     public DateTime AcceptedTermsConditionDate { get; private set; }
     public bool AcceptedPrivateData { get; private set; }
     public DateTime AcceptedPrivateDataDate { get; private set; }
+
+    private User()
+    {
+        Email = new MailAddress("");
+        UserName = string.Empty;
+        FirstName = string.Empty;
+        LastName = string.Empty;
+        Avatar = string.Empty;
+    }
 
     public static User New(UserId? id, string userName, bool enabled, bool emailVerified,
         string firstName, string lastName, MailAddress email, string avatar,

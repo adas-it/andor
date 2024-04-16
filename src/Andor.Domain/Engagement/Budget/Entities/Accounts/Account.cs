@@ -17,22 +17,27 @@ public class Account : AggregateRoot<AccountId>
     public DateTime FirstMovement { get; private set; }
     public DateTime LastMovement { get; private set; }
 
-    public ICollection<AccountCategory> Categories { get; private set; }
-    public ICollection<AccountSubCategory> SubCategories { get; private set; }
-    public ICollection<AccountPaymentMethod> PaymentMethods { get; private set; }
-    public ICollection<AccountUser> UserIds { get; private set; }
-    public ICollection<Invite> Invites { get; private set; }
+    public IReadOnlyCollection<AccountCategory> Categories => [.. _categories];
+    private ICollection<AccountCategory> _categories { get; set; }
+    public IReadOnlyCollection<AccountSubCategory> SubCategories => [.. _subCategories];
+    private ICollection<AccountSubCategory> _subCategories { get; set; }
+    public IReadOnlyCollection<AccountPaymentMethod> PaymentMethods => [.. _paymentMethods];
+    private ICollection<AccountPaymentMethod> _paymentMethods { get; set; }
+    public IReadOnlyCollection<AccountUser> Users => [.. _users];
+    private ICollection<AccountUser> _users { get; set; }
+    public IReadOnlyCollection<Invite> Invites => [.. _invites];
+    private ICollection<Invite> _invites { get; set; }
 
     private Account()
     {
         Id = AccountId.New();
         Name = string.Empty;
         Description = string.Empty;
-        Categories = [];
-        SubCategories = [];
-        PaymentMethods = [];
-        UserIds = [];
-        Invites = [];
+        _categories = [];
+        _subCategories = [];
+        _paymentMethods = [];
+        _users = [];
+        _invites = [];
     }
 
     private DomainResult SetValues(AccountId id,

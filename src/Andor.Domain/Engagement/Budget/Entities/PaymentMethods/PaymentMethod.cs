@@ -1,6 +1,7 @@
 ﻿using Andor.Domain.Common.ValuesObjects;
 using Andor.Domain.Engagement.Budget.Entities.MovementTypes;
 using Andor.Domain.Engagement.Budget.Entities.PaymentMethods.ValueObjects;
+using Andor.Domain.Engagement.Budget.Entities.SubCategories;
 using Andor.Domain.SeedWork;
 using Andor.Domain.Validation;
 
@@ -8,11 +9,23 @@ namespace Andor.Domain.Engagement.Budget.Entities.PaymentMethods;
 
 public class PaymentMethod : AggregateRoot<PaymentMethodId>
 {
-    public string Name { get; private set; } = "";
-    public string Description { get; private set; } = "";
+    public string Name { get; private set; }
+    public string Description { get; private set; }
     public DateTime? StartDate { get; private set; }
     public DateTime? DeactivationDate { get; private set; }
     public MovementType Type { get; private set; } = MovementType.Undefined;
+
+    public IReadOnlyCollection<SubCategory> SubCategories => [.. _subCategories];
+    private ICollection<SubCategory> _subCategories { get; set; }
+
+    private PaymentMethod()
+    {
+        Id = PaymentMethodId.New();
+        Name = string.Empty;
+        Description = string.Empty;
+        _subCategories = [];
+    }
+
     private DomainResult SetValues(PaymentMethodId id,
         string name)
     {

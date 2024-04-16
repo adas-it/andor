@@ -1,8 +1,15 @@
 ﻿// Ignore Spelling: Upsert
 
+using Andor.Domain.Administrations.Languages;
 using Andor.Domain.Common;
 using Andor.Domain.Communications;
 using Andor.Domain.Communications.Users;
+using Andor.Domain.Engagement.Budget.Entities.Accounts;
+using Andor.Domain.Engagement.Budget.Entities.Categories;
+using Andor.Domain.Engagement.Budget.Entities.Currencies;
+using Andor.Domain.Engagement.Budget.Entities.Invites;
+using Andor.Domain.Engagement.Budget.Entities.PaymentMethods;
+using Andor.Domain.Engagement.Budget.Entities.SubCategories;
 using Andor.Domain.Entities.Admin.Configurations;
 using Andor.Domain.Onboarding.Registrations;
 using MassTransit;
@@ -27,12 +34,30 @@ public class PrincipalContextFactory : IDesignTimeDbContextFactory<PrincipalCont
 
 public partial class PrincipalContext(DbContextOptions<PrincipalContext> options) : DbContext(options)
 {
+    // Administration
     public DbSet<Configuration> Configuration => Set<Configuration>();
+    public DbSet<Language> Language => Set<Language>();
+
+    //Onboarding
     public DbSet<Registration> Registration => Set<Registration>();
+
+    // Communication
     public DbSet<Template> Template => Set<Template>();
     public DbSet<Rule> Rule => Set<Rule>();
     public DbSet<Permission> Permission => Set<Permission>();
     public DbSet<Recipient> Recipient => Set<Recipient>();
+
+    //Engagement
+    public DbSet<SubCategory> SubCategory => Set<SubCategory>();
+    public DbSet<PaymentMethod> PaymentMethod => Set<PaymentMethod>();
+    public DbSet<Invite> Invite => Set<Invite>();
+    public DbSet<Currency> Currency => Set<Currency>();
+    public DbSet<Category> Category => Set<Category>();
+    public DbSet<Account> Account => Set<Account>();
+    public DbSet<AccountCategory> AccountCategory => Set<AccountCategory>();
+    public DbSet<AccountSubCategory> AccountSubCategory => Set<AccountSubCategory>();
+    public DbSet<AccountPaymentMethod> AccountPaymentMethod => Set<AccountPaymentMethod>();
+    public DbSet<AccountUser> AccountUser => Set<AccountUser>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

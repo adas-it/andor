@@ -1,6 +1,8 @@
 ﻿using Andor.Domain.Common.ValuesObjects;
 using Andor.Domain.Engagement.Budget.Entities.Categories;
+using Andor.Domain.Engagement.Budget.Entities.Categories.ValueObjects;
 using Andor.Domain.Engagement.Budget.Entities.PaymentMethods;
+using Andor.Domain.Engagement.Budget.Entities.PaymentMethods.ValueObjects;
 using Andor.Domain.Engagement.Budget.Entities.SubCategories.ValueObjects;
 using Andor.Domain.SeedWork;
 using Andor.Domain.Validation;
@@ -13,7 +15,9 @@ public class SubCategory : AggregateRoot<SubCategoryId>
     public string Description { get; private set; } = "";
     public DateTime? StartDate { get; private set; }
     public DateTime? DeactivationDate { get; private set; }
+    public CategoryId? CategoryId { get; private set; }
     public Category? Category { get; private set; }
+    public PaymentMethodId? DefaultPaymentMethodId { get; private set; }
     public PaymentMethod? DefaultPaymentMethod { get; private set; }
     private DomainResult SetValues(SubCategoryId id,
         string name)
