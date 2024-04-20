@@ -15,7 +15,7 @@ public class RequestEmailConfirmationCommandHandler(IMessageSenderInterface mess
     private readonly IMessageSenderInterface _messageSenderInterface = messageSenderInterface;
     public async Task Handle(RequestEmailConfirmationCommand request, CancellationToken cancellationToken)
     {
-        var registrationRule = await _configurationRepository.GetActiveByNameAsync("confirmation_email",
+        var registrationRule = await _configurationRepository.GetActiveByNameAsync("register_email",
             cancellationToken) ?? throw new InvalidFilterCriteriaException("Configuration not found confirmation_email");
 
         await _messageSenderInterface.PubSubSendAsync(new RequestCommunication()

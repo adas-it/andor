@@ -3,6 +3,7 @@ using Andor.Infrastructure.Administrations.Messaging.Consumers.Configurations;
 using Andor.Infrastructure.Administrations.Messaging.Publisher.Configurations.DomainEventHandlersConfig;
 using Andor.Infrastructure.Communication.Messages.Consumers;
 using Andor.Infrastructure.Communication.Messages.Producers;
+using Andor.Infrastructure.Engagement.Budget.Messages;
 using Andor.Infrastructure.Messaging.RabbitMq;
 using Andor.Infrastructure.Onboarding.Messages.Consumers.Registrations;
 using Andor.Infrastructure.Onboarding.Messages.Producers.Registrations.DomainEventHandlersConfig;
@@ -51,8 +52,9 @@ public static class MessagingExtension
             });
 
             x.AddConfigurationsConsumers()
-                .AddRegistrationsConsumers()
-                .AddCommunicationConsumers();
+            .AddRegistrationsConsumers()
+            .AddCommunicationConsumers()
+            .AddBudgetConsumerIntegrations();
 
             x.UsingAzureServiceBus((context, cfg) =>
             {
@@ -61,6 +63,7 @@ public static class MessagingExtension
                 cfg
                 .AddConfigurationsPublisherDomainEventHandlersConfig()
                 .AddConfigurationsConsumerDomainEventHandlersConfig(context);
+
                 cfg
                 .AddRegistrationsPublisherDomainEventConfig()
                 .AddRegistrationsPublisherEventConfig()
@@ -68,6 +71,8 @@ public static class MessagingExtension
 
                 cfg.AddCommunicationsPublisherEventHandlerConfig()
                 .AddCommunicationConsumerDomainEventHandlerConfig(context);
+
+                cfg.AddBudgetConsumerIntegrationEventHandlerConfig(context);
 
                 cfg.DeployPublishTopology = true;
             });

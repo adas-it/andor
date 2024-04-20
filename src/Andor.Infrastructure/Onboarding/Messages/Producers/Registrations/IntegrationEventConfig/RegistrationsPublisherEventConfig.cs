@@ -16,6 +16,14 @@ public static class RegistrationsPublisherEventConfig
 
         config.Publish<RegistrationCompleted>();
 
+        config.Message<UserCreated>(x =>
+        {
+            x.SetEntityName(TopicNames.REGISTRATION_TOPIC);
+        });
+
+        config.Publish<UserCreated>();
+
+
         return config;
     }
 }

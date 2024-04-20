@@ -41,5 +41,11 @@ public record RegistrationConfig : IEntityTypeConfiguration<Registration>
             State => State.Key,
             value => RegistrationState.GetByKey<RegistrationState>(value)
         );
+
+        entity.HasOne(k => k.Language).WithMany().HasForeignKey(k => k.LanguageId);
+        entity.HasOne(k => k.Currency).WithMany().HasForeignKey(k => k.CurrencyId);
+
+        entity.Navigation(x => x.Language).AutoInclude();
+        entity.Navigation(x => x.Currency).AutoInclude();
     }
 }

@@ -1,5 +1,4 @@
-﻿using Andor.Domain.Onboarding.Registrations;
-using Andor.Domain.Onboarding.Registrations.ValueObjects;
+﻿using Andor.Domain.Onboarding.Registrations.ValueObjects;
 using Andor.Domain.SeedWork.Repository.ISearchableRepository;
 using System.Net.Mail;
 

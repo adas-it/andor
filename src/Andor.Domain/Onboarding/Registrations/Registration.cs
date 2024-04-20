@@ -1,4 +1,8 @@
-﻿using Andor.Domain.Common.ValuesObjects;
+﻿using Andor.Domain.Administrations.Languages;
+using Andor.Domain.Administrations.Languages.ValueObjects;
+using Andor.Domain.Common.ValuesObjects;
+using Andor.Domain.Engagement.Budget.Entities.Currencies;
+using Andor.Domain.Engagement.Budget.Entities.Currencies.ValueObjects;
 using Andor.Domain.Onboarding.Registrations.DomainEvents;
 using Andor.Domain.Onboarding.Registrations.ValueObjects;
 using Andor.Domain.SeedWork;
@@ -11,16 +15,21 @@ public class Registration : AggregateRoot<RegistrationId>
 {
     public string FirstName { get; private set; }
     public string LastName { get; private set; }
+    public string UserName { get; private set; }
     public MailAddress Email { get; private set; }
     public CheckCode CheckCode { get; private set; }
     public DateTime RegisterDate { get; private set; }
     public RegistrationState State { get; private set; }
+    public LanguageId LanguageId { get; private set; }
+    public Language Language { get; private set; }
+    public CurrencyId CurrencyId { get; private set; }
+    public Currency Currency { get; private set; }
+    public Guid CountryId { get; private set; }
 
     private Registration()
     {
         FirstName = string.Empty;
         LastName = string.Empty;
-        Email = new MailAddress("");
         CheckCode = CheckCode.New();
         State = RegistrationState.Undefined;
     }
@@ -32,7 +41,10 @@ public class Registration : AggregateRoot<RegistrationId>
         MailAddress email,
         string checkCode,
         DateTime registerDate,
-        RegistrationState state)
+        RegistrationState state,
+        Language language,
+        Currency currency,
+        Guid countryId)
     {
         AddNotification(firstName.NotNullOrEmptyOrWhiteSpace());
         AddNotification(firstName.BetweenLength(2, 50));
@@ -49,11 +61,17 @@ public class Registration : AggregateRoot<RegistrationId>
 
         Id = id;
         FirstName = firstName;
+        UserName = email.ToString();
         LastName = lastName;
         Email = email;
         CheckCode = checkCode;
         RegisterDate = registerDate;
         State = state;
+        LanguageId = language.Id;
+        Language = language;
+        CurrencyId = currency.Id;
+        Currency = currency;
+        CountryId = countryId;
 
         var result = Validate();
 
@@ -63,7 +81,10 @@ public class Registration : AggregateRoot<RegistrationId>
     public static (DomainResult, Registration?) New(
         string firstName,
         string lastName,
-        MailAddress email)
+        MailAddress email,
+        Language language,
+        Currency currency,
+        Guid countryId)
     {
         var entity = new Registration();
 
@@ -73,7 +94,10 @@ public class Registration : AggregateRoot<RegistrationId>
         email,
         CheckCode.New(),
         DateTime.UtcNow,
-        RegistrationState.GeneratedCode);
+        RegistrationState.GeneratedCode,
+        language,
+        currency,
+        countryId);
 
         if (result.IsFailure)
         {
@@ -86,13 +110,25 @@ public class Registration : AggregateRoot<RegistrationId>
     }
 
     public DomainResult Complete(string userName, string firstName,
-        string locale,
         string lastName,
         bool acceptedTermsCondition,
         bool acceptedPrivateData,
-        string password)
+        string password,
+        Language language,
+        Currency currency,
+        Guid countryId
+        )
     {
-        var result = SetValues(Id, firstName, lastName, Email, CheckCode, RegisterDate, RegistrationState.Completed);
+        var result = SetValues(Id,
+            firstName,
+            lastName,
+            Email,
+            CheckCode,
+            RegisterDate,
+            RegistrationState.Completed,
+            language,
+            currency,
+            countryId);
 
         if (result.IsFailure)
         {
@@ -100,7 +136,7 @@ public class Registration : AggregateRoot<RegistrationId>
         }
 
         RaiseDomainEvent(RegistrationCompletedDomainEvent.FromAggregator(this,
-            userName, locale, acceptedTermsCondition, acceptedPrivateData, password));
+            userName, countryId, acceptedTermsCondition, acceptedPrivateData, password));
 
         return result;
     }
@@ -109,7 +145,16 @@ public class Registration : AggregateRoot<RegistrationId>
     {
         var code = CheckCode.New();
 
-        var result = SetValues(Id, FirstName, LastName, Email, code, RegisterDate, State);
+        var result = SetValues(Id,
+            FirstName,
+            LastName,
+            Email,
+            code,
+            RegisterDate,
+            State,
+            Language,
+            Currency,
+            CountryId);
 
         if (result.IsFailure)
         {

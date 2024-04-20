@@ -15,15 +15,14 @@ public class PaymentMethod : AggregateRoot<PaymentMethodId>
     public DateTime? DeactivationDate { get; private set; }
     public MovementType Type { get; private set; } = MovementType.Undefined;
 
-    public IReadOnlyCollection<SubCategory> SubCategories => [.. _subCategories];
-    private ICollection<SubCategory> _subCategories { get; set; }
+    public ICollection<SubCategory> SubCategories { get; set; }
 
     private PaymentMethod()
     {
         Id = PaymentMethodId.New();
         Name = string.Empty;
         Description = string.Empty;
-        _subCategories = [];
+        SubCategories = [];
     }
 
     private DomainResult SetValues(PaymentMethodId id,

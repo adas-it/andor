@@ -18,7 +18,6 @@ public class Invite : AggregateRoot<InviteId>
     private Invite()
     {
         Id = InviteId.New();
-        Email = new MailAddress("");
         Status = InviteStatus.Undefined;
     }
 

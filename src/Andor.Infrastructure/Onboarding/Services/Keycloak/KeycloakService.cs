@@ -1,5 +1,7 @@
 ﻿using Andor.Application.Common;
 using Andor.Application.Common.Interfaces;
+using Andor.Domain.Administrations.Languages;
+using Andor.Domain.Engagement.Budget.Entities.Currencies;
 using Andor.Domain.Onboarding.Users;
 using Andor.Domain.Onboarding.Users.ValueObjects;
 using Andor.Infrastructure.Onboarding.Services.Keycloak.Models;
@@ -13,11 +15,17 @@ public class KeycloakService
     (IKeycloakClient _keycloakClient, IOptions<ApplicationSettings> _configuration)
     : IKeycloakService
 {
-    public async Task<User> CreateUser(string Username,
-        MailAddress Email,
-        string FirstName,
-        string LastName,
-        string Password,
+    public async Task<User> CreateUser(Guid Id,
+    string UserName,
+    string FirstName,
+    string LastName,
+    string Password,
+    string Email,
+    Guid Locale,
+    Language Language,
+    Currency Currency,
+    bool AcceptedTermsCondition,
+    bool AcceptedPrivateData,
         CancellationToken cancellationToken)
     {
         var realm = _configuration.Value.Keycloak!.Realm;
@@ -25,10 +33,10 @@ public class KeycloakService
         var requestDto = new CreateUser(
             FirstName: FirstName,
             LastName: LastName,
-            Email: Email.Address,
+            Email: Email,
             Enabled: true,
             EmailVerified: true,
-            Username: Username,
+            Username: UserName,
             [new Credentials("password", Password, false)],
             new Attributes(
             [string.Empty],
@@ -43,9 +51,9 @@ public class KeycloakService
 
         var userId = location!.Split("/").Last();
 
-        var item = User.New(UserId.Load(userId), Username!,
-        true, true, FirstName, LastName, Email, string.Empty, DateTime.UtcNow,
-        true, DateTime.UtcNow, true, DateTime.UtcNow, null!, null!);
+        var item = User.New(UserId.Load(userId), UserName,
+        true, true, FirstName, LastName, new MailAddress(Email), string.Empty, DateTime.UtcNow,
+        true, DateTime.UtcNow, true, DateTime.UtcNow, Currency, Language);
 
         return item;
     }
@@ -64,11 +72,11 @@ public class KeycloakService
         return ret!;
     }
 
-    public async Task<List<User>?> GetUserByUserName(string username, CancellationToken cancellation)
+    public async Task<List<User>?> GetUserByUserName(string userName, CancellationToken cancellation)
     {
         var realm = _configuration.Value.Keycloak!.Realm;
 
-        var response = await _keycloakClient.Get(realm!, null!, username, cancellation);
+        var response = await _keycloakClient.Get(realm!, null!, userName, cancellation);
 
         if (response.Count != 0)
             return null;

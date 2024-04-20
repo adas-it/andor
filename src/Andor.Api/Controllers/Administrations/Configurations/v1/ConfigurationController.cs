@@ -152,13 +152,14 @@ public class ConfigurationsController(IMediator mediator) : BaseController
         [FromQuery] SearchOrder? dir = null
     )
     {
-        var output = await _mediator.Send(new ListConfigurationsQuery(
-            page ?? 0,
-            perPage ?? 10,
-            search,
-            sort,
-            dir ?? SearchOrder.Asc
-            ), cancellationToken);
+        var output = await _mediator.Send(new ListConfigurationsQuery()
+        {
+            Page = page ?? 0,
+            PerPage = perPage ?? 10,
+            Search = search,
+            Sort = sort,
+            Dir = dir ?? SearchOrder.Asc
+        }, cancellationToken);
 
         return Results.Ok(output);
     }

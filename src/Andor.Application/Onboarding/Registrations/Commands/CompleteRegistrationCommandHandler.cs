@@ -115,10 +115,12 @@ public class CompleteRegistrationCommandHandler(ICommandsRegistrationRepository 
             userName: request.UserName,
             firstName: request.FirstName,
             lastName: request.LastName,
-            locale: request.Locale,
             acceptedTermsCondition: request.AcceptedTermsCondition,
             acceptedPrivateData: request.AcceptedPrivateData,
-            password: request.Password);
+            password: request.Password,
+            language: registration.Language,
+            currency: registration.Currency,
+            countryId: registration.CountryId);
 
         await _repository.UpdateAsync(registration, cancellationToken);
 

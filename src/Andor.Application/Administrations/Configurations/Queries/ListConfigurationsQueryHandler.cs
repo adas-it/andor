@@ -7,8 +7,7 @@ using MediatR;
 namespace Andor.Application.Administrations.Configurations.Queries;
 
 public record ListConfigurationsQuery
-    (int Page, int PerPage, string? Search, string? Sort, SearchOrder Dir)
-    : PaginatedListInput(Page, PerPage, Search, Sort, Dir),
+    : PaginatedListInput,
     IRequest<ListConfigurationsOutput>;
 
 public class ListConfigurationsQueryHandler(IQueriesConfigurationRepository configurationRepository)

@@ -3,6 +3,8 @@ using Andor.Application.Common.Interfaces;
 using Andor.Application.Common.Models;
 using Andor.Application.Dto.Common.Responses;
 using Andor.Application.Dto.Onboarding.Registrations.Responses;
+using Andor.Domain.Communications.Repositories;
+using Andor.Domain.Entities.Admin.Configurations.Repository;
 using Andor.Domain.Onboarding.Registrations;
 using Andor.Domain.Onboarding.Registrations.Repositories;
 using FluentValidation;
@@ -47,6 +49,9 @@ public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
 public class RegisterCommandHandler(
     ICommandsRegistrationRepository _repository,
     IQueriesRegistrationRepository _queriesRepository,
+    IQueriesLanguageRepository _queriesLanguageRepository,
+    IQueriesCurrencyRepository _queriesCurrencyRepository,
+    IQueriesConfigurationRepository _queriesConfigurationRepository,
     IUnitOfWork _unitOfWork
     )
     : IRequestHandler<RegisterCommand, ApplicationResult<RegistrationOutput>>
@@ -61,6 +66,13 @@ public class RegisterCommandHandler(
 
         var entity = await _queriesRepository.GetByEmailAsync(email, cancellationToken);
 
+        var defaultCurrencyId = await _queriesConfigurationRepository.GetActiveByNameAsync("defaultLocation:currency", cancellationToken);
+        var defaultLanguageId = await _queriesConfigurationRepository.GetActiveByNameAsync("defaultLocation:language", cancellationToken);
+        var defaultCountryId = await _queriesConfigurationRepository.GetActiveByNameAsync("defaultLocation:country", cancellationToken);
+
+        var defaultCurrency = await _queriesCurrencyRepository.GetByIdAsync(Guid.Parse(defaultCurrencyId.Value), cancellationToken);
+        var defaultLanguage = await _queriesLanguageRepository.GetByIdAsync(Guid.Parse(defaultLanguageId.Value), cancellationToken);
+
         if (entity != null && entity.IsComplete())
         {
             response.AddError(Dto.Common.ApplicationsErrors.Errors.EmailInUse());
@@ -73,9 +85,13 @@ public class RegisterCommandHandler(
             return response;
         }
 
-        var (result, registration) = Registration.New(request.FirstName,
+        var (result, registration) = Registration
+            .New(request.FirstName,
             request.LastName,
-            email);
+            email,
+            defaultLanguage!,
+            defaultCurrency!,
+            Guid.Parse(defaultCountryId.Value));
 
         if (result.IsFailure || registration is null)
         {

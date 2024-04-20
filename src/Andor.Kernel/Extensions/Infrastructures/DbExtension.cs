@@ -1,11 +1,13 @@
 ﻿using Andor.Application.Common.Interfaces;
 using Andor.Domain.Communications.Repositories;
+using Andor.Domain.Engagement.Budget.Entities.Accounts.Repositories;
 using Andor.Domain.Entities.Admin.Configurations.Repository;
 using Andor.Domain.Onboarding.Registrations.Repositories;
 using Andor.Infrastructure;
 using Andor.Infrastructure.Administrations.Repositories.Configurations;
 using Andor.Infrastructure.Communication.Repositories;
 using Andor.Infrastructure.Communication.Repositories.Users;
+using Andor.Infrastructure.Engagement.Budget.Repositories;
 using Andor.Infrastructure.Onboarding.Repositories.Registrations;
 using Andor.Infrastructure.Repositories.Common;
 using Andor.Infrastructure.Repositories.Context;
@@ -62,6 +64,24 @@ public static class DbExtension
 
         builder.Services.AddScoped<ICommandsTemplateRepository, CommandsTemplateRepository>();
         builder.Services.AddScoped<IQueriesTemplateRepository, QueriesTemplateRepository>();
+
+        builder.Services.AddScoped<IQueriesRegistrationRepository, QueriesRegistrationRepository>();
+        builder.Services.AddScoped<ICommandsRegistrationRepository, CommandsRegistrationRepository>();
+
+        builder.Services.AddScoped<IQueriesSubCategoryRepository, QueriesSubCategoryRepository>();
+        builder.Services.AddScoped<ICommandsSubCategoryRepository, CommandsSubCategoryRepository>();
+
+        builder.Services.AddScoped<IQueriesPaymentMethodRepository, QueriesPaymentMethodRepository>();
+        builder.Services.AddScoped<ICommandsPaymentMethodRepository, CommandsPaymentMethodRepository>();
+
+        builder.Services.AddScoped<IQueriesCurrencyRepository, QueriesCurrencyRepository>();
+        builder.Services.AddScoped<ICommandsCurrencyRepository, CommandsCurrencyRepository>();
+
+        builder.Services.AddScoped<IQueriesAccountRepository, QueriesAccountRepository>();
+        builder.Services.AddScoped<ICommandsAccountRepository, CommandsAccountRepository>();
+
+        builder.Services.AddScoped<IQueriesLanguageRepository, QueriesLanguageRepository>();
+        builder.Services.AddScoped<ICommandsLanguageRepository, CommandsLanguageRepository>();
 
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 

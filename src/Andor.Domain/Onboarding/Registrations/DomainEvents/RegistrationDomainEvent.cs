@@ -54,12 +54,14 @@ public sealed record RegistrationCompletedDomainEvent
     public string LastName { get; init; } = "";
     public string Password { get; init; } = "";
     public string Email { get; init; } = "";
-    public string Locale { get; init; } = "";
+    public Guid Locale { get; init; }
+    public Guid LanguageId { get; init; }
+    public Guid CurrencyId { get; init; }
     public bool AcceptedTermsCondition { get; set; }
     public bool AcceptedPrivateData { get; set; }
 
     public static RegistrationCompletedDomainEvent FromAggregator(Registration entity,
-        string userName, string locale, bool acceptedTermsCondition, bool acceptedPrivateData,
+        string userName, Guid locale, bool acceptedTermsCondition, bool acceptedPrivateData,
         string password)
         => new RegistrationCompletedDomainEvent() with
         {
@@ -71,6 +73,8 @@ public sealed record RegistrationCompletedDomainEvent
             Locale = locale,
             AcceptedTermsCondition = acceptedTermsCondition,
             AcceptedPrivateData = acceptedPrivateData,
-            Password = password
+            Password = password,
+            LanguageId = entity.Language.Id,
+            CurrencyId = entity.Currency.Id
         };
 }

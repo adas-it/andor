@@ -18,8 +18,8 @@ public class User : AggregateRoot<UserId>
     public string LastName { get; private set; }
     public MailAddress Email { get; private set; }
     public string Avatar { get; private set; }
-    public Currency? CurrencyPreferred { get; private set; }
-    public Language? LanguagePreferred { get; private set; }
+    public Currency CurrencyPreferred { get; private set; }
+    public Language LanguagePreferred { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public bool AcceptedTermsCondition { get; private set; }
     public DateTime AcceptedTermsConditionDate { get; private set; }
@@ -28,7 +28,6 @@ public class User : AggregateRoot<UserId>
 
     private User()
     {
-        Email = new MailAddress("");
         UserName = string.Empty;
         FirstName = string.Empty;
         LastName = string.Empty;

@@ -164,10 +164,10 @@ namespace Andor.Infrastructure.Migrations
                         .HasMaxLength(70)
                         .HasColumnType("character varying(70)");
 
-                    b.Property<DateTime>("FirstMovement")
+                    b.Property<DateTime?>("FirstMovement")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("LastMovement")
+                    b.Property<DateTime?>("LastMovement")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
@@ -435,6 +435,12 @@ namespace Andor.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("CountryId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CurrencyId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
@@ -443,6 +449,9 @@ namespace Andor.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(70)
                         .HasColumnType("character varying(70)");
+
+                    b.Property<Guid>("LanguageId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -455,7 +464,15 @@ namespace Andor.Infrastructure.Migrations
                     b.Property<int>("State")
                         .HasColumnType("integer");
 
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("CurrencyId");
+
+                    b.HasIndex("LanguageId");
 
                     b.ToTable("Registration", "Onboarding");
                 });
@@ -753,6 +770,25 @@ namespace Andor.Infrastructure.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("DefaultPaymentMethod");
+                });
+
+            modelBuilder.Entity("Andor.Domain.Onboarding.Registrations.Registration", b =>
+                {
+                    b.HasOne("Andor.Domain.Engagement.Budget.Entities.Currencies.Currency", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Andor.Domain.Administrations.Languages.Language", "Language")
+                        .WithMany()
+                        .HasForeignKey("LanguageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Currency");
+
+                    b.Navigation("Language");
                 });
 
             modelBuilder.Entity("Andor.Domain.Communications.Rule", b =>

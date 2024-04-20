@@ -58,9 +58,10 @@ public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
                 _logger.LogInformation("Commit {request}", typeof(TRequest).FullName);
                 return response;
             }
-            catch
+            catch (Exception ex)
             {
                 _logger.LogInformation("Rollback {request}", typeof(TRequest).FullName);
+                _logger.LogError("Rollback {request}", typeof(TRequest).FullName, ex);
                 await transaction.RollbackAsync(cancellationToken);
                 throw;
             }

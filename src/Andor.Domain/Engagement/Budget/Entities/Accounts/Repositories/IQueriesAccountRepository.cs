@@ -1,5 +1,9 @@
-﻿namespace Andor.Domain.Engagement.Budget.Entities.Accounts.Repositories;
+﻿using Andor.Domain.Engagement.Budget.Entities.Accounts.ValueObjects;
+using Andor.Domain.SeedWork.Repository.ISearchableRepository;
 
-internal class IQueriesAccountRepository
+namespace Andor.Domain.Engagement.Budget.Entities.Accounts.Repositories;
+
+public interface IQueriesAccountRepository :
+    IResearchableRepository<Account, AccountId, SearchInput>
 {
 }
