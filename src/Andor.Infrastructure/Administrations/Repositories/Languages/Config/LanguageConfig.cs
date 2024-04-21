@@ -1,10 +1,6 @@
 ﻿using Andor.Domain.Administrations.Languages;
 using Andor.Domain.Administrations.Languages.ValueObjects;
-<<<<<<< HEAD
 using Andor.Domain.Engagement.Budget.Accounts.Currencies.ValueObjects;
-=======
-using Andor.Domain.Engagement.Budget.Entities.Currencies.ValueObjects;
->>>>>>> main
 using Andor.Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

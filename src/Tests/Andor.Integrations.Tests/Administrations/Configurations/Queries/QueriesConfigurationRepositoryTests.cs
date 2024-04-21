@@ -1,9 +1,5 @@
 ﻿using Andor.Application.Administrations.Configurations.Commands;
-<<<<<<< HEAD
 using Andor.Domain.Administrations.Configurations.ValueObjects;
-=======
-using Andor.Domain.Entities.Admin.Configurations.ValueObjects;
->>>>>>> main
 using Andor.Infrastructure.Administrations.Repositories.Configurations;
 
 namespace Andor.Integrations.Tests.Administrations.Configurations.Queries;

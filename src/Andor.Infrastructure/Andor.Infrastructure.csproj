@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Andor.Domain\Andor.Domain.csproj" />
-    <ProjectReference Include="..\Andor.Application\Andor.Application.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="MassTransit.Azure.ServiceBus.Core" Version="8.2.1" />
     <PackageReference Include="MassTransit.EntityFrameworkCore" Version="8.2.1" />
     <PackageReference Include="MediatR" Version="12.2.0" />
@@ -32,13 +27,16 @@
   </ItemGroup>
 
   <ItemGroup>
-<<<<<<< HEAD
     <Folder Include="Engagement\Budget\Messages\Producers\" />
-=======
     <Folder Include="Engagement\Budget\Repositories\Config\" />
->>>>>>> main
     <Folder Include="Migrations\" />
     <Folder Include="Onboarding\Repositories\Users\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Andor.Application.Dto\Andor.Application.Dto.csproj" />
+    <ProjectReference Include="..\Andor.Application\Andor.Application.csproj" />
+    <ProjectReference Include="..\Andor.Domain\Andor.Domain.csproj" />
   </ItemGroup>
 
 </Project>

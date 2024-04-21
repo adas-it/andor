@@ -1,6 +1,4 @@
-﻿using Andor.Domain.Engagement.Budget.Accounts.Accounts;
-
-namespace Andor.Domain.Engagement.Budget.Accounts.Accounts.DomainEvents;
+﻿namespace Andor.Domain.Engagement.Budget.Accounts.Accounts.DomainEvents;
 
 public sealed record AccountCreatedDomainEvent
 {

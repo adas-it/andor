@@ -14,17 +14,16 @@
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.4" />
     <PackageReference Include="Microsoft.Identity.Web.TokenAcquisition" Version="2.17.4" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Andor.Domain\Andor.Domain.csproj" />
-    <ProjectReference Include="..\Andor.Application.Dto\Andor.Application.Dto.csproj" />
-  </ItemGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
 </ItemGroup>
   <ItemGroup>
     <Folder Include="Users\DomainEvents\" />
     <Folder Include="Users\ValuesObject\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Andor.Application.Dto\Andor.Application.Dto.csproj" />
+    <ProjectReference Include="..\Andor.Domain\Andor.Domain.csproj" />
   </ItemGroup>
 
 </Project>

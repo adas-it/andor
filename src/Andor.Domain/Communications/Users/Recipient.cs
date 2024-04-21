@@ -1,5 +1,5 @@
 ﻿using Andor.Domain.Common.ValuesObjects;
-using Andor.Domain.Entities.Communications.Users.ValueObjects;
+using Andor.Domain.Communications.Users.ValueObjects;
 using Andor.Domain.SeedWork;
 using Andor.Domain.Validation;
 using System.Net.Mail;

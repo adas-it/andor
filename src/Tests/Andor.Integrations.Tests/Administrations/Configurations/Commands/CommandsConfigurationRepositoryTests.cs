@@ -1,10 +1,6 @@
 ﻿using Andor.Application.Common.Interfaces;
-<<<<<<< HEAD
 using Andor.Domain.Administrations.Configurations;
 using Andor.Domain.Administrations.Configurations.ValueObjects;
-=======
-using Andor.Domain.Entities.Admin.Configurations.ValueObjects;
->>>>>>> main
 using Andor.Infrastructure.Administrations.Repositories.Configurations;
 using NSubstitute;
 

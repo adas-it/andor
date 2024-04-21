@@ -27,15 +27,11 @@ public class RegistrationDomainEventConsumer(IMediator _mediator) :
 
     public async Task Consume(ConsumeContext<RegistrationCompletedDomainEvent> context)
     {
-        await _mediator.Send(new CreateKeycloakUserCommand(context.Message));
         await _mediator.Send(new NotifyRegistrationCompletedCommand(context.Message));
-<<<<<<< HEAD
     }
 
     public async Task Consume(ConsumeContext<UserCreatedDomainEvent> context)
     {
         await _mediator.Send(new NotifyUserCreatedCommand(context.Message));
-=======
->>>>>>> main
     }
 }
