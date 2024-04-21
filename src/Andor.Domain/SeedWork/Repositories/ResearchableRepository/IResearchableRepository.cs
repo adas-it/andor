@@ -1,4 +1,4 @@
-﻿namespace Andor.Domain.SeedWork.Repository.ISearchableRepository;
+﻿namespace Andor.Domain.SeedWork.Repositories.ResearchableRepository;
 
 public interface IResearchableRepository<TEntity, TEntityId, TSearchInput>
     where TEntity : Entity<TEntityId>

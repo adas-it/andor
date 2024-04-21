@@ -1,7 +1,7 @@
 ﻿using Andor.Application.Common;
 using Andor.Application.Common.Interfaces;
 using Andor.Domain.Administrations.Languages;
-using Andor.Domain.Engagement.Budget.Entities.Currencies;
+using Andor.Domain.Engagement.Budget.Accounts.Currencies;
 using Andor.Domain.Onboarding.Users;
 using Andor.Domain.Onboarding.Users.ValueObjects;
 using Andor.Infrastructure.Onboarding.Services.Keycloak.Models;

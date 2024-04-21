@@ -1,5 +1,6 @@
 ﻿using Andor.Application.Common.Interfaces;
-using Andor.Domain.Entities.Admin.Configurations.ValueObjects;
+using Andor.Domain.Administrations.Configurations;
+using Andor.Domain.Administrations.Configurations.ValueObjects;
 using Andor.Infrastructure.Administrations.Repositories.Configurations;
 using NSubstitute;
 

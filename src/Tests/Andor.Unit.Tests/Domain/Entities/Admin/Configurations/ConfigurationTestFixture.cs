@@ -1,5 +1,5 @@
 ﻿using Andor.Application.Dto.Administrations.Configurations.Requests;
-using Andor.Domain.Entities.Admin.Configurations.ValueObjects;
+using Andor.Domain.Administrations.Configurations.ValueObjects;
 using Andor.TestsUtil;
 
 namespace Andor.Unit.Tests.Domain.Entities.Admin.Configurations;

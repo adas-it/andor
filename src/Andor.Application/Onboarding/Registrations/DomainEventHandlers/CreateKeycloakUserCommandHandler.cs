@@ -1,7 +1,7 @@
 ﻿using Andor.Application.Common.Interfaces;
-using Andor.Domain.Communications.Repositories;
+using Andor.Domain.Administrations.Languages.Repositories;
+using Andor.Domain.Engagement.Budget.Accounts.Currencies.Repositories;
 using Andor.Domain.Onboarding.Registrations.DomainEvents;
-using Andor.Domain.Onboarding.Registrations.Repositories;
 using MediatR;
 
 namespace Andor.Application.Onboarding.Registrations.DomainEventHandlers;

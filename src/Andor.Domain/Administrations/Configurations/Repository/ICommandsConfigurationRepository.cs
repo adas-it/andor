@@ -1,7 +1,7 @@
-﻿using Andor.Domain.Entities.Admin.Configurations.ValueObjects;
-using Andor.Domain.SeedWork.Repository.CommandRepository;
+﻿using Andor.Domain.Administrations.Configurations.ValueObjects;
+using Andor.Domain.SeedWork.Repositories.CommandRepository;
 
-namespace Andor.Domain.Entities.Admin.Configurations.Repository;
+namespace Andor.Domain.Administrations.Configurations.Repository;
 
 public interface ICommandsConfigurationRepository : ICommandRepository<Configuration, ConfigurationId>
 {

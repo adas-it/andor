@@ -1,4 +1,6 @@
-﻿namespace Andor.Domain.Entities.Admin.Configurations.Events;
+﻿using Andor.Domain.Administrations.Configurations;
+
+namespace Andor.Domain.Administrations.Configurations.Events;
 
 public record ConfigurationCreatedDomainEvent
 {

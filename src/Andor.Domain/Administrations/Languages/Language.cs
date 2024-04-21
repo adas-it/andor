@@ -1,6 +1,6 @@
 ﻿using Andor.Domain.Administrations.Languages.ValueObjects;
 using Andor.Domain.Common.ValuesObjects;
-using Andor.Domain.Engagement.Budget.Entities.Currencies.ValueObjects;
+using Andor.Domain.Engagement.Budget.Accounts.Currencies.ValueObjects;
 using Andor.Domain.SeedWork;
 using Andor.Domain.Validation;
 

@@ -1,6 +1,7 @@
 ﻿using Andor.Application.Dto.Common.Requests;
 using Andor.Application.Dto.Common.Responses;
-using Andor.Application.Dto.Engagement.Budget.Account;
+using Andor.Application.Dto.Engagement.Budget.Account.Requests;
+using Andor.Application.Dto.Engagement.Budget.Account.Responses;
 using Andor.Application.Dto.Onboarding.Registrations.Requests;
 using Andor.Application.Dto.Onboarding.Registrations.Responses;
 using Andor.Application.Engagement.Budget.Accounts.Queries;
@@ -78,5 +79,111 @@ public class AccountController(IMediator mediator) : BaseController
         var output = await mediator.Send(request, cancellationToken);
 
         return Result(output);
+    }
+
+    [HttpGet("{accountId:guid}/cash-flow")]
+    [MapToApiVersion("1.0")]
+    [ProducesResponseType(typeof(DefaultResponse<CashFlowOutput>), StatusCodes.Status200OK)]
+    public async Task<IResult> GetCashFlow(
+        CancellationToken cancellationToken,
+        [FromRoute] Guid accountId,
+        [FromQuery] int? year = null,
+        [FromQuery] int? month = null
+    )
+    {
+        /*
+        GetCashFlowByMonthQuery input = new();
+        input.AccountId = accountId;
+        input.Year = year ?? DateTime.UtcNow.Year;
+        input.Month = month ?? DateTime.UtcNow.Month;
+
+        var output = await mediator.Send(input, cancellationToken);
+
+        return Result(output);
+        */
+        var result = ApplicationResult<CashFlowOutput>.Success();
+
+        result.SetData(new CashFlowOutput());
+
+        return Result(result);
+    }
+
+    [HttpGet("{accountId:guid}/financial-summary")]
+    [MapToApiVersion("1.0")]
+    [ProducesResponseType(typeof(DefaultResponse<List<FinancialSummariesOutput>>), StatusCodes.Status200OK)]
+    public async Task<IResult> FinancialSummary(
+        CancellationToken cancellationToken,
+        [FromRoute] Guid? accountId,
+        [FromQuery(Name = "year")] int? year = null,
+        [FromQuery(Name = "month")] int? month = null
+    )
+    {
+        /*
+        var input = new GetFinancialSummariesByMonthQuery();
+        if (accountId is not null) input.AccountId = accountId.Value;
+        if (year is not null) input.Year = year.Value;
+        if (month is not null) input.Month = month.Value;
+
+        var output = await mediator.Send(input, cancellationToken);
+
+        return Result(output);
+        */
+        var result = ApplicationResult<FinancialSummariesOutput>.Success();
+
+        result.SetData(new FinancialSummariesOutput());
+
+        return Result(result);
+    }
+
+    [HttpGet("{accountId:guid}/category-summary")]
+    [MapToApiVersion("1.0")]
+    [ProducesResponseType(typeof(DefaultResponse<List<CategorySummariesOutput>>), StatusCodes.Status200OK)]
+    public async Task<IResult> CategorySummary(
+        CancellationToken cancellationToken,
+        [FromRoute] Guid? accountId,
+        [FromQuery(Name = "year")] int? year = null,
+        [FromQuery(Name = "month")] int? month = null
+    )
+    {
+        /*
+        var input = new GetCategorySummariesByMonthQuery();
+        if (accountId is not null) input.AccountId = accountId.Value;
+        if (year is not null) input.Year = year.Value;
+        if (month is not null) input.Month = month.Value;
+
+        var output = await mediator.Send(input, cancellationToken);
+
+        return Result(output);
+        */
+        var result = ApplicationResult<CategorySummariesOutput>.Success();
+
+        result.SetData(new CategorySummariesOutput());
+
+        return Result(result);
+    }
+
+    [HttpPost("{accountId:guid}/share")]
+    [MapToApiVersion("1.0")]
+    [ProducesResponseType(typeof(DefaultResponse<object>), StatusCodes.Status200OK)]
+    public async Task<IResult> ShareAccount(
+        CancellationToken cancellationToken,
+        [FromRoute] Guid accountId,
+        [FromBody] ShareInput input
+    )
+    {
+        /*
+        var command = new ShareCommand()
+        {
+            AccountId = accountId,
+            Email = input.Email,
+        };
+
+        var output = await mediator.Send(command, cancellationToken);
+
+        return Result("");
+        */
+        var result = ApplicationResult<object>.Success();
+
+        return Result(result);
     }
 }

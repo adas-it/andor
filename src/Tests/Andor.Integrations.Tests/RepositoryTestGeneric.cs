@@ -1,5 +1,5 @@
 ﻿using Andor.Application.Common.Interfaces;
-using Andor.Domain.SeedWork.Repository.CommandRepository;
+using Andor.Domain.SeedWork.Repositories.CommandRepository;
 using NSubstitute;
 
 namespace Andor.Integrations.Tests;

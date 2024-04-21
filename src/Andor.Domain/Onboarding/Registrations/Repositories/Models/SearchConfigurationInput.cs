@@ -1,4 +1,4 @@
-﻿using Andor.Domain.Entities.Admin.Configurations.ValueObjects;
+﻿using Andor.Domain.Administrations.Configurations.ValueObjects;
 
 namespace Andor.Domain.Onboarding.Registrations.Repositories.Models;
 

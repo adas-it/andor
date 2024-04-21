@@ -1,6 +1,6 @@
 ﻿using Andor.Domain.Validation;
 
-namespace Andor.Domain.Entities.Admin.Configurations.ValueObjects;
+namespace Andor.Domain.Administrations.Configurations.ValueObjects;
 
 public record struct ConfigurationId(Guid Value)
 {

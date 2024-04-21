@@ -1,6 +1,6 @@
 ﻿using Andor.Application.Dto.Administrations.Configurations.Responses;
-using Andor.Domain.Entities.Admin.Configurations.Repository;
-using Andor.Domain.Entities.Admin.Configurations.ValueObjects;
+using Andor.Domain.Administrations.Configurations.Repository;
+using Andor.Domain.Administrations.Configurations.ValueObjects;
 using Mapster;
 using MediatR;
 

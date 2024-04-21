@@ -1,11 +1,11 @@
-﻿using Andor.Domain.Common;
+﻿using Andor.Domain.Administrations.Configurations.Events;
+using Andor.Domain.Administrations.Configurations.ValueObjects;
+using Andor.Domain.Common;
 using Andor.Domain.Common.ValuesObjects;
-using Andor.Domain.Entities.Admin.Configurations.Events;
-using Andor.Domain.Entities.Admin.Configurations.ValueObjects;
 using Andor.Domain.SeedWork;
 using Andor.Domain.Validation;
 
-namespace Andor.Domain.Entities.Admin.Configurations;
+namespace Andor.Domain.Administrations.Configurations;
 
 public class Configuration : AggregateRoot<ConfigurationId>, ISoftDeletableEntity
 {

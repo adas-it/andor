@@ -1,8 +1,8 @@
-﻿using Andor.Domain.Entities.Admin.Configurations;
-using Andor.Domain.Entities.Admin.Configurations.Repository;
-using Andor.Domain.Entities.Admin.Configurations.ValueObjects;
+﻿using Andor.Domain.Administrations.Configurations;
+using Andor.Domain.Administrations.Configurations.Repository;
+using Andor.Domain.Administrations.Configurations.ValueObjects;
 using Andor.Domain.Onboarding.Registrations.Repositories.Models;
-using Andor.Domain.SeedWork.Repository.ISearchableRepository;
+using Andor.Domain.SeedWork.Repositories.ResearchableRepository;
 using Andor.Infrastructure.Repositories.Common;
 using Andor.Infrastructure.Repositories.Context;
 using Microsoft.EntityFrameworkCore;

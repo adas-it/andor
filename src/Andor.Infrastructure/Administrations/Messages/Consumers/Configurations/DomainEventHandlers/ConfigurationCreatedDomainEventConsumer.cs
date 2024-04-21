@@ -1,5 +1,5 @@
 ﻿using Andor.Application.Administrations.Configurations.DomainEventHandlers;
-using Andor.Domain.Entities.Admin.Configurations.Events;
+using Andor.Domain.Administrations.Configurations.Events;
 using MassTransit;
 using MediatR;
 

@@ -1,6 +1,6 @@
 ﻿using Andor.Domain.Communications;
 using Andor.Domain.Communications.ValueObjects;
-using Andor.Domain.SeedWork.Repository.ISearchableRepository;
+using Andor.Domain.SeedWork.Repositories.ResearchableRepository;
 
 namespace Andor.Domain.Communications.Repositories;
 

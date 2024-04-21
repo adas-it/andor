@@ -1,7 +1,7 @@
 ﻿// Ignore Spelling: Keycloak
 
 using Andor.Domain.Administrations.Languages;
-using Andor.Domain.Engagement.Budget.Entities.Currencies;
+using Andor.Domain.Engagement.Budget.Accounts.Currencies;
 using Andor.Domain.Onboarding.Users;
 using System.Net.Mail;
 

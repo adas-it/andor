@@ -1,6 +1,6 @@
 ﻿namespace Andor.Infrastructure.Repositories.Common;
 using Andor.Domain.SeedWork;
-using Andor.Domain.SeedWork.Repository.ISearchableRepository;
+using Andor.Domain.SeedWork.Repositories.ResearchableRepository;
 using Andor.Infrastructure.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;

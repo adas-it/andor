@@ -1,6 +1,6 @@
 ﻿using Andor.Application.Administrations.Configurations.Commands;
-using Andor.Domain.Entities.Admin.Configurations;
-using Andor.Domain.Entities.Admin.Configurations.ValueObjects;
+using Andor.Domain.Administrations.Configurations;
+using Andor.Domain.Administrations.Configurations.ValueObjects;
 using Andor.Infrastructure.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 

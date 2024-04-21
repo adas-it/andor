@@ -1,8 +1,8 @@
 ﻿using Andor.Domain.Administrations.Languages;
 using Andor.Domain.Administrations.Languages.ValueObjects;
-using Andor.Domain.SeedWork.Repository.ISearchableRepository;
+using Andor.Domain.SeedWork.Repositories.ResearchableRepository;
 
-namespace Andor.Domain.Communications.Repositories;
+namespace Andor.Domain.Administrations.Languages.Repositories;
 
 public interface IQueriesLanguageRepository :
     IResearchableRepository<Language, LanguageId, SearchInput>

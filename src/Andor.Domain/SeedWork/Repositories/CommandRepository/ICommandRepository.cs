@@ -1,4 +1,4 @@
-﻿namespace Andor.Domain.SeedWork.Repository.CommandRepository;
+﻿namespace Andor.Domain.SeedWork.Repositories.CommandRepository;
 
 public interface ICommandRepository<TEntity, TEntityId>
     where TEntity : Entity<TEntityId>

@@ -1,6 +1,6 @@
 ﻿namespace Andor.Infrastructure.Administrations.Messaging.Publisher.Configurations.DomainEventHandlersConfig;
 
-using Andor.Domain.Entities.Admin.Configurations.Events;
+using Andor.Domain.Administrations.Configurations.Events;
 using Andor.Infrastructure.Messaging.Publisher;
 using MassTransit;
 

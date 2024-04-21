@@ -1,6 +1,6 @@
 ﻿using Andor.Domain.Administrations.Languages;
 using Andor.Domain.Common.ValuesObjects;
-using Andor.Domain.Engagement.Budget.Entities.Currencies;
+using Andor.Domain.Engagement.Budget.Accounts.Currencies;
 using Andor.Domain.Onboarding.Users.DomainEvents;
 using Andor.Domain.Onboarding.Users.ValueObjects;
 using Andor.Domain.SeedWork;

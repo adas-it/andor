@@ -1,6 +1,6 @@
-﻿using Andor.Domain.Engagement.Budget.Entities.Categories;
-using Andor.Domain.Engagement.Budget.Entities.Categories.ValueObjects;
-using Andor.Domain.Engagement.Budget.Entities.MovementTypes;
+﻿using Andor.Domain.Engagement.Budget.Accounts.Categories;
+using Andor.Domain.Engagement.Budget.Accounts.Categories.ValueObjects;
+using Andor.Domain.Engagement.Budget.FinancialMovements.MovementTypes;
 using Andor.Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

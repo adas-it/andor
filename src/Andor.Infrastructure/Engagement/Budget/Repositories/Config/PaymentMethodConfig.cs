@@ -1,6 +1,6 @@
-﻿using Andor.Domain.Engagement.Budget.Entities.MovementTypes;
-using Andor.Domain.Engagement.Budget.Entities.PaymentMethods;
-using Andor.Domain.Engagement.Budget.Entities.PaymentMethods.ValueObjects;
+﻿using Andor.Domain.Engagement.Budget.Accounts.PaymentMethods;
+using Andor.Domain.Engagement.Budget.Accounts.PaymentMethods.ValueObjects;
+using Andor.Domain.Engagement.Budget.FinancialMovements.MovementTypes;
 using Andor.Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

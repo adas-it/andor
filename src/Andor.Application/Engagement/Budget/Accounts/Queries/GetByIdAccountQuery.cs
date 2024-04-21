@@ -1,7 +1,7 @@
 ﻿using Andor.Application.Dto.Common.Responses;
-using Andor.Application.Dto.Engagement.Budget.Account;
-using Andor.Domain.Engagement.Budget.Entities.Accounts.Repositories;
-using Andor.Domain.Engagement.Budget.Entities.Accounts.ValueObjects;
+using Andor.Application.Dto.Engagement.Budget.Account.Responses;
+using Andor.Domain.Engagement.Budget.Accounts.Accounts.Repositories;
+using Andor.Domain.Engagement.Budget.Accounts.Accounts.ValueObjects;
 using Mapster;
 using MediatR;
 

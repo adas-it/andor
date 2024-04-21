@@ -3,8 +3,8 @@ using Andor.Application.Common.Attributes;
 using Andor.Application.Common.Interfaces;
 using Andor.Application.Common.Models;
 using Andor.Application.Dto.Common.Responses;
-using Andor.Domain.Entities.Admin.Configurations.Repository;
-using Andor.Domain.Entities.Admin.Configurations.ValueObjects;
+using Andor.Domain.Administrations.Configurations.Repository;
+using Andor.Domain.Administrations.Configurations.ValueObjects;
 using FluentValidation;
 using MediatR;
 

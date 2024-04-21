@@ -1,5 +1,5 @@
 ﻿using Andor.Application.Administrations.Configurations.Commands;
-using Andor.Domain.Entities.Admin.Configurations.ValueObjects;
+using Andor.Domain.Administrations.Configurations.ValueObjects;
 using Andor.Infrastructure.Administrations.Repositories.Configurations;
 
 namespace Andor.Integrations.Tests.Administrations.Configurations.Queries;

@@ -1,6 +1,6 @@
-﻿using Andor.Domain.Engagement.Budget.Entities.PaymentMethods;
-using Andor.Domain.Engagement.Budget.Entities.PaymentMethods.ValueObjects;
-using Andor.Domain.Onboarding.Registrations.Repositories;
+﻿using Andor.Domain.Engagement.Budget.Accounts.PaymentMethods;
+using Andor.Domain.Engagement.Budget.Accounts.PaymentMethods.Repositories;
+using Andor.Domain.Engagement.Budget.Accounts.PaymentMethods.ValueObjects;
 using Andor.Infrastructure.Repositories.Common;
 using Andor.Infrastructure.Repositories.Context;
 

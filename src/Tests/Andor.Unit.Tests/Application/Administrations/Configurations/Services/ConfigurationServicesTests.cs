@@ -1,6 +1,6 @@
 ﻿using Andor.Application.Administrations.Configurations.Commands;
 using Andor.Application.Administrations.Configurations.Services;
-using Andor.Domain.Entities.Admin.Configurations.Repository;
+using Andor.Domain.Administrations.Configurations.Repository;
 using Andor.Domain.Onboarding.Registrations.Repositories.Models;
 using Andor.TestsUtil;
 using Andor.Unit.Tests.Domain.Entities.Admin.Configurations;

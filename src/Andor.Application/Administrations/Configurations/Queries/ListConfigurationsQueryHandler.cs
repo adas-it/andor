@@ -1,6 +1,6 @@
 ﻿using Andor.Application.Dto.Administrations.Configurations.Responses;
 using Andor.Application.Dto.Common.Requests;
-using Andor.Domain.Entities.Admin.Configurations.Repository;
+using Andor.Domain.Administrations.Configurations.Repository;
 using Mapster;
 using MediatR;
 
@@ -21,7 +21,7 @@ public class ListConfigurationsQueryHandler(IQueriesConfigurationRepository conf
                 request.PerPage,
                 request.Search,
                 request.Sort,
-                (Domain.SeedWork.Repository.ISearchableRepository.SearchOrder)request.Dir
+                (Domain.SeedWork.Repositories.ResearchableRepository.SearchOrder)request.Dir
             ),
             cancellationToken
         );

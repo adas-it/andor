@@ -1,6 +1,6 @@
 ﻿using Andor.Domain.Common;
 
-namespace Andor.Domain.Entities.Admin.Configurations.ValueObjects;
+namespace Andor.Domain.Administrations.Configurations.ValueObjects;
 
 public record ConfigurationState : Enumeration<int>
 {

@@ -1,6 +1,6 @@
-﻿using Andor.Domain.Engagement.Budget.Entities.SubCategories;
-using Andor.Domain.Engagement.Budget.Entities.SubCategories.ValueObjects;
-using Andor.Domain.Onboarding.Registrations.Repositories;
+﻿using Andor.Domain.Engagement.Budget.Accounts.SubCategories;
+using Andor.Domain.Engagement.Budget.Accounts.SubCategories.Repositories;
+using Andor.Domain.Engagement.Budget.Accounts.SubCategories.ValueObjects;
 using Andor.Infrastructure.Repositories.Common;
 using Andor.Infrastructure.Repositories.Context;
 

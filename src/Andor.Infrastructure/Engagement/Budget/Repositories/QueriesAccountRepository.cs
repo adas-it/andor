@@ -1,8 +1,8 @@
 ﻿using Andor.Application.Common.Models.Authorizations;
-using Andor.Domain.Engagement.Budget.Entities.Accounts;
-using Andor.Domain.Engagement.Budget.Entities.Accounts.Repositories;
-using Andor.Domain.Engagement.Budget.Entities.Accounts.ValueObjects;
-using Andor.Domain.SeedWork.Repository.ISearchableRepository;
+using Andor.Domain.Engagement.Budget.Accounts.Accounts;
+using Andor.Domain.Engagement.Budget.Accounts.Accounts.Repositories;
+using Andor.Domain.Engagement.Budget.Accounts.Accounts.ValueObjects;
+using Andor.Domain.SeedWork.Repositories.ResearchableRepository;
 using Andor.Infrastructure.Repositories.Common;
 using Andor.Infrastructure.Repositories.Context;
 using Microsoft.EntityFrameworkCore;

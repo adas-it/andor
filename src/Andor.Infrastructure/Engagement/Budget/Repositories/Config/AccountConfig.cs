@@ -1,5 +1,5 @@
-﻿using Andor.Domain.Engagement.Budget.Entities.Accounts;
-using Andor.Domain.Engagement.Budget.Entities.Accounts.ValueObjects;
+﻿using Andor.Domain.Engagement.Budget.Accounts.Accounts;
+using Andor.Domain.Engagement.Budget.Accounts.Accounts.ValueObjects;
 using Andor.Domain.Onboarding.Users.ValueObjects;
 using Andor.Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;

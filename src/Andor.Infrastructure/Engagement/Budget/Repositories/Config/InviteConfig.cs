@@ -1,5 +1,5 @@
-﻿using Andor.Domain.Engagement.Budget.Entities.Invites;
-using Andor.Domain.Engagement.Budget.Entities.Invites.ValueObjects;
+﻿using Andor.Domain.Engagement.Budget.Accounts.Invites;
+using Andor.Domain.Engagement.Budget.Accounts.Invites.ValueObjects;
 using Andor.Infrastructure.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

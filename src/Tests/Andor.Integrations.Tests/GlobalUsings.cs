@@ -1,4 +1,3 @@
-global using Andor.Domain.Entities.Admin.Configurations;
 global using Andor.Domain.SeedWork;
 global using Andor.Infrastructure.Repositories.Common;
 global using Andor.Infrastructure.Repositories.Context;

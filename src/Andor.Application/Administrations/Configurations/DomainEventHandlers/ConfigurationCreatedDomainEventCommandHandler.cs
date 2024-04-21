@@ -2,7 +2,7 @@
 
 using Andor.Application.Common.Interfaces;
 using Andor.Application.Dto.Administrations.Configurations.IntegrationsEvents.v1;
-using Andor.Domain.Entities.Admin.Configurations.Events;
+using Andor.Domain.Administrations.Configurations.Events;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;

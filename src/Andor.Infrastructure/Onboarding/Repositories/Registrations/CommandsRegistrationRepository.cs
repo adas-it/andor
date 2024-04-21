@@ -1,5 +1,5 @@
 ﻿using Andor.Domain.Administrations.Languages;
-using Andor.Domain.Engagement.Budget.Entities.Currencies;
+using Andor.Domain.Engagement.Budget.Accounts.Currencies;
 using Andor.Domain.Onboarding.Registrations;
 using Andor.Domain.Onboarding.Registrations.Repositories;
 using Andor.Domain.Onboarding.Registrations.ValueObjects;

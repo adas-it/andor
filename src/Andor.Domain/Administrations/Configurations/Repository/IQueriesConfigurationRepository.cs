@@ -1,8 +1,8 @@
-﻿using Andor.Domain.Entities.Admin.Configurations.ValueObjects;
+﻿using Andor.Domain.Administrations.Configurations.ValueObjects;
 using Andor.Domain.Onboarding.Registrations.Repositories.Models;
-using Andor.Domain.SeedWork.Repository.ISearchableRepository;
+using Andor.Domain.SeedWork.Repositories.ResearchableRepository;
 
-namespace Andor.Domain.Entities.Admin.Configurations.Repository;
+namespace Andor.Domain.Administrations.Configurations.Repository;
 
 public interface IQueriesConfigurationRepository :
     IResearchableRepository<Configuration, ConfigurationId, SearchInput>

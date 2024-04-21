@@ -1,16 +1,16 @@
 ﻿// Ignore Spelling: Upsert
 
+using Andor.Domain.Administrations.Configurations;
 using Andor.Domain.Administrations.Languages;
 using Andor.Domain.Common;
 using Andor.Domain.Communications;
 using Andor.Domain.Communications.Users;
-using Andor.Domain.Engagement.Budget.Entities.Accounts;
-using Andor.Domain.Engagement.Budget.Entities.Categories;
-using Andor.Domain.Engagement.Budget.Entities.Currencies;
-using Andor.Domain.Engagement.Budget.Entities.Invites;
-using Andor.Domain.Engagement.Budget.Entities.PaymentMethods;
-using Andor.Domain.Engagement.Budget.Entities.SubCategories;
-using Andor.Domain.Entities.Admin.Configurations;
+using Andor.Domain.Engagement.Budget.Accounts.Accounts;
+using Andor.Domain.Engagement.Budget.Accounts.Categories;
+using Andor.Domain.Engagement.Budget.Accounts.Currencies;
+using Andor.Domain.Engagement.Budget.Accounts.Invites;
+using Andor.Domain.Engagement.Budget.Accounts.PaymentMethods;
+using Andor.Domain.Engagement.Budget.Accounts.SubCategories;
 using Andor.Domain.Onboarding.Registrations;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
