@@ -4,7 +4,7 @@ using Andor.Domain.Entities.Admin.Configurations.ValueObjects;
 using Andor.Infrastructure.Repositories.Common;
 using Andor.Infrastructure.Repositories.Context;
 
-namespace Andor.Infrastructure.Administrations.Configurations;
+namespace Andor.Infrastructure.Administrations.Repositories.Configurations;
 
 public class CommandsConfigurationRepository(PrincipalContext context) :
     CommandsBaseRepository<Configuration, ConfigurationId>(context),

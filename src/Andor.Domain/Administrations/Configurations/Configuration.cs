@@ -19,31 +19,6 @@ public class Configuration : AggregateRoot<ConfigurationId>, ISoftDeletableEntit
     public bool IsDeleted { get; private set; }
     public ConfigurationState State => GetStatus(IsDeleted, StartDate, ExpireDate);
 
-    public static ConfigurationState GetStatus(bool _isDeleted, DateTime _startDate, DateTime? _expireDate)
-    {
-        if (_isDeleted)
-        {
-            return ConfigurationState.Undefined;
-        }
-
-        if (_startDate > DateTime.UtcNow)
-        {
-            return ConfigurationState.Awaiting;
-        }
-
-        if (_startDate < DateTime.UtcNow && (_expireDate.HasValue is false || _expireDate.Value > DateTime.UtcNow))
-        {
-            return ConfigurationState.Active;
-        }
-
-        if (_expireDate.HasValue && _expireDate.Value < DateTime.UtcNow)
-        {
-            return ConfigurationState.Expired;
-        }
-
-        return ConfigurationState.Undefined;
-    }
-
     private Configuration()
     {
         Id = ConfigurationId.New();
@@ -95,6 +70,32 @@ public class Configuration : AggregateRoot<ConfigurationId>, ISoftDeletableEntit
 
         return (result, entity);
     }
+
+    public static ConfigurationState GetStatus(bool _isDeleted, DateTime _startDate, DateTime? _expireDate)
+    {
+        if (_isDeleted)
+        {
+            return ConfigurationState.Undefined;
+        }
+
+        if (_startDate > DateTime.UtcNow)
+        {
+            return ConfigurationState.Awaiting;
+        }
+
+        if (_startDate < DateTime.UtcNow && (_expireDate.HasValue is false || _expireDate.Value > DateTime.UtcNow))
+        {
+            return ConfigurationState.Active;
+        }
+
+        if (_expireDate.HasValue && _expireDate.Value < DateTime.UtcNow)
+        {
+            return ConfigurationState.Expired;
+        }
+
+        return ConfigurationState.Undefined;
+    }
+
     private void SetValues(
             string name,
             string value,

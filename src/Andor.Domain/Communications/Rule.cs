@@ -7,16 +7,16 @@ namespace Andor.Domain.Communications;
 
 public class Rule : AggregateRoot<RuleId>
 {
-    public string Name { get; private set; } = "";
+    public string Name { get; private set; }
     public ValueObjects.Type Type { get; private set; }
     public DateTime CreatedAt { get; private set; }
-    //private List<Template> PrivateTemplates { get; set; } = [];
     public ICollection<Template> Templates { get; private set; }
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private Rule()
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     {
+        Name = string.Empty;
+        Type = ValueObjects.Type.Undefined;
+        Templates = [];
     }
 
     private DomainResult SetValues(
