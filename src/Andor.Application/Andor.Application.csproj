@@ -18,8 +18,8 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
 </ItemGroup>
   <ItemGroup>
-    <Folder Include="Users\DomainEvents\" />
-    <Folder Include="Users\ValuesObject\" />
+    <Folder Include="Onboarding\Users\DomainEvents\" />
+    <Folder Include="Onboarding\Users\ValuesObject\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Andor.Application.Dto\Andor.Application.Dto.csproj" />
