@@ -9,6 +9,7 @@
   <ItemGroup>
     <Compile Remove="Administrations\Languages\DomainEvents\**" />
     <Compile Remove="Administrations\Languages\Errors\**" />
+<<<<<<< HEAD
     <EmbeddedResource Remove="Administrations\Languages\DomainEvents\**" />
     <EmbeddedResource Remove="Administrations\Languages\Errors\**" />
     <None Remove="Administrations\Languages\DomainEvents\**" />
@@ -23,6 +24,21 @@
     <Folder Include="Engagement\Budget\FinancialMovements\FinancialMovements\DomainEvents\" />
     <Folder Include="Engagement\Budget\FinancialMovements\FinancialMovements\Errors\" />
     <Folder Include="Onboarding\Users\Repositories\" />
+=======
+    <Compile Remove="Administrations\Languages\Repositories\**" />
+    <EmbeddedResource Remove="Administrations\Languages\DomainEvents\**" />
+    <EmbeddedResource Remove="Administrations\Languages\Errors\**" />
+    <EmbeddedResource Remove="Administrations\Languages\Repositories\**" />
+    <None Remove="Administrations\Languages\DomainEvents\**" />
+    <None Remove="Administrations\Languages\Errors\**" />
+    <None Remove="Administrations\Languages\Repositories\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Engagement\Budget\Entities\Categories\DomainEvents\" />
+    <Folder Include="Engagement\Budget\Entities\Categories\Repositories\" />
+    <Folder Include="Engagement\Budget\Entities\Currencies\Repositories\" />
+>>>>>>> main
   </ItemGroup>
 
 </Project>
