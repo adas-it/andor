@@ -1,4 +1,5 @@
 ﻿namespace Andor.Infrastructure.Repositories.Common;
+
 using Andor.Domain.SeedWork;
 using Andor.Domain.SeedWork.Repositories.ResearchableRepository;
 using Andor.Infrastructure.Repositories.Context;
@@ -11,6 +12,7 @@ public class QueryHelper<TEntity, TEntityId>(PrincipalContext context)
     where TEntityId : IEquatable<TEntityId>
 {
     protected readonly DbSet<TEntity> _dbSet = context.Set<TEntity>();
+    protected Expression<Func<TEntity, bool>>? loggedUserFilter;
 
     public virtual async Task<TEntity?> GetByIdAsync(TEntityId id, CancellationToken cancellationToken)
     => await _dbSet
@@ -18,7 +20,16 @@ public class QueryHelper<TEntity, TEntityId>(PrincipalContext context)
         .FirstOrDefaultAsync(x => x.Id.Equals(id), cancellationToken);
 
     protected virtual IQueryable<TEntity> GetMany(Expression<Func<TEntity, bool>> where)
-        => _dbSet.AsNoTracking().Where(where);
+    {
+        var query = _dbSet.AsNoTracking();
+
+        if (loggedUserFilter is not null)
+        {
+            query = query.Where(loggedUserFilter);
+        }
+
+        return query.Where(where);
+    }
 
     protected virtual IQueryable<TEntity> GetManyPaginated(Expression<Func<TEntity, bool>> where,
         string? orderBy,
@@ -37,6 +48,11 @@ public class QueryHelper<TEntity, TEntityId>(PrincipalContext context)
         out int totalPages)
     {
         var query = _dbSet.AsNoTracking();
+
+        if (loggedUserFilter is not null)
+        {
+            query = query.Where(loggedUserFilter);
+        }
 
         if (where != null)
         {
@@ -81,7 +97,16 @@ public class QueryHelper<TEntity, TEntityId>(PrincipalContext context)
         int? perPage,
         out int total)
     {
-        var query = _dbSet.AsNoTracking().Select(project);
+        IQueryable<TOutput> query;
+
+        if (loggedUserFilter is not null)
+        {
+            query = _dbSet.AsNoTracking().Where(loggedUserFilter).Select(project);
+        }
+        else
+        {
+            query = _dbSet.AsNoTracking().Select(project);
+        }
 
         if (where != null)
         {

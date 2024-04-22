@@ -4,7 +4,7 @@ public record PaginatedListInput
 {
     public PaginatedListInput()
     {
-        Page = 1;
+        Page = 0;
         PerPage = 10;
         Dir = SearchOrder.Asc;
     }

@@ -5,19 +5,21 @@ using Andor.Domain.Engagement.Budget.Accounts.Accounts.ValueObjects;
 using Andor.Domain.SeedWork.Repositories.ResearchableRepository;
 using Andor.Infrastructure.Repositories.Common;
 using Andor.Infrastructure.Repositories.Context;
-using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace Andor.Infrastructure.Engagement.Budget.Repositories;
 
-public class QueriesAccountRepository(PrincipalContext context,
-        ICurrentUserService _currentUserService) :
-        QueryHelper<Account, AccountId>(context), IQueriesAccountRepository
+public class QueriesAccountRepository :
+        QueryHelper<Account, AccountId>, IQueriesAccountRepository
 {
-    public override Task<Account?> GetByIdAsync(AccountId id, CancellationToken cancellationToken)
-        => Task.FromResult(
-            _dbSet.AsNoTracking()
-            .FirstOrDefault(x => x.Id == id && x.Users.Any(z => z.UserId == _currentUserService.User.UserId)));
+    public QueriesAccountRepository(PrincipalContext context,
+        ICurrentUserService currentUserService) : base(context)
+    {
+        _currentUserService = currentUserService;
+        loggedUserFilter = x => x.Users.Any(z => z.UserId == _currentUserService.User.UserId);
+    }
+
+    private readonly ICurrentUserService _currentUserService;
 
     public Task<SearchOutput<Account>> SearchAsync(SearchInput input, CancellationToken cancellationToken)
     {
