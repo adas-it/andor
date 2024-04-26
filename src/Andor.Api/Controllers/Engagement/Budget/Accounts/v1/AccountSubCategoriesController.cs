@@ -2,7 +2,9 @@
 using Andor.Application.Dto.Common.Responses;
 using Andor.Application.Dto.Engagement.Budget.SubCategories.Requests;
 using Andor.Application.Dto.Engagement.Budget.SubCategories.Responses;
+using Andor.Application.Engagement.Budget.Accounts.Queries;
 using Asp.Versioning;
+using MediatR;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -11,10 +13,10 @@ namespace Andor.Api.Controllers.Engagement.Budget.Accounts.v1;
 
 [ApiController]
 [ApiVersion("1.0")]
-[Route("v{version:apiVersion}/[controller]")]
+[Route("v{version:apiVersion}/account")]
 [Produces(MediaTypeNames.Application.Json)]
 [Consumes(MediaTypeNames.Application.Json)]
-public class AccountSubCategoriesController : BaseController
+public class AccountSubCategoriesController(IMediator mediator) : BaseController
 {
     [HttpPost("{accountId:guid}/sub-category")]
     [MapToApiVersion("1.0")]
@@ -148,33 +150,20 @@ public class AccountSubCategoriesController : BaseController
         return Result(result);
     }
 
-    [HttpGet("{accountId:guid}/sub-category/{id:guid}")]
+    [HttpGet("{accountId:guid}/sub-category/{subCategoryId:guid}")]
     [MapToApiVersion("1.0")]
     [ProducesResponseType(typeof(DefaultResponse<SubCategoryOutput>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DefaultResponse<object>), StatusCodes.Status400BadRequest)]
     public async Task<IResult> GetById(
         [FromRoute] Guid accountId,
-        [FromRoute] Guid id,
+        [FromRoute] Guid subCategoryId,
         CancellationToken cancellationToken
     )
     {
-        /*
-        CheckIdIfIdIsNull(id);
-
-        if (notifier.Erros.Any())
-        {
-            return Result<SubCategoryOutput>(null!);
-        }
-
-        var output = await mediator.Send(new GetByIdSubCategoryQuery(id), cancellationToken);
+        var output = await mediator.Send(new GetByAccountIdAndSubCategoryIdQuery(accountId, subCategoryId)
+            , cancellationToken);
 
         return Result(output);
-        */
-        var result = ApplicationResult<SubCategoryOutput>.Success();
-
-        result.SetData(new SubCategoryOutput());
-
-        return Result(result);
     }
 
     [HttpGet("{accountId:guid}/sub-category")]
@@ -191,22 +180,17 @@ public class AccountSubCategoriesController : BaseController
         [FromQuery(Name = "category")] Guid? category = null
     )
     {
-        /*
         var input = new ListSubCategoriesQuery();
         if (page is not null) input.Page = page.Value;
         if (perPage is not null) input.PerPage = perPage.Value;
         if (!string.IsNullOrWhiteSpace(search)) input.Search = search;
         if (!string.IsNullOrWhiteSpace(sort)) input.Sort = sort;
         if (dir is not null) input.Dir = dir.Value;
-        if (category is not null) input.Category = category.Value;
+        if (category is not null) input.CategoryId = category.Value;
+        input.AccountId = accountId;
 
         var output = await mediator.Send(input, cancellationToken);
+
         return Result(output);
-        */
-        var result = ApplicationResult<ListSubCategoriesOutput>.Success();
-
-        result.SetData(new ListSubCategoriesOutput(0, 0, 0, null));
-
-        return Result(result);
     }
 }

@@ -13,13 +13,10 @@ public class QueriesAccountRepository :
         QueryHelper<Account, AccountId>, IQueriesAccountRepository
 {
     public QueriesAccountRepository(PrincipalContext context,
-        ICurrentUserService currentUserService) : base(context)
+        ICurrentUserService _currentUserService) : base(context)
     {
-        _currentUserService = currentUserService;
         loggedUserFilter = x => x.Users.Any(z => z.UserId == _currentUserService.User.UserId);
     }
-
-    private readonly ICurrentUserService _currentUserService;
 
     public Task<SearchOutput<Account>> SearchAsync(SearchInput input, CancellationToken cancellationToken)
     {

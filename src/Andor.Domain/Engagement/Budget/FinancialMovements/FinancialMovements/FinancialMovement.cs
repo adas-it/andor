@@ -1,4 +1,5 @@
 ﻿using Andor.Domain.Common.ValuesObjects;
+using Andor.Domain.Engagement.Budget.Accounts.Accounts;
 using Andor.Domain.Engagement.Budget.Accounts.Accounts.ValueObjects;
 using Andor.Domain.Engagement.Budget.Accounts.PaymentMethods;
 using Andor.Domain.Engagement.Budget.Accounts.SubCategories;
@@ -18,7 +19,8 @@ public class FinancialMovement : Entity<FinancialMovementId>
     public MovementType Type { get; private set; }
     public MovementStatus Status { get; private set; }
     public PaymentMethod PaymentMethod { get; private set; }
-    public Guid AccountId { get; private set; }
+    public AccountId AccountId { get; private set; }
+    public Account Account { get; private set; }
     public decimal Value { get; private set; }
     public bool IsDeleted { get; private set; }
 

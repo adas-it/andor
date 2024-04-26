@@ -45,6 +45,9 @@ public class AccountCategoryConfig : IEntityTypeConfiguration<AccountCategory>
 
         entity.HasOne(k => k.Account).WithMany(x => x.Categories).HasForeignKey(x => x.AccountId);
         entity.HasOne(k => k.Category);
+
+        entity.Navigation(x => x.Category).AutoInclude();
+        entity.Navigation(x => x.Account).AutoInclude();
     }
 }
 public class AccountSubCategoryConfig : IEntityTypeConfiguration<AccountSubCategory>
@@ -59,6 +62,9 @@ public class AccountSubCategoryConfig : IEntityTypeConfiguration<AccountSubCateg
 
         entity.HasOne(k => k.Account).WithMany(x => x.SubCategories).HasForeignKey(x => x.AccountId);
         entity.HasOne(k => k.SubCategory);
+
+        entity.Navigation(x => x.SubCategory).AutoInclude();
+        entity.Navigation(x => x.Account).AutoInclude();
     }
 }
 public class AccountPaymentMethodConfig : IEntityTypeConfiguration<AccountPaymentMethod>

@@ -2,8 +2,10 @@
 using Andor.Application.Dto.Common.Responses;
 using Andor.Application.Dto.Engagement.Budget.Categories.Requests;
 using Andor.Application.Dto.Engagement.Budget.Categories.Response;
+using Andor.Application.Engagement.Budget.Accounts.Queries;
 using Andor.Domain.Engagement.Budget.Accounts.Accounts.ValueObjects;
 using Asp.Versioning;
+using MediatR;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -12,12 +14,11 @@ namespace Andor.Api.Controllers.Engagement.Budget.Accounts.v1;
 
 [ApiController]
 [ApiVersion("1.0")]
-[Route("v{version:apiVersion}/[controller]")]
+[Route("v{version:apiVersion}/account")]
 [Produces(MediaTypeNames.Application.Json)]
 [Consumes(MediaTypeNames.Application.Json)]
-public class AccountCategoriesController : BaseController
+public class AccountCategoriesController(IMediator mediator) : BaseController
 {
-
     [HttpPost("{accountId:guid}/category")]
     public async Task<IResult> Create(
         [FromBody] CategoryInput apiDto,
@@ -143,32 +144,20 @@ public class AccountCategoriesController : BaseController
         return Result(result);
     }
 
-    [HttpGet("{accountId:guid}/category/{id:guid}")]
+    [HttpGet("{accountId:guid}/category/{categoryId:guid}")]
     [MapToApiVersion("1.0")]
     [ProducesResponseType(typeof(DefaultResponse<CategoryOutput>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DefaultResponse<object>), StatusCodes.Status400BadRequest)]
     public async Task<IResult> GetById(
-        [FromRoute] Guid id,
+        [FromRoute] Guid accountId,
+        [FromRoute] Guid categoryId,
         CancellationToken cancellationToken
     )
     {
-        /*
-        CheckIdIfIdIsNull(id);
-
-        if (notifier.Erros.Any())
-        {
-            return Result<object>(null!);
-        }
-
-        var output = await mediator.Send(new GetByIdCategoryQuery(id), cancellationToken);
+        var output = await mediator.Send(new GetByAccountIdAndCategoryIdQuery(
+            accountId, categoryId), cancellationToken);
 
         return Result(output);
-        */
-        var result = ApplicationResult<CategoryOutput>.Success();
-
-        result.SetData(new CategoryOutput());
-
-        return Result(result);
     }
 
     [HttpGet("{accountId:guid}/category")]
@@ -181,24 +170,18 @@ public class AccountCategoriesController : BaseController
         [FromQuery] string? search = null,
         [FromQuery] string? sort = null,
         [FromQuery] SearchOrder? dir = null,
-        [FromQuery(Name = "type")] string? type = null
+        [FromQuery(Name = "type")] int? type = null
     )
     {
-        /*
         var input = new ListCategoriesQuery();
         if (page is not null) input.Page = page.Value;
         if (perPage is not null) input.PerPage = perPage.Value;
         if (!string.IsNullOrWhiteSpace(search)) input.Search = search;
         if (!string.IsNullOrWhiteSpace(sort)) input.Sort = sort;
         if (dir is not null) input.Dir = dir.Value;
-        if (type is not null) input.Type = type;
+        if (type is not null) input.Type = type.Value;
 
-        var output = await mediator.Send(input, cancellationToken);
-        return Result(output);
-        */
-        var result = ApplicationResult<ListCategoriesOutput>.Success();
-
-        result.SetData(new ListCategoriesOutput(0, 0, 0, null));
+        var result = await mediator.Send(input, cancellationToken);
 
         return Result(result);
     }

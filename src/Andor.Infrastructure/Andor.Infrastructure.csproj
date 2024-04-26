@@ -28,7 +28,6 @@
 
   <ItemGroup>
     <Folder Include="Engagement\Budget\Messages\Producers\" />
-    <Folder Include="Engagement\Budget\Repositories\Config\" />
     <Folder Include="Migrations\" />
     <Folder Include="Onboarding\Repositories\Users\" />
   </ItemGroup>

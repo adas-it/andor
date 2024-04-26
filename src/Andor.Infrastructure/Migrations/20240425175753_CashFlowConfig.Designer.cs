@@ -3,6 +3,7 @@ using System;
 using Andor.Infrastructure.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Andor.Infrastructure.Migrations
 {
     [DbContext(typeof(PrincipalContext))]
-    partial class PrincipalContextModelSnapshot : ModelSnapshot
+    [Migration("20240425175753_CashFlowConfig")]
+    partial class CashFlowConfig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -466,50 +469,6 @@ namespace Andor.Infrastructure.Migrations
                     b.ToTable("CashFlow", "Engagement");
                 });
 
-            modelBuilder.Entity("Andor.Domain.Engagement.Budget.FinancialMovements.FinancialMovements.FinancialMovement", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(250)
-                        .HasColumnType("character varying(250)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid>("PaymentMethodId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("SubCategoryId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("Value")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
-
-                    b.HasIndex("PaymentMethodId");
-
-                    b.HasIndex("SubCategoryId");
-
-                    b.ToTable("FinancialMovement", "Engagement");
-                });
-
             modelBuilder.Entity("Andor.Domain.Onboarding.Registrations.Registration", b =>
                 {
                     b.Property<Guid>("Id")
@@ -865,33 +824,6 @@ namespace Andor.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Account");
-                });
-
-            modelBuilder.Entity("Andor.Domain.Engagement.Budget.FinancialMovements.FinancialMovements.FinancialMovement", b =>
-                {
-                    b.HasOne("Andor.Domain.Engagement.Budget.Accounts.Accounts.Account", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Andor.Domain.Engagement.Budget.Accounts.PaymentMethods.PaymentMethod", "PaymentMethod")
-                        .WithMany()
-                        .HasForeignKey("PaymentMethodId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Andor.Domain.Engagement.Budget.Accounts.SubCategories.SubCategory", "SubCategory")
-                        .WithMany()
-                        .HasForeignKey("SubCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
-
-                    b.Navigation("PaymentMethod");
-
-                    b.Navigation("SubCategory");
                 });
 
             modelBuilder.Entity("Andor.Domain.Onboarding.Registrations.Registration", b =>

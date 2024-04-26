@@ -5,6 +5,7 @@ using Andor.Application.Dto.Engagement.Budget.Account.Responses;
 using Andor.Application.Dto.Onboarding.Registrations.Requests;
 using Andor.Application.Dto.Onboarding.Registrations.Responses;
 using Andor.Application.Engagement.Budget.Accounts.Queries;
+using Andor.Application.Engagement.Budget.MonthlyCash.Queries;
 using Andor.Application.Onboarding.Registrations.Commands;
 using Asp.Versioning;
 using Mapster;
@@ -16,7 +17,7 @@ namespace Andor.Api.Controllers.Onboarding.Registrations.v1;
 
 [ApiController]
 [ApiVersion("1.0")]
-[Route("v{version:apiVersion}/[controller]")]
+[Route("v{version:apiVersion}/account")]
 [Produces(MediaTypeNames.Application.Json)]
 [Consumes(MediaTypeNames.Application.Json)]
 public class AccountController(IMediator mediator) : BaseController
@@ -91,7 +92,6 @@ public class AccountController(IMediator mediator) : BaseController
         [FromQuery] int? month = null
     )
     {
-        /*
         GetCashFlowByMonthQuery input = new();
         input.AccountId = accountId;
         input.Year = year ?? DateTime.UtcNow.Year;
@@ -100,12 +100,6 @@ public class AccountController(IMediator mediator) : BaseController
         var output = await mediator.Send(input, cancellationToken);
 
         return Result(output);
-        */
-        var result = ApplicationResult<CashFlowOutput>.Success();
-
-        result.SetData(new CashFlowOutput());
-
-        return Result(result);
     }
 
     [HttpGet("{accountId:guid}/financial-summary")]
@@ -118,7 +112,6 @@ public class AccountController(IMediator mediator) : BaseController
         [FromQuery(Name = "month")] int? month = null
     )
     {
-        /*
         var input = new GetFinancialSummariesByMonthQuery();
         if (accountId is not null) input.AccountId = accountId.Value;
         if (year is not null) input.Year = year.Value;
@@ -127,12 +120,6 @@ public class AccountController(IMediator mediator) : BaseController
         var output = await mediator.Send(input, cancellationToken);
 
         return Result(output);
-        */
-        var result = ApplicationResult<FinancialSummariesOutput>.Success();
-
-        result.SetData(new FinancialSummariesOutput());
-
-        return Result(result);
     }
 
     [HttpGet("{accountId:guid}/category-summary")]
@@ -145,7 +132,6 @@ public class AccountController(IMediator mediator) : BaseController
         [FromQuery(Name = "month")] int? month = null
     )
     {
-        /*
         var input = new GetCategorySummariesByMonthQuery();
         if (accountId is not null) input.AccountId = accountId.Value;
         if (year is not null) input.Year = year.Value;
@@ -154,12 +140,6 @@ public class AccountController(IMediator mediator) : BaseController
         var output = await mediator.Send(input, cancellationToken);
 
         return Result(output);
-        */
-        var result = ApplicationResult<CategorySummariesOutput>.Success();
-
-        result.SetData(new CategorySummariesOutput());
-
-        return Result(result);
     }
 
     [HttpPost("{accountId:guid}/share")]

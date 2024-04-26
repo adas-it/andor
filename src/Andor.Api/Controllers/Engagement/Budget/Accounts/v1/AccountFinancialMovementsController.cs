@@ -11,7 +11,7 @@ namespace Andor.Api.Controllers.Engagement.Budget.Accounts.v1;
 
 [ApiController]
 [ApiVersion("1.0")]
-[Route("v{version:apiVersion}/[controller]")]
+[Route("v{version:apiVersion}/account")]
 [Produces(MediaTypeNames.Application.Json)]
 [Consumes(MediaTypeNames.Application.Json)]
 public class AccountFinancialMovementsController : BaseController

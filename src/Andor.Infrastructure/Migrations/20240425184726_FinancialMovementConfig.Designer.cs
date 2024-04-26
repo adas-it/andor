@@ -3,6 +3,7 @@ using System;
 using Andor.Infrastructure.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Andor.Infrastructure.Migrations
 {
     [DbContext(typeof(PrincipalContext))]
-    partial class PrincipalContextModelSnapshot : ModelSnapshot
+    [Migration("20240425184726_FinancialMovementConfig")]
+    partial class FinancialMovementConfig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

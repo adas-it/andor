@@ -19,6 +19,7 @@ public class SubCategory : AggregateRoot<SubCategoryId>
     public Category? Category { get; private set; }
     public PaymentMethodId? DefaultPaymentMethodId { get; private set; }
     public PaymentMethod? DefaultPaymentMethod { get; private set; }
+
     private DomainResult SetValues(SubCategoryId id,
         string name)
     {

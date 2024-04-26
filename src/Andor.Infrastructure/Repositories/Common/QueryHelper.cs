@@ -37,15 +37,33 @@ public class QueryHelper<TEntity, TEntityId>(PrincipalContext context)
         int page,
         int perPage,
         out int totalPages)
-        => GetManyPaginated(where, orderBy, order, page, perPage, null!, out totalPages);
+        => Extension.GetManyPaginated(
+            _dbSet, loggedUserFilter, where, orderBy, order, page, perPage, null!, out totalPages);
+}
 
-    protected virtual IQueryable<TEntity> GetManyPaginated(Expression<Func<TEntity, bool>> where,
-        string? orderBy,
-        SearchOrder order,
-        int page,
-        int perPage,
-        Expression<Func<TEntity, object>> include,
-        out int totalPages)
+public static class Extension
+{
+    public static IQueryable<TEntity> GetManyPaginated<TDbSet, TEntity>(
+        TDbSet _dbSet,
+        Expression<Func<TEntity, bool>>? loggedUserFilter,
+        Expression<Func<TEntity, bool>> where,
+        string? orderBy, SearchOrder order, int page, int perPage, out int totalPages)
+        where TDbSet : DbSet<TEntity>
+        where TEntity : class
+    {
+        return GetManyPaginated<DbSet<TEntity>, TEntity>(
+            _dbSet, loggedUserFilter, where, orderBy, order, page, perPage, null!, out totalPages);
+
+    }
+
+    public static IQueryable<TEntity> GetManyPaginated<TDbSet, TEntity>(
+        TDbSet _dbSet,
+        Expression<Func<TEntity, bool>>? loggedUserFilter,
+        Expression<Func<TEntity, bool>> where,
+        string? orderBy, SearchOrder order, int page, int perPage,
+        Expression<Func<TEntity, object>> include, out int totalPages)
+        where TDbSet : DbSet<TEntity>
+        where TEntity : class
     {
         var query = _dbSet.AsNoTracking();
 
@@ -77,10 +95,6 @@ public class QueryHelper<TEntity, TEntityId>(PrincipalContext context)
                     query = query.OrderByDescending(ToLambda<TEntity>(field.Name));
             }
         }
-        else
-        {
-            query = query.OrderBy(z => z.Id);
-        }
 
         if (include != null)
         {
@@ -90,12 +104,17 @@ public class QueryHelper<TEntity, TEntityId>(PrincipalContext context)
         return query.Skip(page * perPage).Take(perPage);
     }
 
-    protected virtual IQueryable<TOutput> GetManyPaginated<TOutput>(Func<IQueryable<TOutput>>? where,
+    public static IQueryable<TOutput> GetManyPaginated<TOutput, TDbSet, TEntity, TEntityId>(
+        TDbSet _dbSet,
+        Expression<Func<TEntity, bool>>? loggedUserFilter,
+        Func<IQueryable<TOutput>>? where,
         Dictionary<string, SearchOrder>? orderBy,
         Expression<Func<TEntity, TOutput>> project,
         int? page,
         int? perPage,
         out int total)
+        where TDbSet : DbSet<TEntity>
+        where TEntity : class
     {
         IQueryable<TOutput> query;
 
@@ -141,9 +160,9 @@ public class QueryHelper<TEntity, TEntityId>(PrincipalContext context)
         return query;
     }
 
-    private static Expression<Func<TProp, object>> ToLambda<TProp>(string propertyName)
+    public static Expression<Func<TProp, object>> ToLambda<TProp>(string propertyName)
     {
-        var parameter = Expression.Parameter(typeof(TEntity));
+        var parameter = Expression.Parameter(typeof(TProp));
         var property = Expression.Property(parameter, propertyName);
         var propAsObject = Expression.Convert(property, typeof(object));
 
