@@ -1,5 +1,5 @@
 ﻿using Andor.Application.Dto.Communications.IntegrationsEvents.v1;
-using Andor.Infrastructure.Messaging.Publisher;
+using Andor.Infrastructure.Messaging.Producers;
 using MassTransit;
 
 namespace Andor.Infrastructure.Communication.Messages.Producers;

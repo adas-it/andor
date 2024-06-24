@@ -123,4 +123,32 @@ public class Account : AggregateRoot<AccountId>
 
         return (result, entity);
     }
+
+    public (DomainResult, Account?) SetFirstMovement(DateTime? firstMovement)
+    {
+        var result = SetValues(Id, Name, Description, Currency, Deleted, firstMovement, LastMovement);
+
+        if (result.IsFailure)
+        {
+            return (result, null);
+        }
+
+        //RaiseDomainEvent(AccountFirstMovementSetDomainEvent.FromAggregator(this));
+
+        return (result, this);
+    }
+
+    public (DomainResult, Account?) SetLastMovement(DateTime? lastMovement)
+    {
+        var result = SetValues(Id, Name, Description, Currency, Deleted, FirstMovement, lastMovement);
+
+        if (result.IsFailure)
+        {
+            return (result, null);
+        }
+
+        //RaiseDomainEvent(AccountLastMovementSetDomainEvent.FromAggregator(this));
+
+        return (result, this);
+    }
 }

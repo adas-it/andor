@@ -1,8 +1,8 @@
-﻿using Andor.Infrastructure.Engagement.Budget.Messages.Consumers.IntegrationEventHandlers;
-using Andor.Infrastructure.Messaging.Publisher;
+﻿using Andor.Infrastructure.Engagement.Budget.Messages.Consumers.Accounts.IntegrationEventHandlers;
+using Andor.Infrastructure.Messaging.Producers;
 using MassTransit;
 
-namespace Andor.Infrastructure.Engagement.Budget.Messages;
+namespace Andor.Infrastructure.Engagement.Budget.Messages.Consumers;
 
 public static class BudgetConsumerIntegrationEventHandler
 {

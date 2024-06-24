@@ -7,7 +7,7 @@ using Andor.Domain.SeedWork.Repositories.ResearchableRepository;
 namespace Andor.Domain.Engagement.Budget.Accounts.Accounts.Repositories;
 
 public interface IQueriesFinancialMovementRepository :
-    IResearchableRepository<FinancialMovement, FinancialMovementId, SearchInput>
+    IResearchableRepository<FinancialMovement, FinancialMovementId, SearchInputMovement>
 {
     Task<List<FinancialMovement>> GetAllFinancialMovementsByMonth(
         AccountId accountId,

@@ -22,6 +22,7 @@ public class SubCategoryConfig : IEntityTypeConfiguration<SubCategory>
         entity.HasOne(k => k.DefaultPaymentMethod).WithMany(x => x.SubCategories).HasForeignKey(x => x.DefaultPaymentMethodId);
 
         entity.Navigation(x => x.Category).AutoInclude();
+        entity.Navigation(x => x.DefaultPaymentMethod).AutoInclude();
     }
 
     public static ValueConverter<SubCategoryId, Guid> GetSubCategoryIdConverter()

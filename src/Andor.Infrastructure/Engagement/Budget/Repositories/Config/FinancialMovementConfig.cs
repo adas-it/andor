@@ -24,10 +24,17 @@ public record FinancialMovementConfig : IEntityTypeConfiguration<FinancialMoveme
         entity.Property(k => k.Status).HasConversion(GetMovementStatusConverter());
         entity.Property(k => k.Type).HasConversion(GetMovementTypeConverter());
 
+        entity.HasOne(k => k.SubCategory).WithMany().HasForeignKey(x => x.SubCategoryId);
+        entity.HasOne(k => k.PaymentMethod).WithMany().HasForeignKey(x => x.PaymentMethodId);
+
         entity.HasOne(k => k.Account)
             .WithMany()
             .HasForeignKey(k => k.AccountId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        entity.Navigation(x => x.PaymentMethod).AutoInclude();
+        entity.Navigation(x => x.SubCategory).AutoInclude();
+        entity.Navigation(x => x.Account).AutoInclude();
     }
 
     public static ValueConverter<FinancialMovementId, Guid> GetFinancialMovementIdConverter()

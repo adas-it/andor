@@ -43,13 +43,15 @@ public class QueriesAccountPaymentMethodRepository : IQueriesAccountPaymentMetho
 
     public Task<SearchOutput<PaymentMethod>> SearchAsync(SearchInputAccountPayment input, CancellationToken cancellationToken)
     {
-        Expression<Func<AccountPaymentMethod, bool>> where = x => x.PaymentMethod.Type == input.Type
-        && x.AccountId == input.AccountId;
+        List<Expression<Func<AccountPaymentMethod, bool>>> where = [];
+
+        where.Add(x => x.PaymentMethod.Type == input.Type);
+        where.Add(x => x.AccountId == input.AccountId);
 
         if (!string.IsNullOrWhiteSpace(input.Search))
-            where = x => x.PaymentMethod.Name.Contains(input.Search, StringComparison.CurrentCultureIgnoreCase)
-                && x.PaymentMethod.Type == input.Type
-                && x.AccountId == input.AccountId;
+        {
+            where.Add(x => x.PaymentMethod.Name.Contains(input.Search, StringComparison.CurrentCultureIgnoreCase));
+        }
 
         var items = Extension.GetManyPaginated(
             _dbSet,

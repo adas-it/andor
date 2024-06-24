@@ -51,9 +51,10 @@ public class QueriesCashFlowRepository :
         return null;
     }
 
-    public Task<CashFlow?> GetCurrentOrPreviousCashFlowByAccountIdAsync(AccountId accountId, Year year, Month month, CancellationToken cancellationToken)
-        => _dbSet.OrderByDescending(x => x.Year).ThenByDescending(x => x.Month)
+    public async Task<CashFlow?> GetCurrentOrPreviousCashFlowByAccountIdAsync(AccountId accountId, Year year, Month month, CancellationToken cancellationToken)
+        => await _dbSet.OrderByDescending(x => x.Year).ThenByDescending(x => x.Month)
         .Where(loggedUserFilter)
+        .AsNoTracking()
         .FirstOrDefaultAsync(x => x.AccountId == accountId &&
             ((x.Year == year && x.Month <= month) || (x.Year < year)), cancellationToken);
 

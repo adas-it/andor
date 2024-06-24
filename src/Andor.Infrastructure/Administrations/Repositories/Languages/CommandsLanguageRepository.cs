@@ -4,7 +4,7 @@ using Andor.Domain.Administrations.Languages.ValueObjects;
 using Andor.Infrastructure.Repositories.Common;
 using Andor.Infrastructure.Repositories.Context;
 
-namespace Andor.Infrastructure.Administrations.Repositories.Configurations;
+namespace Andor.Infrastructure.Administrations.Repositories.Languages;
 
 public class CommandsLanguageRepository(PrincipalContext context) :
     CommandsBaseRepository<Language, LanguageId>(context),

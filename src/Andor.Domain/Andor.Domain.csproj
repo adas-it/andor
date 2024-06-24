@@ -17,9 +17,7 @@
 
   <ItemGroup>
     <Folder Include="Engagement\Budget\Accounts\Categories\DomainEvents\" />
-    <Folder Include="Engagement\Budget\FinancialMovements\CashFlow\DomainEvents\" />
     <Folder Include="Engagement\Budget\FinancialMovements\CashFlow\Errors\" />
-    <Folder Include="Engagement\Budget\FinancialMovements\FinancialMovements\DomainEvents\" />
     <Folder Include="Engagement\Budget\FinancialMovements\FinancialMovements\Errors\" />
     <Folder Include="Onboarding\Users\Repositories\" />
   </ItemGroup>

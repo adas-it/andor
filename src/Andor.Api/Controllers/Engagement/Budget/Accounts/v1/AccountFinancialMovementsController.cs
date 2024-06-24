@@ -2,7 +2,11 @@
 using Andor.Application.Dto.Common.Responses;
 using Andor.Application.Dto.Engagement.Budget.FinancialMovements.Response;
 using Andor.Application.Dto.Engagement.Budget.FinancialMovements.Resquests;
+using Andor.Application.Engagement.Budget.Accounts.Queries;
+using Andor.Application.Engagement.Budget.FinancialMovements.Commands;
 using Asp.Versioning;
+using Mapster;
+using MediatR;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -14,7 +18,7 @@ namespace Andor.Api.Controllers.Engagement.Budget.Accounts.v1;
 [Route("v{version:apiVersion}/account")]
 [Produces(MediaTypeNames.Application.Json)]
 [Consumes(MediaTypeNames.Application.Json)]
-public class AccountFinancialMovementsController : BaseController
+public class AccountFinancialMovementsController(IMediator _mediator) : BaseController
 {
     [HttpPost("{accountId:guid}/financial-movement")]
     [MapToApiVersion("1.0")]
@@ -27,26 +31,14 @@ public class AccountFinancialMovementsController : BaseController
         CancellationToken cancellationToken
     )
     {
-        /*
-        if (apiDto == null)
-        {
-            return UnprocessableEntity(new DefaultResponse<object>());
-        }
-
         var entity = apiDto.Adapt<RegisterFinancialMovementCommand>() with
         {
             AccountId = accountId
         };
 
-        var output = await mediator.Send(entity, cancellationToken);
+        var output = await _mediator.Send(entity, cancellationToken);
 
         return Result(output);
-        */
-        var result = ApplicationResult<FinancialMovementOutput>.Success();
-
-        result.SetData(new FinancialMovementOutput());
-
-        return Result(result);
     }
 
     [HttpPatch("{accountId:guid}/financial-movement/{id:guid}")]
@@ -102,27 +94,14 @@ public class AccountFinancialMovementsController : BaseController
         CancellationToken cancellationToken
     )
     {
-        /*
-        CheckIdIfIdIsNull(id);
-
-        if (notifier.Erros.Any())
-        {
-            return Result<FinancialMovementOutput>(null!);
-        }
-
         var input = apiInput.Adapt<ModifyFinancialMovementCommand>();
 
-        input.Id = id;
+        input.AccountId = accountId;
+        input.FinancialMovementId = id;
 
-        var output = await mediator.Send(input, cancellationToken);
+        var output = await _mediator.Send(input, cancellationToken);
 
         return Result(output);
-        */
-        var result = ApplicationResult<FinancialMovementOutput>.Success();
-
-        result.SetData(new FinancialMovementOutput());
-
-        return Result(result);
     }
 
     [HttpDelete("{accountId:guid}/financial-movement/{id:guid}")]
@@ -136,50 +115,30 @@ public class AccountFinancialMovementsController : BaseController
         CancellationToken cancellationToken
     )
     {
-        /*
-        CheckIdIfIdIsNull(id);
-
-        if (notifier.Erros.Any())
-        {
-            return Result<FinancialMovementOutput>(null!);
-        }
-
-        await mediator.Send(new RemoveFinancialMovementCommand(id), cancellationToken);
-
-        return Result<FinancialMovementOutput>(null!);
-        */
         var result = ApplicationResult<object>.Success();
+
+        await _mediator.Send(new DeleteFinancialMovementCommand() { FinancialMovementId = id }, cancellationToken);
 
         return Result(result);
     }
 
-    [HttpGet("{accountId:guid}/financial-movement/{id:guid}")]
+    [HttpGet("{accountId:guid}/financial-movement/{financialMovementId:guid}")]
     [MapToApiVersion("1.0")]
     [ProducesResponseType(typeof(DefaultResponse<FinancialMovementOutput>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DefaultResponse<object>), StatusCodes.Status400BadRequest)]
     public async Task<IResult> GetById(
         [FromRoute] Guid accountId,
-        [FromRoute] Guid id,
+        [FromRoute] Guid financialMovementId,
         CancellationToken cancellationToken
     )
     {
-        /*
-        CheckIdIfIdIsNull(id);
-
-        if (notifier.Erros.Any())
+        var output = await _mediator.Send(new GetByIdFinancialMovementQuery()
         {
-            return Result<FinancialMovementOutput>(null!);
-        }
-
-        var output = await mediator.Send(new GetByIdFinancialMovementQuery(id), cancellationToken);
+            AccountId = accountId,
+            FinancialMovementId = financialMovementId
+        }, cancellationToken);
 
         return Result(output);
-        */
-        var result = ApplicationResult<FinancialMovementOutput>.Success();
-
-        result.SetData(new FinancialMovementOutput());
-
-        return Result(result);
     }
 
     [HttpGet("{accountId:guid}/financial-movement")]
@@ -197,7 +156,6 @@ public class AccountFinancialMovementsController : BaseController
         [FromQuery] int? month = null
     )
     {
-        /*
         var input = new ListFinancialMovementsQuery();
         if (page is not null) input.Page = page.Value;
         if (perPage is not null) input.PerPage = perPage.Value;
@@ -210,13 +168,7 @@ public class AccountFinancialMovementsController : BaseController
 
         input.AccountId = accountId;
 
-        var output = await mediator.Send(input, cancellationToken);
+        var output = await _mediator.Send(input, cancellationToken);
         return Result(output);
-        */
-        var result = ApplicationResult<ListFinancialMovementsOutput>.Success();
-
-        result.SetData(new ListFinancialMovementsOutput(0, 0, 0, null));
-
-        return Result(result);
     }
 }

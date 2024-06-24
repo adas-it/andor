@@ -44,7 +44,19 @@ public class QueriesAccountSubCategoryRepository : IQueriesAccountSubCategoryRep
 
     public Task<SearchOutput<SubCategory>> SearchAsync(SearchInputSubCategory input, CancellationToken cancellationToken)
     {
-        Expression<Func<AccountSubCategory, bool>> where = x => x.AccountId == input.AccountId;
+        List<Expression<Func<AccountSubCategory, bool>>> where = [];
+
+        where.Add(x => x.AccountId == input.AccountId);
+
+        if (!string.IsNullOrWhiteSpace(input.Search))
+        {
+            where.Add(x => x.SubCategory.Name.Contains(input.Search, StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        if (input.CategoryId.HasValue)
+        {
+            where.Add(x => x.SubCategory.CategoryId == input.CategoryId.Value);
+        }
 
         var query = Extension.GetManyPaginated(
             _dbSet,
@@ -56,16 +68,6 @@ public class QueriesAccountSubCategoryRepository : IQueriesAccountSubCategoryRep
             input.PerPage,
             out var total)
             .Select(x => x.SubCategory);
-
-        if (!string.IsNullOrWhiteSpace(input.Search))
-        {
-            query = query.Where(x => x.Name.Contains(input.Search, StringComparison.CurrentCultureIgnoreCase));
-        }
-
-        if (input.CategoryId.HasValue)
-        {
-            query = query.Where(x => x.CategoryId == input.CategoryId.Value);
-        }
 
         var items = query.ToList();
 

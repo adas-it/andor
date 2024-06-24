@@ -38,32 +38,38 @@ public class QueriesFinancialMovementRepository :
         return await query.ToListAsync(cancellationToken);
     }
 
-    public Task<DateTime?> GetFirstMovement(
+    public async Task<DateTime?> GetFirstMovement(
         Domain.Engagement.Budget.Accounts.Accounts.ValueObjects.AccountId accountId, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+     => await _dbSet.Where(x => x.AccountId == accountId && x.IsDeleted == false)
+            .OrderBy(x => x.Date)
+            .Select(x => x.Date)
+            .FirstOrDefaultAsync(cancellationToken);
 
-    public Task<DateTime?> GetLastMovement(
+    public async Task<DateTime?> GetLastMovement(
         Domain.Engagement.Budget.Accounts.Accounts.ValueObjects.AccountId accountId, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+    => await _dbSet.Where(x => x.AccountId == accountId && x.IsDeleted == false)
+            .OrderByDescending(x => x.Date)
+            .Select(x => x.Date)
+            .FirstOrDefaultAsync(cancellationToken);
 
-    public Task<SearchOutput<FinancialMovement>> SearchAsync(SearchInput input, CancellationToken cancellationToken)
+    public Task<SearchOutput<FinancialMovement>> SearchAsync(SearchInputMovement input, CancellationToken cancellationToken)
     {
-        Expression<Func<FinancialMovement, bool>> where = x => true;
+        List<Expression<Func<FinancialMovement, bool>>> where = [];
+
+        where.Add(x => x.Date.Year == input.Year.Value && x.Date.Month == input.Month.Value);
+        where.Add(x => x.IsDeleted == false);
 
         if (!string.IsNullOrWhiteSpace(input.Search))
-            where = x => x.Description.Contains(input.Search, StringComparison.CurrentCultureIgnoreCase);
+        {
+            where.Add(x => x.Description.Contains(input.Search, StringComparison.CurrentCultureIgnoreCase));
+        }
 
         var items = GetManyPaginated(where,
             input.OrderBy,
             input.Order,
             input.Page,
             input.PerPage,
-            out var total)
-            .ToList();
+            out var total).ToList();
 
         return Task.FromResult(new SearchOutput<FinancialMovement>(input.Page, input.PerPage, total, items!));
     }

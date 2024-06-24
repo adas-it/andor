@@ -38,6 +38,15 @@ public class QueryHelper<TEntity, TEntityId>(PrincipalContext context)
         int perPage,
         out int totalPages)
         => Extension.GetManyPaginated(
+            _dbSet, loggedUserFilter, new List<Expression<Func<TEntity, bool>>>() { where }, orderBy, order, page, perPage, null!, out totalPages);
+
+    protected virtual IQueryable<TEntity> GetManyPaginated(List<Expression<Func<TEntity, bool>>> where,
+        string? orderBy,
+        SearchOrder order,
+        int page,
+        int perPage,
+        out int totalPages)
+        => Extension.GetManyPaginated(
             _dbSet, loggedUserFilter, where, orderBy, order, page, perPage, null!, out totalPages);
 }
 
@@ -46,7 +55,7 @@ public static class Extension
     public static IQueryable<TEntity> GetManyPaginated<TDbSet, TEntity>(
         TDbSet _dbSet,
         Expression<Func<TEntity, bool>>? loggedUserFilter,
-        Expression<Func<TEntity, bool>> where,
+        List<Expression<Func<TEntity, bool>>> where,
         string? orderBy, SearchOrder order, int page, int perPage, out int totalPages)
         where TDbSet : DbSet<TEntity>
         where TEntity : class
@@ -59,7 +68,7 @@ public static class Extension
     public static IQueryable<TEntity> GetManyPaginated<TDbSet, TEntity>(
         TDbSet _dbSet,
         Expression<Func<TEntity, bool>>? loggedUserFilter,
-        Expression<Func<TEntity, bool>> where,
+        List<Expression<Func<TEntity, bool>>> where,
         string? orderBy, SearchOrder order, int page, int perPage,
         Expression<Func<TEntity, object>> include, out int totalPages)
         where TDbSet : DbSet<TEntity>
@@ -74,7 +83,10 @@ public static class Extension
 
         if (where != null)
         {
-            query = query.Where(where);
+            foreach (var item in where)
+            {
+                query = query.Where(item);
+            }
         }
 
         totalPages = query.Count();

@@ -3,7 +3,7 @@ using Andor.Domain.Administrations.Configurations.Events;
 using MassTransit;
 using MediatR;
 
-namespace Andor.Infrastructure.Administrations.Messaging.Consumers.Configurations.DomainEventHandlers;
+namespace Andor.Infrastructure.Administrations.Messages.Consumers.Configurations.DomainEventHandlers;
 
 public class ConfigurationCreatedDomainEventConsumer(IMediator mediator) : IConsumer<ConfigurationCreatedDomainEvent>
 {

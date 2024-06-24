@@ -1,12 +1,13 @@
 ﻿using Andor.Application.Common.Interfaces;
-using Andor.Infrastructure.Administrations.Messaging.Consumers.Configurations;
-using Andor.Infrastructure.Administrations.Messaging.Publisher.Configurations.DomainEventHandlersConfig;
+using Andor.Infrastructure.Administrations.Messages.Consumers.Configurations;
+using Andor.Infrastructure.Administrations.Messages.Producers.Configurations.DomainEventHandlersConfig;
 using Andor.Infrastructure.Communication.Messages.Consumers;
 using Andor.Infrastructure.Communication.Messages.Producers;
-using Andor.Infrastructure.Engagement.Budget.Messages;
-using Andor.Infrastructure.Messaging.RabbitMq;
+using Andor.Infrastructure.Engagement.Budget.Messages.Consumers;
+using Andor.Infrastructure.Engagement.Budget.Messages.Producers.FinancialMovements.DomainEventHandlersConfig;
+using Andor.Infrastructure.Messaging.Producers;
 using Andor.Infrastructure.Onboarding.Messages.Consumers.Registrations;
-using Andor.Infrastructure.Onboarding.Messages.Producers.Registrations.DomainEventHandlersConfig;
+using Andor.Infrastructure.Onboarding.Messages.Producers.Registrations.DomainEventConfig;
 using Andor.Infrastructure.Onboarding.Messages.Producers.Registrations.IntegrationEventConfig;
 using Andor.Infrastructure.Repositories.Context;
 using MassTransit;
@@ -51,10 +52,12 @@ public static class MessagingExtension
                 }
             });
 
-            x.AddConfigurationsConsumers()
+            x
+            .AddConfigurationsConsumers()
             .AddRegistrationsConsumers()
             .AddCommunicationConsumers()
-            .AddBudgetConsumerIntegrations();
+            .AddBudgetConsumerIntegrations()
+            .AddBudgetConsumerDomain();
 
             x.UsingAzureServiceBus((context, cfg) =>
             {
@@ -69,10 +72,18 @@ public static class MessagingExtension
                 .AddRegistrationsPublisherEventConfig()
                 .AddRegistrationConsumerDomainEventHandlerConfig(context);
 
-                cfg.AddCommunicationsPublisherEventHandlerConfig()
+                cfg
+                .AddCommunicationsPublisherEventHandlerConfig()
                 .AddCommunicationConsumerDomainEventHandlerConfig(context);
 
-                cfg.AddBudgetConsumerIntegrationEventHandlerConfig(context);
+                cfg
+                .AddBudgetConsumerIntegrationEventHandlerConfig(context);
+
+                cfg
+                .AddBudgetConsumerDomainEventHandlerConfig(context)
+                .AddFinancialMovementPublisherDomainEventConfig();
+
+                cfg.AddCashFlowPublisherDomainEventConfig();
 
                 cfg.DeployPublishTopology = true;
             });

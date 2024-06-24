@@ -26,6 +26,10 @@ public record AccountConfig : IEntityTypeConfiguration<Account>
         entity.HasMany(k => k.Users).WithOne(x => x.Account).HasForeignKey(x => x.AccountId);
         entity.HasMany(k => k.Invites).WithOne(x => x.Account).HasForeignKey(x => x.AccountId);
 
+        entity.Navigation(x => x.Categories).AutoInclude();
+        entity.Navigation(x => x.SubCategories).AutoInclude();
+        entity.Navigation(x => x.PaymentMethods).AutoInclude();
+        entity.Navigation(x => x.Users).AutoInclude();
         entity.Navigation(x => x.Invites).AutoInclude();
     }
 
@@ -79,6 +83,8 @@ public class AccountPaymentMethodConfig : IEntityTypeConfiguration<AccountPaymen
 
         entity.HasOne(k => k.Account).WithMany(x => x.PaymentMethods).HasForeignKey(x => x.AccountId);
         entity.HasOne(k => k.PaymentMethod);
+
+        entity.Navigation(x => x.PaymentMethod).AutoInclude();
     }
 }
 public class AccountUserConfig : IEntityTypeConfiguration<AccountUser>

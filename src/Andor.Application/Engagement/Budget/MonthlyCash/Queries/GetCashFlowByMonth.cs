@@ -3,6 +3,7 @@ using Andor.Application.Dto.Engagement.Budget.Account.Responses;
 using Andor.Domain.Common.ValuesObjects;
 using Andor.Domain.Engagement.Budget.Accounts.Accounts.Repositories;
 using Andor.Domain.Engagement.Budget.Accounts.Accounts.ValueObjects;
+using Mapster;
 using MediatR;
 
 namespace Andor.Application.Engagement.Budget.MonthlyCash.Queries;
@@ -21,7 +22,7 @@ public class GetCashFlowByMonthQueryHandler(IQueriesCashFlowRepository _queriesC
     {
         var result = ApplicationResult<CashFlowOutput>.Success();
 
-        var output = new CashFlowOutput();
+        CashFlowOutput output;
 
         var cashFlow = await _queriesCashFlow.GetCurrentOrPreviousCashFlowByAccountIdAsync(
             request.AccountId,
@@ -38,6 +39,10 @@ public class GetCashFlowByMonthQueryHandler(IQueriesCashFlowRepository _queriesC
                 FinalBalancePreviousMonth = cashFlow?.AccountBalance ?? 0,
                 BalanceForecast = cashFlow?.AccountBalance ?? 0
             };
+        }
+        else
+        {
+            output = cashFlow.Adapt<CashFlowOutput>();
         }
 
         result.SetData(output);

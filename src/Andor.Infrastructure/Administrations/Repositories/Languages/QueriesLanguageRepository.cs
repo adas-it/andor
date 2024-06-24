@@ -6,7 +6,7 @@ using Andor.Infrastructure.Repositories.Common;
 using Andor.Infrastructure.Repositories.Context;
 using System.Linq.Expressions;
 
-namespace Andor.Infrastructure.Administrations.Repositories.Configurations;
+namespace Andor.Infrastructure.Administrations.Repositories.Languages;
 
 public class QueriesLanguageRepository(PrincipalContext context) :
     QueryHelper<Language, LanguageId>(context),

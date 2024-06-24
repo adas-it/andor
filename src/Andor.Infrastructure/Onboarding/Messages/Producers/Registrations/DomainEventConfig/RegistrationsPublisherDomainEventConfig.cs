@@ -1,8 +1,8 @@
-﻿namespace Andor.Infrastructure.Onboarding.Messages.Producers.Registrations.DomainEventHandlersConfig;
+﻿namespace Andor.Infrastructure.Onboarding.Messages.Producers.Registrations.DomainEventConfig;
 
 using Andor.Domain.Onboarding.Registrations.DomainEvents;
 using Andor.Domain.Onboarding.Users.DomainEvents;
-using Andor.Infrastructure.Messaging.Publisher;
+using Andor.Infrastructure.Messaging.Producers;
 using MassTransit;
 
 public static class RegistrationsPublisherDomainEventConfig

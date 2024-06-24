@@ -1,6 +1,7 @@
-﻿namespace Andor.Infrastructure.Administrations.Messaging.Consumers.Configurations;
-using Andor.Infrastructure.Administrations.Messaging.Consumers.Configurations.DomainEventHandlers;
-using Andor.Infrastructure.Messaging.Publisher;
+﻿namespace Andor.Infrastructure.Administrations.Messages.Consumers.Configurations;
+
+using Andor.Infrastructure.Administrations.Messages.Consumers.Configurations.DomainEventHandlers;
+using Andor.Infrastructure.Messaging.Producers;
 using MassTransit;
 public static class ConfigurationsConsumersDomainEventHandlersConfig
 {

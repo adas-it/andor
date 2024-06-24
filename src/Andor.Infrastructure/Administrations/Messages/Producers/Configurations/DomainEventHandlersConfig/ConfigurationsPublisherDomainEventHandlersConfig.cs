@@ -1,7 +1,7 @@
-﻿namespace Andor.Infrastructure.Administrations.Messaging.Publisher.Configurations.DomainEventHandlersConfig;
+﻿namespace Andor.Infrastructure.Administrations.Messages.Producers.Configurations.DomainEventHandlersConfig;
 
 using Andor.Domain.Administrations.Configurations.Events;
-using Andor.Infrastructure.Messaging.Publisher;
+using Andor.Infrastructure.Messaging.Producers;
 using MassTransit;
 
 public static class ConfigurationsPublisherDomainEventHandlersConfig

@@ -1,7 +1,7 @@
 ﻿namespace Andor.Infrastructure.Onboarding.Messages.Producers.Registrations.IntegrationEventConfig;
 
 using Andor.Application.Dto.Onboarding.Registrations.IntegrationsEvents.v1;
-using Andor.Infrastructure.Messaging.Publisher;
+using Andor.Infrastructure.Messaging.Producers;
 using MassTransit;
 
 public static class RegistrationsPublisherEventConfig

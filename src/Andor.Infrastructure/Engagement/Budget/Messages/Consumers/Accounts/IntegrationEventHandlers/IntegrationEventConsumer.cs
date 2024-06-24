@@ -3,7 +3,7 @@ using Andor.Application.Engagement.Budget.Accounts.Commands;
 using MassTransit;
 using MediatR;
 
-namespace Andor.Infrastructure.Engagement.Budget.Messages.Consumers.IntegrationEventHandlers;
+namespace Andor.Infrastructure.Engagement.Budget.Messages.Consumers.Accounts.IntegrationEventHandlers;
 
 public class IntegrationEventConsumer(IMediator _mediator) :
     IConsumer<UserCreated>

@@ -37,6 +37,6 @@ public abstract class CommandsBaseRepository<TEntity, TEntityId>(PrincipalContex
 
     public virtual async Task<TEntity?> GetByIdAsync(TEntityId id, CancellationToken cancellationToken)
     => await _dbSet
-        .AsNoTracking()
+        //.AsNoTracking()
         .FirstOrDefaultAsync(x => x.Id.Equals(id), cancellationToken);
 }

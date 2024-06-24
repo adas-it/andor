@@ -1,5 +1,5 @@
 ﻿using Andor.Infrastructure.Communication.Messages.Consumers.Integrations;
-using Andor.Infrastructure.Messaging.Publisher;
+using Andor.Infrastructure.Messaging.Producers;
 using MassTransit;
 
 namespace Andor.Infrastructure.Communication.Messages.Consumers;

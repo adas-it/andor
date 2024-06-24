@@ -24,13 +24,18 @@ public class ListSubCategoriesQueryHandler(IQueriesAccountSubCategoryRepository 
     {
         var response = ApplicationResult<ListSubCategoriesOutput>.Success();
 
+        if (request.CategoryId is null)
+        {
+            return response;
+        }
+
         var searchOutput = await repository.SearchAsync(
             new(
                 request.Page,
                 request.PerPage,
                 request.Search,
                 request.Sort,
-                (Andor.Domain.SeedWork.Repositories.ResearchableRepository.SearchOrder)request.Dir,
+                (Domain.SeedWork.Repositories.ResearchableRepository.SearchOrder)request.Dir,
                 request.CategoryId,
                 request.AccountId
             ),

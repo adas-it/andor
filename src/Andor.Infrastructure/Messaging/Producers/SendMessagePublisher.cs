@@ -1,7 +1,7 @@
 ﻿using Andor.Application.Common.Interfaces;
 using MassTransit;
 
-namespace Andor.Infrastructure.Messaging.RabbitMq;
+namespace Andor.Infrastructure.Messaging.Producers;
 
 public class SendMessagePublisher(IPublishEndpoint bus) : IMessageSenderInterface
 {

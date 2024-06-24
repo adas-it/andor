@@ -1,5 +1,6 @@
 ﻿namespace Andor.Infrastructure.Onboarding.Messages.Consumers.Registrations;
-using Andor.Infrastructure.Messaging.Publisher;
+
+using Andor.Infrastructure.Messaging.Producers;
 using Andor.Infrastructure.Onboarding.Messages.Consumers.Registrations.DomainEventHandlers;
 using MassTransit;
 

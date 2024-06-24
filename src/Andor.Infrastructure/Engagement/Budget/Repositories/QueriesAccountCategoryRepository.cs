@@ -43,11 +43,14 @@ public class QueriesAccountCategoryRepository : IQueriesAccountCategoryRepositor
 
     public Task<SearchOutput<Category>> SearchAsync(SearchInputCategory input, CancellationToken cancellationToken)
     {
-        Expression<Func<AccountCategory, bool>> where = x => x.Category.Type == input.Type;
+        List<Expression<Func<AccountCategory, bool>>> where = [];
+
+        where.Add(x => x.Category.Type == input.Type);
 
         if (!string.IsNullOrWhiteSpace(input.Search))
-            where = x => x.Category.Name.Contains(input.Search, StringComparison.CurrentCultureIgnoreCase)
-                && x.Category.Type == input.Type;
+        {
+            where.Add(x => x.Category.Name.Contains(input.Search, StringComparison.CurrentCultureIgnoreCase));
+        }
 
         var items = Extension.GetManyPaginated(
             _dbSet,

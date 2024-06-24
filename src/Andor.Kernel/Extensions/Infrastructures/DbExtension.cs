@@ -10,6 +10,7 @@ using Andor.Domain.Engagement.Budget.Accounts.SubCategories.Repositories;
 using Andor.Domain.Onboarding.Registrations.Repositories;
 using Andor.Infrastructure;
 using Andor.Infrastructure.Administrations.Repositories.Configurations;
+using Andor.Infrastructure.Administrations.Repositories.Languages;
 using Andor.Infrastructure.Communication.Repositories;
 using Andor.Infrastructure.Communication.Repositories.Users;
 using Andor.Infrastructure.Engagement.Budget.Repositories;
@@ -89,12 +90,13 @@ public static class DbExtension
         builder.Services.AddScoped<ICommandsLanguageRepository, CommandsLanguageRepository>();
 
         builder.Services.AddScoped<IQueriesCashFlowRepository, QueriesCashFlowRepository>();
-        //builder.Services.AddScoped<ICommandsCashFlowRepository, CommandsCashFlowRepository>();
+        builder.Services.AddScoped<ICommandsCashFlowRepository, CommandsCashFlowRepository>();
 
         builder.Services.AddScoped<IQueriesAccountCategoryRepository, QueriesAccountCategoryRepository>();
         //builder.Services.AddScoped<ICommandsCashFlowRepository, CommandsCashFlowRepository>();
 
         builder.Services.AddScoped<IQueriesFinancialMovementRepository, QueriesFinancialMovementRepository>();
+        builder.Services.AddScoped<ICommandsFinancialMovementRepository, CommandsFinancialMovementRepository>();
 
         builder.Services.AddScoped<IQueriesAccountPaymentMethodRepository, QueriesAccountPaymentMethodRepository>();
 
