@@ -1,4 +1,4 @@
-﻿namespace Andor.Infrastructure.Engagement.Budget.Messages.Producers.FinancialMovements.DomainEventHandlersConfig;
+﻿namespace Andor.Infrastructure.Engagement.Budget.Messages.Producers.CashFlow.DomainEventHandlersConfig;
 
 using Andor.Domain.Engagement.Budget.FinancialMovements.CashFlow.DomainEvents;
 using Andor.Infrastructure.Messaging.Producers;
@@ -19,5 +19,3 @@ public static class CashFlowPublisherDomainEventConfig
         return config;
     }
 }
-
-

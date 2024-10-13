@@ -5,15 +5,18 @@ using Andor.Domain.Communications.Repositories;
 using Andor.Domain.Engagement.Budget.Accounts.Accounts.Repositories;
 using Andor.Domain.Engagement.Budget.Accounts.Categories.Repositories;
 using Andor.Domain.Engagement.Budget.Accounts.Currencies.Repositories;
+using Andor.Domain.Engagement.Budget.Accounts.Invites.Repositories;
 using Andor.Domain.Engagement.Budget.Accounts.PaymentMethods.Repositories;
 using Andor.Domain.Engagement.Budget.Accounts.SubCategories.Repositories;
+using Andor.Domain.Engagement.Budget.Accounts.Users.Repositories;
 using Andor.Domain.Onboarding.Registrations.Repositories;
 using Andor.Infrastructure;
 using Andor.Infrastructure.Administrations.Repositories.Configurations;
 using Andor.Infrastructure.Administrations.Repositories.Languages;
 using Andor.Infrastructure.Communication.Repositories;
 using Andor.Infrastructure.Communication.Repositories.Users;
-using Andor.Infrastructure.Engagement.Budget.Repositories;
+using Andor.Infrastructure.Engagement.Budget.Repositories.Commands;
+using Andor.Infrastructure.Engagement.Budget.Repositories.Queries;
 using Andor.Infrastructure.Onboarding.Repositories.Registrations;
 using Andor.Infrastructure.Repositories.Common;
 using Andor.Infrastructure.Repositories.Context;
@@ -86,6 +89,9 @@ public static class DbExtension
         builder.Services.AddScoped<IQueriesAccountRepository, QueriesAccountRepository>();
         builder.Services.AddScoped<ICommandsAccountRepository, CommandsAccountRepository>();
 
+        builder.Services.AddScoped<IQueriesInviteRepository, QueriesInviteRepository>();
+        builder.Services.AddScoped<ICommandsInviteRepository, CommandsInviteRepository>();
+
         builder.Services.AddScoped<IQueriesLanguageRepository, QueriesLanguageRepository>();
         builder.Services.AddScoped<ICommandsLanguageRepository, CommandsLanguageRepository>();
 
@@ -101,6 +107,8 @@ public static class DbExtension
         builder.Services.AddScoped<IQueriesAccountPaymentMethodRepository, QueriesAccountPaymentMethodRepository>();
 
         builder.Services.AddScoped<IQueriesAccountSubCategoryRepository, QueriesAccountSubCategoryRepository>();
+
+        builder.Services.AddScoped<ICommandsUserRepository, CommandsUserRepository>();
 
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 

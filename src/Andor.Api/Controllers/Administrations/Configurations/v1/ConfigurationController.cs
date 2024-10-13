@@ -1,7 +1,7 @@
-﻿using Andor.Application.Administrations.Configurations.Commands.ChangeConfiguration;
-using Andor.Application.Administrations.Configurations.Commands.ModifyConfiguration;
-using Andor.Application.Administrations.Configurations.Commands.RegisterConfiguration;
-using Andor.Application.Administrations.Configurations.Commands.RemoveConfiguration;
+﻿using Andor.Application.Administrations.Configurations.Commands.ChangeConfigurations;
+using Andor.Application.Administrations.Configurations.Commands.ModifyConfigurations;
+using Andor.Application.Administrations.Configurations.Commands.RegisterConfigurations;
+using Andor.Application.Administrations.Configurations.Commands.RemoveConfigurations;
 using Andor.Application.Administrations.Configurations.Queries;
 using Andor.Application.Dto.Administrations.Configurations.Requests;
 using Andor.Application.Dto.Administrations.Configurations.Responses;
@@ -18,7 +18,7 @@ namespace Andor.Api.Controllers.Administrations.Configurations.v1;
 
 [ApiController]
 [ApiVersion("1.0")]
-[Authorize(AuthenticationSchemes = "Bearer")]
+[Authorize(AuthenticationSchemes = "Bearer", Roles = "admin")]
 [Route("v{version:apiVersion}/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [Consumes(MediaTypeNames.Application.Json)]

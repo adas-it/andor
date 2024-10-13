@@ -1,6 +1,6 @@
 ﻿// Ignore Spelling: Validator
 
-using Andor.Application.Administrations.Configurations.Commands.ChangeConfiguration;
+using Andor.Application.Administrations.Configurations.Commands.ChangeConfigurations;
 using Andor.Domain.Administrations.Configurations.ValueObjects;
 using Andor.TestsUtil;
 using Andor.Unit.Tests.Domain.Entities.Admin.Configurations;

@@ -1,4 +1,5 @@
-﻿using Andor.Application.Common.Models.Authorizations;
+﻿using Andor.Application.Common.Interfaces;
+using Andor.Application.Common.Models.Authorizations;
 using Bogus;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;

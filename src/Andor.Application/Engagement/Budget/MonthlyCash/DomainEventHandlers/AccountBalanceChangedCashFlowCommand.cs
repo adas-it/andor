@@ -5,7 +5,7 @@ using Andor.Domain.Engagement.Budget.Accounts.Accounts.ValueObjects;
 using Andor.Domain.Engagement.Budget.FinancialMovements.CashFlow.DomainEvents;
 using MediatR;
 
-namespace Andor.Application.Engagement.Budget.FinancialMovements.Commands;
+namespace Andor.Application.Engagement.Budget.MonthlyCash.DomainEventHandlers;
 
 public record AccountBalanceChangedCashFlowCommand(AccountBalanceChangedDomainEvent context) : IRequest
 {

@@ -1,4 +1,4 @@
-﻿using Andor.Application.Administrations.Configurations.Commands.RemoveConfiguration;
+﻿using Andor.Application.Administrations.Configurations.Commands.RemoveConfigurations;
 using Andor.Application.Common.Interfaces;
 using Andor.Application.Dto.Common.ApplicationsErrors;
 using Andor.Domain.Administrations.Configurations;

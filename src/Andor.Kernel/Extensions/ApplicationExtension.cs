@@ -1,4 +1,4 @@
-﻿using Andor.Application.Administrations.Configurations.Commands.RegisterConfiguration;
+﻿using Andor.Application.Administrations.Configurations.Commands.RegisterConfigurations;
 using Andor.Application.Administrations.Configurations.Services;
 using Andor.Application.Common.Behaviors;
 using Andor.Application.Common.Interfaces;

@@ -7,7 +7,7 @@ using Andor.Domain.Engagement.Budget.FinancialMovements.MovementStatuses;
 using Andor.Domain.Engagement.Budget.FinancialMovements.MovementTypes;
 using MediatR;
 
-namespace Andor.Application.Engagement.Budget.FinancialMovements.Commands;
+namespace Andor.Application.Engagement.Budget.MonthlyCash.DomainEventHandlers;
 
 public record FinancialMovementCreatedCashFlowCommand(FinancialMovementCreatedDomainEvent context) : IRequest
 {
@@ -35,7 +35,7 @@ public class FinancialMovementCreatedCashFlowCommandHandler(
 
         CashFlow cashFlow;
 
-        if (_cashFlow == null || (_cashFlow.Month != _month || _cashFlow.Year != _year))
+        if (_cashFlow == null || _cashFlow.Month != _month || _cashFlow.Year != _year)
         {
             (_, cashFlow) = CashFlow.New(
                 _year,

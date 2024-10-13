@@ -15,7 +15,7 @@ using MediatR;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 
-namespace Andor.Application.Administrations.Configurations.Commands.ModifyConfiguration;
+namespace Andor.Application.Administrations.Configurations.Commands.ModifyConfigurations;
 
 public record ModifyConfigurationCommand(ConfigurationId Id,
     JsonPatchDocument<Dto.Administrations.Configurations.Requests.BaseConfiguration> PatchDocument) : IRequest<ApplicationResult<ConfigurationOutput>>;

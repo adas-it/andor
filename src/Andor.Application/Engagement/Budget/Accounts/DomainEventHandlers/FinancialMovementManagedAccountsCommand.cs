@@ -3,13 +3,13 @@ using Andor.Domain.Engagement.Budget.Accounts.Accounts.Repositories;
 using Andor.Domain.Engagement.Budget.Accounts.Accounts.ValueObjects;
 using MediatR;
 
-namespace Andor.Application.Engagement.Budget.FinancialMovements.Commands;
+namespace Andor.Application.Engagement.Budget.Accounts.DomainEventHandlers;
 
 public record FinancialMovementManagedAccountsCommand(AccountId AccountId) : IRequest
 {
 }
 
-public class FinancialMovementManagedAccountsCommandHandler(
+internal class FinancialMovementManagedAccountsCommandHandler(
         IUnitOfWork _unitOfWork,
         IQueriesFinancialMovementRepository _financialMovementRepository,
         ICommandsAccountRepository _accountRepository) : IRequestHandler<FinancialMovementManagedAccountsCommand>

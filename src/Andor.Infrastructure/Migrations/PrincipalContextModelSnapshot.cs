@@ -17,10 +17,38 @@ namespace Andor.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.4")
+                .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Andor.Application.Engagement.Budget.Invites.Saga.InviteSagaState", b =>
+                {
+                    b.Property<Guid>("CorrelationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("GuestEmail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("GuestId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("InviteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("InvitingId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("CorrelationId");
+
+                    b.ToTable("InviteSagaState", "Engagement");
+                });
 
             modelBuilder.Entity("Andor.Domain.Administrations.Configurations.Configuration", b =>
                 {
@@ -283,6 +311,8 @@ namespace Andor.Infrastructure.Migrations
 
                     b.HasKey("AccountId", "UserId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("AccountUser", "Engagement");
                 });
 
@@ -352,12 +382,22 @@ namespace Andor.Infrastructure.Migrations
                         .HasMaxLength(70)
                         .HasColumnType("character varying(70)");
 
+                    b.Property<Guid?>("GuestId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("InvitingId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
+
+                    b.HasIndex("GuestId");
+
+                    b.HasIndex("InvitingId");
 
                     b.ToTable("Invite", "Engagement");
                 });
@@ -424,6 +464,35 @@ namespace Andor.Infrastructure.Migrations
                     b.HasIndex("DefaultPaymentMethodId");
 
                     b.ToTable("SubCategory", "Engagement");
+                });
+
+            modelBuilder.Entity("Andor.Domain.Engagement.Budget.Accounts.Users.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(70)
+                        .HasColumnType("character varying(70)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("PreferredCurrencyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PreferredLanguageId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("User", "Engagement");
                 });
 
             modelBuilder.Entity("Andor.Domain.Engagement.Budget.FinancialMovements.CashFlow.CashFlow", b =>
@@ -827,7 +896,15 @@ namespace Andor.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Andor.Domain.Engagement.Budget.Accounts.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Account");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Andor.Domain.Engagement.Budget.Accounts.Invites.Invite", b =>
@@ -838,7 +915,21 @@ namespace Andor.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Andor.Domain.Engagement.Budget.Accounts.Users.User", "Guest")
+                        .WithMany()
+                        .HasForeignKey("GuestId");
+
+                    b.HasOne("Andor.Domain.Engagement.Budget.Accounts.Users.User", "Inviting")
+                        .WithMany()
+                        .HasForeignKey("InvitingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Account");
+
+                    b.Navigation("Guest");
+
+                    b.Navigation("Inviting");
                 });
 
             modelBuilder.Entity("Andor.Domain.Engagement.Budget.Accounts.SubCategories.SubCategory", b =>

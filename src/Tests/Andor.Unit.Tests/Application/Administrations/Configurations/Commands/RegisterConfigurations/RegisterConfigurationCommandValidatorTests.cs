@@ -1,6 +1,6 @@
 ﻿// Ignore Spelling: Validator
 
-using Andor.Application.Administrations.Configurations.Commands.RegisterConfiguration;
+using Andor.Application.Administrations.Configurations.Commands.RegisterConfigurations;
 using Andor.TestsUtil;
 using Andor.Unit.Tests.Domain.Entities.Admin.Configurations;
 using FluentAssertions;

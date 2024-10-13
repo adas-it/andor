@@ -12,7 +12,7 @@ using Mapster;
 using MediatR;
 using _dto = Andor.Application.Dto.Administrations.Configurations.Requests;
 
-namespace Andor.Application.Administrations.Configurations.Commands.ChangeConfiguration;
+namespace Andor.Application.Administrations.Configurations.Commands.ChangeConfigurations;
 
 public record ChangeConfigurationCommand(ConfigurationId Id, _dto.BaseConfiguration BaseConfiguration)
     : BaseConfiguration(BaseConfiguration), IRequest<ApplicationResult<ConfigurationOutput>>;

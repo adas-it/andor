@@ -6,7 +6,7 @@ using Andor.Domain.Engagement.Budget.FinancialMovements.MovementStatuses;
 using Andor.Domain.Engagement.Budget.FinancialMovements.MovementTypes;
 using MediatR;
 
-namespace Andor.Application.Engagement.Budget.FinancialMovements.Commands;
+namespace Andor.Application.Engagement.Budget.MonthlyCash.DomainEventHandlers;
 
 public record FinancialMovementDeletedCashFlowCommand(FinancialMovementDeletedDomainEvent context) : IRequest
 {
@@ -32,7 +32,7 @@ public class FinancialMovementDeletedCashFlowCommandHandler(
         var _cashFlow = await _cashFlowRepository
             .GetCurrentOrPreviousCashFlowAsync(_account.Id, _year, _month, cancellationToken);
 
-        if (_cashFlow != null && (_cashFlow.Month == _month && _cashFlow.Year == _year))
+        if (_cashFlow != null && _cashFlow.Month == _month && _cashFlow.Year == _year)
         {
             _cashFlow.AddFinancialMovement(_type, _status, -current.Value);
 

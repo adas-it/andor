@@ -1,6 +1,6 @@
 ﻿namespace Andor.Unit.Tests.Application.Administrations.Configurations.Commands.RegisterConfigurations;
 
-using Andor.Application.Administrations.Configurations.Commands.RegisterConfiguration;
+using Andor.Application.Administrations.Configurations.Commands.RegisterConfigurations;
 using Andor.Application.Administrations.Configurations.Services;
 using Andor.Application.Common.Interfaces;
 using Andor.Application.Dto.Administrations.Configurations.Responses;

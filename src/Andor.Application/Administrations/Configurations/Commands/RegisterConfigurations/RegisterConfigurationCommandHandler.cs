@@ -3,7 +3,6 @@ using Andor.Application.Administrations.Configurations.Services;
 using Andor.Application.Common.Attributes;
 using Andor.Application.Common.Interfaces;
 using Andor.Application.Common.Models;
-using Andor.Application.Common.Models.Authorizations;
 using Andor.Application.Dto.Administrations.Configurations.Responses;
 using Andor.Application.Dto.Common.Responses;
 using Andor.Domain.Administrations.Configurations;
@@ -13,7 +12,7 @@ using Mapster;
 using MediatR;
 using _dto = Andor.Application.Dto.Administrations.Configurations.Requests;
 
-namespace Andor.Application.Administrations.Configurations.Commands.RegisterConfiguration;
+namespace Andor.Application.Administrations.Configurations.Commands.RegisterConfigurations;
 public record RegisterConfigurationCommand(_dto.BaseConfiguration BaseConfiguration)
     : BaseConfiguration(BaseConfiguration), IRequest<ApplicationResult<ConfigurationOutput>>;
 

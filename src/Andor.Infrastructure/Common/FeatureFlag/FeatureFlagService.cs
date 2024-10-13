@@ -1,6 +1,5 @@
 ﻿using Andor.Application.Common;
 using Andor.Application.Common.Interfaces;
-using Andor.Application.Common.Models.Authorizations;
 using Andor.Application.Common.Models.FeatureFlag;
 using Microsoft.Extensions.Options;
 using Unleash;

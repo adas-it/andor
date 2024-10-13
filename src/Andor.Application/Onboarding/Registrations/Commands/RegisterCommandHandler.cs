@@ -33,12 +33,6 @@ public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
             .Length(2, 50)
             .WithMessage(ValidationConstant.LengthError);
 
-        RuleFor(x => x.LastName)
-            .NotEmpty()
-            .WithMessage(ValidationConstant.RequiredField)
-            .Length(2, 50)
-            .WithMessage(ValidationConstant.LengthError);
-
         RuleFor(x => x.Email)
             .NotEmpty()
             .WithMessage(ValidationConstant.RequiredField)

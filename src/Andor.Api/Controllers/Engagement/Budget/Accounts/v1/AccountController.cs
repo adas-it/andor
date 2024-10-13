@@ -1,6 +1,5 @@
 ﻿using Andor.Application.Dto.Common.Requests;
 using Andor.Application.Dto.Common.Responses;
-using Andor.Application.Dto.Engagement.Budget.Account.Requests;
 using Andor.Application.Dto.Engagement.Budget.Account.Responses;
 using Andor.Application.Dto.Onboarding.Registrations.Requests;
 using Andor.Application.Dto.Onboarding.Registrations.Responses;
@@ -140,30 +139,5 @@ public class AccountController(IMediator mediator) : BaseController
         var output = await mediator.Send(input, cancellationToken);
 
         return Result(output);
-    }
-
-    [HttpPost("{accountId:guid}/share")]
-    [MapToApiVersion("1.0")]
-    [ProducesResponseType(typeof(DefaultResponse<object>), StatusCodes.Status200OK)]
-    public async Task<IResult> ShareAccount(
-        CancellationToken cancellationToken,
-        [FromRoute] Guid accountId,
-        [FromBody] ShareInput input
-    )
-    {
-        /*
-        var command = new ShareCommand()
-        {
-            AccountId = accountId,
-            Email = input.Email,
-        };
-
-        var output = await mediator.Send(command, cancellationToken);
-
-        return Result("");
-        */
-        var result = ApplicationResult<object>.Success();
-
-        return Result(result);
     }
 }

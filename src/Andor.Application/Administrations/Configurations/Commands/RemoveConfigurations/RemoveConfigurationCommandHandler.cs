@@ -8,7 +8,7 @@ using Andor.Domain.Administrations.Configurations.ValueObjects;
 using FluentValidation;
 using MediatR;
 
-namespace Andor.Application.Administrations.Configurations.Commands.RemoveConfiguration;
+namespace Andor.Application.Administrations.Configurations.Commands.RemoveConfigurations;
 
 public record RemoveConfigurationCommand(ConfigurationId Id) : IRequest<ApplicationResult<object>>;
 

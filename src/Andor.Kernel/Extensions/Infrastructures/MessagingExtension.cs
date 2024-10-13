@@ -1,10 +1,14 @@
 ﻿using Andor.Application.Common.Interfaces;
+using Andor.Application.Engagement.Budget.Invites.Saga;
 using Andor.Infrastructure.Administrations.Messages.Consumers.Configurations;
 using Andor.Infrastructure.Administrations.Messages.Producers.Configurations.DomainEventHandlersConfig;
 using Andor.Infrastructure.Communication.Messages.Consumers;
 using Andor.Infrastructure.Communication.Messages.Producers;
 using Andor.Infrastructure.Engagement.Budget.Messages.Consumers;
+using Andor.Infrastructure.Engagement.Budget.Messages.Producers.CashFlow.DomainEventHandlersConfig;
 using Andor.Infrastructure.Engagement.Budget.Messages.Producers.FinancialMovements.DomainEventHandlersConfig;
+using Andor.Infrastructure.Engagement.Budget.Messages.Producers.Invites.DomainEventHandlersConfig;
+using Andor.Infrastructure.Engagement.Budget.Messages.Producers.Users.DomainEventHandlersConfig;
 using Andor.Infrastructure.Messaging.Producers;
 using Andor.Infrastructure.Onboarding.Messages.Consumers.Registrations;
 using Andor.Infrastructure.Onboarding.Messages.Producers.Registrations.DomainEventConfig;
@@ -41,6 +45,14 @@ public static class MessagingExtension
 
                 o.UsePostgres()
                 .UseBusOutbox();
+            });
+
+            x.AddSagaStateMachine<InviteSaga, InviteSagaState>()
+            .EntityFrameworkRepository(r =>
+            {
+                r.ExistingDbContext<PrincipalContext>();
+
+                r.UsePostgres();
             });
 
             x.AddConfigureEndpointsCallback((_, cfg) =>
@@ -84,6 +96,10 @@ public static class MessagingExtension
                 .AddFinancialMovementPublisherDomainEventConfig();
 
                 cfg.AddCashFlowPublisherDomainEventConfig();
+
+                cfg.AddInvitesPublisherDomainEventConfig();
+
+                cfg.AddUsersPublisherDomainEventConfig();
 
                 cfg.DeployPublishTopology = true;
             });

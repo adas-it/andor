@@ -10,11 +10,9 @@ public class IntegrationEventConsumer(IMediator _mediator) :
 {
     public async Task Consume(ConsumeContext<UserCreated> context)
     {
-        var command = new CreateAccountCommand()
+        var command = new CreateUserCommand()
         {
-            CurrencyId = context.Message.CurrencyId,
-            UserId = context.Message.UserId,
-            AccountName = context.Message.FirstName + "'s Account"
+            User = context.Message
         };
 
         await _mediator.Send(command);

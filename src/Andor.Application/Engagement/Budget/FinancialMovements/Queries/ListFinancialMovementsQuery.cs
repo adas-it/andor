@@ -9,7 +9,7 @@ using Andor.Domain.Engagement.Budget.FinancialMovements.MovementTypes;
 using Mapster;
 using MediatR;
 
-namespace Andor.Application.Engagement.Budget.Accounts.Queries;
+namespace Andor.Application.Engagement.Budget.FinancialMovements.Queries;
 
 public record ListFinancialMovementsQuery
     : PaginatedListInput, IRequest<ApplicationResult<ListFinancialMovementsOutput>>

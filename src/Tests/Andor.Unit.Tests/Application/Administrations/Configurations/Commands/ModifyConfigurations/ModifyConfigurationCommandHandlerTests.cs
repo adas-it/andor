@@ -1,4 +1,4 @@
-﻿using Andor.Application.Administrations.Configurations.Commands.ModifyConfiguration;
+﻿using Andor.Application.Administrations.Configurations.Commands.ModifyConfigurations;
 using Andor.Application.Administrations.Configurations.Services;
 using Andor.Application.Common.Interfaces;
 using Andor.Application.Dto.Common.ApplicationsErrors;

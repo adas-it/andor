@@ -1,5 +1,6 @@
 ﻿namespace Andor.Application.Common.Models.Authorizations;
 
+using Andor.Application.Common.Interfaces;
 using Microsoft.AspNetCore.Http;
 
 public class CurrentUserService : ICurrentUserService

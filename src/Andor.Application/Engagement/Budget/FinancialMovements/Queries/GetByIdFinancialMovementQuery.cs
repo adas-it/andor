@@ -6,7 +6,7 @@ using Andor.Domain.Engagement.Budget.FinancialMovements.FinancialMovements.Value
 using Mapster;
 using MediatR;
 
-namespace Andor.Application.Engagement.Budget.Accounts.Queries;
+namespace Andor.Application.Engagement.Budget.FinancialMovements.Queries;
 
 public class GetByIdFinancialMovementQuery : IRequest<ApplicationResult<FinancialMovementOutput>>
 {

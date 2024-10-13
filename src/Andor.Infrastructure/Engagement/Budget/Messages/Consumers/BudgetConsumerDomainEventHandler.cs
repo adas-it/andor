@@ -1,6 +1,8 @@
-﻿using Andor.Infrastructure.Messaging.Producers;
+﻿using Andor.Infrastructure.Engagement.Budget.Messages.Consumers.Accounts.DomainEventHandlers;
+using Andor.Infrastructure.Messaging.Producers;
 using MassTransit;
 using _accounts = Andor.Infrastructure.Engagement.Budget.Messages.Consumers.Accounts.DomainEventHandlers;
+using _invites = Andor.Infrastructure.Engagement.Budget.Messages.Consumers.Invites.DomainEventHandlers;
 using _monthlyCash = Andor.Infrastructure.Engagement.Budget.Messages.Consumers.MonthlyCash.DomainEventHandlers;
 
 namespace Andor.Infrastructure.Engagement.Budget.Messages.Consumers;
@@ -12,6 +14,9 @@ public static class BudgetConsumerDomainEventHandler
         config.AddConsumer<_accounts.FinancialMovementDomainEventConsumer>();
         config.AddConsumer<_monthlyCash.FinancialMovementDomainEventConsumer>();
         config.AddConsumer<_monthlyCash.CashFlowDomainEventConsumer>();
+        config.AddConsumer<_monthlyCash.CashFlowDomainEventConsumer>();
+        config.AddConsumer<_invites.InvitesDomainEventConsumer>();
+        config.AddConsumer<UserDomainEventConsumer>();
 
         return config;
     }
@@ -35,6 +40,25 @@ public static class BudgetConsumerDomainEventHandler
 
                 x.Consumer<_monthlyCash.FinancialMovementDomainEventConsumer>(context);
             });
+
+        config.SubscriptionEndpoint(
+            $"invites-subscription",
+            TopicNames.ENGAGEMENT_DOMAIN_TOPIC, x =>
+            {
+                x.ConfigureConsumeTopology = false;
+
+                x.Consumer<_invites.InvitesDomainEventConsumer>(context);
+            });
+
+        config.SubscriptionEndpoint(
+            $"user-subscription",
+            TopicNames.ENGAGEMENT_DOMAIN_TOPIC, x =>
+            {
+                x.ConfigureConsumeTopology = false;
+
+                x.Consumer<UserDomainEventConsumer>(context);
+            });
+
 
         config.SubscriptionEndpoint(
             $"monthly-cash-subscription",
