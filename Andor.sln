@@ -15,16 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andor.Application", "src\An
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andor.Application.Dto", "src\Andor.Application.Dto\Andor.Application.Dto.csproj", "{1C87326A-C71B-4995-95A0-FFDA2DFE4EB6}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{EC856E7B-39C6-48C9-AE61-EEEF38BC706D}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andor.Unit.Tests", "src\Tests\Andor.Unit.Tests\Andor.Unit.Tests.csproj", "{DDCFE98E-08FB-4480-B47D-DD217DBFB942}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andor.TestsUtil", "src\Tests\Andor.TestsUtil\Andor.TestsUtil.csproj", "{77924FE2-AB16-40CC-B59B-7E7047948E37}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andor.Component.Tests", "src\Tests\Andor.Component.Tests\Andor.Component.Tests.csproj", "{CADF64C4-E021-4505-AE4D-694DDA790C2B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andor.Integrations.Tests", "src\Tests\Andor.Integrations.Tests\Andor.Integrations.Tests.csproj", "{841EA361-61C2-4E10-8A6D-2A6D47094971}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B63424B1-0D71-4C7F-90D1-C9311D6C0B8B}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -60,31 +50,9 @@ Global
 		{1C87326A-C71B-4995-95A0-FFDA2DFE4EB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C87326A-C71B-4995-95A0-FFDA2DFE4EB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C87326A-C71B-4995-95A0-FFDA2DFE4EB6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DDCFE98E-08FB-4480-B47D-DD217DBFB942}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DDCFE98E-08FB-4480-B47D-DD217DBFB942}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DDCFE98E-08FB-4480-B47D-DD217DBFB942}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DDCFE98E-08FB-4480-B47D-DD217DBFB942}.Release|Any CPU.Build.0 = Release|Any CPU
-		{77924FE2-AB16-40CC-B59B-7E7047948E37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{77924FE2-AB16-40CC-B59B-7E7047948E37}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{77924FE2-AB16-40CC-B59B-7E7047948E37}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{77924FE2-AB16-40CC-B59B-7E7047948E37}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CADF64C4-E021-4505-AE4D-694DDA790C2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CADF64C4-E021-4505-AE4D-694DDA790C2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CADF64C4-E021-4505-AE4D-694DDA790C2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CADF64C4-E021-4505-AE4D-694DDA790C2B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{841EA361-61C2-4E10-8A6D-2A6D47094971}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{841EA361-61C2-4E10-8A6D-2A6D47094971}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{841EA361-61C2-4E10-8A6D-2A6D47094971}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{841EA361-61C2-4E10-8A6D-2A6D47094971}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{DDCFE98E-08FB-4480-B47D-DD217DBFB942} = {EC856E7B-39C6-48C9-AE61-EEEF38BC706D}
-		{77924FE2-AB16-40CC-B59B-7E7047948E37} = {EC856E7B-39C6-48C9-AE61-EEEF38BC706D}
-		{CADF64C4-E021-4505-AE4D-694DDA790C2B} = {EC856E7B-39C6-48C9-AE61-EEEF38BC706D}
-		{841EA361-61C2-4E10-8A6D-2A6D47094971} = {EC856E7B-39C6-48C9-AE61-EEEF38BC706D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EC52520D-997E-4E32-88E5-B00E14F64642}
