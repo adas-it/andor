@@ -20,6 +20,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8AC4F373-76CE-4AA7-98B8-AA63F78F782A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andor.TestsUtil", "src\Tests\Andor.TestsUtil\Andor.TestsUtil.csproj", "{A71B6454-FBFB-4661-9DB9-DE6430DED6E1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andor.Unit.Tests", "src\Tests\Andor.Unit.Tests\Andor.Unit.Tests.csproj", "{F0087556-6F9D-44B9-87BC-5EBE9931E45E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,9 +56,21 @@ Global
 		{1C87326A-C71B-4995-95A0-FFDA2DFE4EB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C87326A-C71B-4995-95A0-FFDA2DFE4EB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C87326A-C71B-4995-95A0-FFDA2DFE4EB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A71B6454-FBFB-4661-9DB9-DE6430DED6E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A71B6454-FBFB-4661-9DB9-DE6430DED6E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A71B6454-FBFB-4661-9DB9-DE6430DED6E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A71B6454-FBFB-4661-9DB9-DE6430DED6E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0087556-6F9D-44B9-87BC-5EBE9931E45E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0087556-6F9D-44B9-87BC-5EBE9931E45E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0087556-6F9D-44B9-87BC-5EBE9931E45E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0087556-6F9D-44B9-87BC-5EBE9931E45E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A71B6454-FBFB-4661-9DB9-DE6430DED6E1} = {8AC4F373-76CE-4AA7-98B8-AA63F78F782A}
+		{F0087556-6F9D-44B9-87BC-5EBE9931E45E} = {8AC4F373-76CE-4AA7-98B8-AA63F78F782A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EC52520D-997E-4E32-88E5-B00E14F64642}
