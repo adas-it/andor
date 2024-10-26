@@ -2,6 +2,8 @@
 using Andor.Application.Common.Interfaces;
 using Andor.Application.Communications.Interfaces;
 using Andor.Application.Communications.Services.PartnerHandler;
+using Andor.Infrastructure.Common.FeatureFlag;
+using Andor.Infrastructure.Communication.Gateway;
 using Andor.Infrastructure.Onboarding.Services.Keycloak;
 using Andor.Infrastructure.Onboarding.Services.Keycloak.Auth;
 using Microsoft.AspNetCore.Builder;
@@ -43,6 +45,9 @@ public static class ServicesExtension
 
         builder.Services.AddTransient<IKeycloakService, KeycloakService>();
         builder.Services.AddTransient<IPartner, InHousePartner>();
+
+        builder.Services.AddScoped<ISMTP, Smtp>();
+        builder.Services.AddScoped<IFeatureFlagService, FeatureFlagService>();
 
         return builder;
     }

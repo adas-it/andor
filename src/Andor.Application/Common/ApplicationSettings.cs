@@ -10,6 +10,7 @@ public record ApplicationSettings
     public Keycloak? Keycloak { get; init; }
     public SmtpConfig? SmtpConfig { get; init; }
     public UnleashConfig? Unleash { get; init; }
+    public MassTransit? MassTransit { get; init; }
 }
 
 public record Cors(List<string>? AllowedOrigins);
@@ -46,4 +47,10 @@ public class UnleashConfig
     public string? AppName { get; set; }
     public string? UnleashApi { get; set; }
     public string? Authorization { get; set; }
+}
+
+public class MassTransit
+{
+    public bool OutBox { get; set; }
+    public bool InMemorySaga { get; set; }
 }

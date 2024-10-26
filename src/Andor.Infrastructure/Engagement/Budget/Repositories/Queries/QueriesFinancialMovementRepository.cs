@@ -58,6 +58,7 @@ public class QueriesFinancialMovementRepository :
 
         where.Add(x => x.Date.Year == input.Year.Value && x.Date.Month == input.Month.Value);
         where.Add(x => x.IsDeleted == false);
+        where.Add(x => x.AccountId == input.AccountId);
 
         if (!string.IsNullOrWhiteSpace(input.Search))
         {

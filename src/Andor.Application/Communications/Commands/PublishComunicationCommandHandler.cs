@@ -28,7 +28,7 @@ public class PublishCommunicationCommandHandler(IQueriesRuleRepository _queriesR
         var partnerHandler =
         _partnerManager.GetPartnerHandler(template.Partner);
 
-        await partnerHandler.SendEmail(request.Email, template, request.Values, cancellationToken);
+        await partnerHandler.SendEmail(request.Email, rule.Name, template, request.Values, cancellationToken);
 
         return Unit.Value;
     }

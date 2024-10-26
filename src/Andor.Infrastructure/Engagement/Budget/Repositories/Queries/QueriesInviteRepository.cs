@@ -12,10 +12,30 @@ namespace Andor.Infrastructure.Engagement.Budget.Repositories.Queries;
 public class QueriesInviteRepository :
         QueryHelper<Invite, InviteId>, IQueriesInviteRepository
 {
+    private readonly ICurrentUserService _currentUserService;
     public QueriesInviteRepository(PrincipalContext context,
-        ICurrentUserService _currentUserService) : base(context)
+        ICurrentUserService currentUserService) : base(context)
     {
+        _currentUserService = currentUserService;
+
         loggedUserFilter = x => x.Account.Users.Any(z => z.UserId == _currentUserService.User.UserId);
+    }
+
+    public Task<SearchOutput<Invite>> SearchPendingsInvitesAsync(SearchInput input, CancellationToken cancellationToken)
+    {
+        loggedUserFilter = x => x.GuestId == _currentUserService.User.UserId;
+
+        Expression<Func<Invite, bool>> where = x => x.Status == InviteStatus.Pending;
+
+        var items = GetManyPaginated(where,
+            input.OrderBy,
+            input.Order,
+            input.Page,
+            input.PerPage,
+            out var total)
+            .ToList();
+
+        return Task.FromResult(new SearchOutput<Invite>(input.Page, input.PerPage, total, items!));
     }
 
     public Task<SearchOutput<Invite>> SearchAsync(SearchInputInvite input, CancellationToken cancellationToken)

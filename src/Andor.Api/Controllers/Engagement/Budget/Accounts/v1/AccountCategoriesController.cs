@@ -165,6 +165,7 @@ public class AccountCategoriesController(IMediator mediator) : BaseController
     [ProducesResponseType(typeof(DefaultResponse<ListCategoriesOutput>), StatusCodes.Status200OK)]
     public async Task<IResult> List(
         CancellationToken cancellationToken,
+        [FromRoute(Name = "accountId")] Guid accountId,
         [FromQuery] int? page = null,
         [FromQuery(Name = "per_page")] int? perPage = null,
         [FromQuery] string? search = null,
@@ -180,6 +181,8 @@ public class AccountCategoriesController(IMediator mediator) : BaseController
         if (!string.IsNullOrWhiteSpace(sort)) input.Sort = sort;
         if (dir is not null) input.Dir = dir.Value;
         if (type is not null) input.Type = type.Value;
+
+        input.AccountId = accountId;
 
         var result = await mediator.Send(input, cancellationToken);
 

@@ -6,6 +6,7 @@ using Andor.Domain.Engagement.Budget.Accounts.Currencies;
 using Andor.Domain.Engagement.Budget.Accounts.Invites;
 using Andor.Domain.Engagement.Budget.Accounts.PaymentMethods;
 using Andor.Domain.Engagement.Budget.Accounts.SubCategories;
+using Andor.Domain.Engagement.Budget.Accounts.Users;
 using Andor.Domain.SeedWork;
 using Andor.Domain.Validation;
 
@@ -148,6 +149,19 @@ public class Account : AggregateRoot<AccountId>
         }
 
         //RaiseDomainEvent(AccountLastMovementSetDomainEvent.FromAggregator(this));
+
+        return (result, this);
+    }
+
+    public (DomainResult, Account?) AddNewMember(User user)
+    {
+        Users.Add(new AccountUser()
+        {
+            AccountId = Id,
+            UserId = user.Id,
+        });
+
+        var result = Validate();
 
         return (result, this);
     }

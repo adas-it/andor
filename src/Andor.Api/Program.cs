@@ -28,8 +28,13 @@ builder.Services
     })
     .AddNewtonsoftJson();
 
+builder.Services.Configure<ApplicationSettings>(builder.Configuration);
+
+var applicationSettings = builder.Configuration
+    .Get<ApplicationSettings>();
+
 builder.AddDbExtension()
-    .AddDbMessagingExtension()
+    .AddDbMessagingExtension(applicationSettings)
     .AddApplicationExtensionServices()
     .AddApiExtensionServices()
     .AddServicesExtensionServices()
@@ -44,7 +49,6 @@ builder.Services
     .ConfigureJWT(builder.Configuration);
 
 builder.Services.AddSwagger(builder.Configuration);
-builder.Services.Configure<ApplicationSettings>(builder.Configuration);
 
 var app = builder.Build();
 
@@ -82,7 +86,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
 
 public static class MyJPIF
 {

@@ -10,6 +10,14 @@ namespace Andor.Infrastructure.Engagement.Budget.Repositories.Commands
     public class CommandsInviteRepository(PrincipalContext context) :
     CommandsBaseRepository<Invite, InviteId>(context), ICommandsInviteRepository
     {
+
+        public override async Task<Invite?> GetByIdAsync(InviteId id, CancellationToken cancellationToken)
+        => await _dbSet
+            .Include(x => x.Inviting)
+            .Include(x => x.Guest)
+            .Include(x => x.Account)
+            .FirstOrDefaultAsync(x => x.Id.Equals(id), cancellationToken);
+
         public async Task<List<Invite>> GetAllPendingByGuestEmailAsync(string mail, CancellationToken cancellationToken)
         {
             var invites = await _dbSet.Where(x => x.Email == mail).ToListAsync(cancellationToken);

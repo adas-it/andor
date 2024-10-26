@@ -1,4 +1,5 @@
-﻿using Andor.Application.Common.Interfaces;
+﻿using Andor.Application.Common;
+using Andor.Application.Common.Interfaces;
 using Andor.Application.Engagement.Budget.Invites.Saga;
 using Andor.Infrastructure.Administrations.Messages.Consumers.Configurations;
 using Andor.Infrastructure.Administrations.Messages.Producers.Configurations.DomainEventHandlersConfig;
@@ -23,7 +24,7 @@ namespace Andor.Kernel.Extensions.Infrastructures;
 
 public static class MessagingExtension
 {
-    public static WebApplicationBuilder AddDbMessagingExtension(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder AddDbMessagingExtension(this WebApplicationBuilder builder, ApplicationSettings applicationSettings)
     {
         var configs = builder.Configuration
             .GetConnectionString("ServiceBus");
@@ -39,21 +40,27 @@ public static class MessagingExtension
         {
             x.SetKebabCaseEndpointNameFormatter();
 
-            x.AddEntityFrameworkOutbox<PrincipalContext>(o =>
+            if (applicationSettings?.MassTransit?.OutBox ?? false)
             {
-                o.QueryDelay = TimeSpan.FromMilliseconds(500);
+                x.AddEntityFrameworkOutbox<PrincipalContext>(o =>
+                {
+                    o.QueryDelay = TimeSpan.FromMilliseconds(500);
 
-                o.UsePostgres()
-                .UseBusOutbox();
-            });
+                    o.UsePostgres()
+                    .UseBusOutbox();
+                });
+            }
 
-            x.AddSagaStateMachine<InviteSaga, InviteSagaState>()
-            .EntityFrameworkRepository(r =>
+            if (applicationSettings?.MassTransit?.OutBox ?? false)
             {
-                r.ExistingDbContext<PrincipalContext>();
+                x.AddSagaStateMachine<InviteSaga, InviteSagaState>()
+                .EntityFrameworkRepository(r =>
+                 {
+                     r.ExistingDbContext<PrincipalContext>();
 
-                r.UsePostgres();
-            });
+                     r.UsePostgres();
+                 });
+            }
 
             x.AddConfigureEndpointsCallback((_, cfg) =>
             {

@@ -45,6 +45,7 @@ public class QueriesAccountCategoryRepository : IQueriesAccountCategoryRepositor
     {
         List<Expression<Func<AccountCategory, bool>>> where = [];
 
+        where.Add(x => x.AccountId == input.accountId);
         where.Add(x => x.Category.Type == input.Type);
 
         if (!string.IsNullOrWhiteSpace(input.Search))

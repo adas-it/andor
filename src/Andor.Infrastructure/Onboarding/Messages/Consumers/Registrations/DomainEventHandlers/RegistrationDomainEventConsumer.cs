@@ -25,7 +25,7 @@ public class RegistrationDomainEventConsumer(IMediator _mediator) :
             context.Message.CheckCode));
     }
 
-    public async Task Consume(ConsumeContext<RegistrationCompletedDomainEvent> context)
+    public Task Consume(ConsumeContext<RegistrationCompletedDomainEvent> context)
     {
         var tasks = new Task[]
         {
@@ -34,6 +34,8 @@ public class RegistrationDomainEventConsumer(IMediator _mediator) :
         };
 
         Task.WaitAll(tasks);
+
+        return Task.CompletedTask;
     }
 
     public async Task Consume(ConsumeContext<UserCreatedDomainEvent> context)

@@ -1,7 +1,9 @@
-﻿using Andor.Application.Dto.Common.Responses;
+﻿using Andor.Application.Dto.Common.Requests;
+using Andor.Application.Dto.Common.Responses;
 using Andor.Application.Dto.Engagement.Budget.Invites.Requests;
 using Andor.Application.Dto.Engagement.Budget.Invites.Responses;
 using Andor.Application.Engagement.Budget.Invites.Commands;
+using Andor.Application.Engagement.Budget.Invites.Queries;
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -16,10 +18,9 @@ namespace Andor.Api.Controllers.Onboarding.Registrations.v1;
 [Consumes(MediaTypeNames.Application.Json)]
 public class InvitesController(IMediator mediator) : BaseController
 {
-    /*
-    [HttpGet]
+    [HttpGet("invites")]
     [MapToApiVersion("1.0")]
-    [ProducesResponseType(typeof(DefaultResponse<ListAccountOutput>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DefaultResponse<ListInviteOutput>), StatusCodes.Status200OK)]
     public async Task<IResult> GetAccounts(
         CancellationToken cancellationToken,
         [FromQuery] int? page = null,
@@ -29,7 +30,7 @@ public class InvitesController(IMediator mediator) : BaseController
         [FromQuery] SearchOrder? dir = null
     )
     {
-        var input = new ListAccountsQuery();
+        var input = new ListInvitesQuery();
         if (page is not null) input.Page = page.Value;
         if (perPage is not null) input.PerPage = perPage.Value;
         if (!string.IsNullOrWhiteSpace(search)) input.Search = search;
@@ -41,6 +42,7 @@ public class InvitesController(IMediator mediator) : BaseController
         return Result(output);
     }
 
+    /*
     [HttpGet("{id:guid}")]
     [MapToApiVersion("1.0")]
     [ProducesResponseType(typeof(DefaultResponse<AccountOutput>), StatusCodes.Status200OK)]
@@ -55,12 +57,13 @@ public class InvitesController(IMediator mediator) : BaseController
         return Result(output);
     }
     */
+
     [HttpPost("{accountid:guid}/share")]
     [MapToApiVersion("1.0")]
     [ProducesResponseType(typeof(DefaultResponse<InviteOutput>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(DefaultResponse<object>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(DefaultResponse<object>), StatusCodes.Status422UnprocessableEntity)]
-    public async Task<IResult> Register(
+    public async Task<IResult> Share(
         [FromRoute] Guid accountId,
         [FromBody] InviteInput input,
         CancellationToken cancellationToken
@@ -83,89 +86,31 @@ public class InvitesController(IMediator mediator) : BaseController
 
         return Result(output);
     }
-    /*
-    [HttpGet("{accountId:guid}/cash-flow")]
+
+    [HttpPost("{inviteId:guid}/answer")]
     [MapToApiVersion("1.0")]
-    [ProducesResponseType(typeof(DefaultResponse<CashFlowOutput>), StatusCodes.Status200OK)]
-    public async Task<IResult> GetCashFlow(
-        CancellationToken cancellationToken,
-        [FromRoute] Guid accountId,
-        [FromQuery] int? year = null,
-        [FromQuery] int? month = null
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(DefaultResponse<object>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(DefaultResponse<object>), StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IResult> Answer(
+        [FromRoute] Guid inviteId,
+        [FromBody] AnswerInput input,
+        CancellationToken cancellationToken
     )
     {
-        GetCashFlowByMonthQuery input = new();
-        input.AccountId = accountId;
-        input.Year = year ?? DateTime.UtcNow.Year;
-        input.Month = month ?? DateTime.UtcNow.Month;
-
-        var output = await mediator.Send(input, cancellationToken);
-
-        return Result(output);
-    }
-
-    [HttpGet("{accountId:guid}/financial-summary")]
-    [MapToApiVersion("1.0")]
-    [ProducesResponseType(typeof(DefaultResponse<List<FinancialSummariesOutput>>), StatusCodes.Status200OK)]
-    public async Task<IResult> FinancialSummary(
-        CancellationToken cancellationToken,
-        [FromRoute] Guid? accountId,
-        [FromQuery(Name = "year")] int? year = null,
-        [FromQuery(Name = "month")] int? month = null
-    )
-    {
-        var input = new GetFinancialSummariesByMonthQuery();
-        if (accountId is not null) input.AccountId = accountId.Value;
-        if (year is not null) input.Year = year.Value;
-        if (month is not null) input.Month = month.Value;
-
-        var output = await mediator.Send(input, cancellationToken);
-
-        return Result(output);
-    }
-
-    [HttpGet("{accountId:guid}/category-summary")]
-    [MapToApiVersion("1.0")]
-    [ProducesResponseType(typeof(DefaultResponse<List<CategorySummariesOutput>>), StatusCodes.Status200OK)]
-    public async Task<IResult> CategorySummary(
-        CancellationToken cancellationToken,
-        [FromRoute] Guid? accountId,
-        [FromQuery(Name = "year")] int? year = null,
-        [FromQuery(Name = "month")] int? month = null
-    )
-    {
-        var input = new GetCategorySummariesByMonthQuery();
-        if (accountId is not null) input.AccountId = accountId.Value;
-        if (year is not null) input.Year = year.Value;
-        if (month is not null) input.Month = month.Value;
-
-        var output = await mediator.Send(input, cancellationToken);
-
-        return Result(output);
-    }
-
-    [HttpPost("{accountId:guid}/share")]
-    [MapToApiVersion("1.0")]
-    [ProducesResponseType(typeof(DefaultResponse<object>), StatusCodes.Status200OK)]
-    public async Task<IResult> ShareAccount(
-        CancellationToken cancellationToken,
-        [FromRoute] Guid accountId,
-        [FromBody] ShareInput input
-    )
-    {
-        /*
-        var command = new ShareCommand()
+        if (input == null)
         {
-            AccountId = accountId,
-            Email = input.Email,
+            return Results.UnprocessableEntity();
+        }
+
+        var request = new AnswerInviteCommand()
+        {
+            InviteId = inviteId,
+            IsAccepeted = input.IsAccepted
         };
 
-        var output = await mediator.Send(command, cancellationToken);
+        var output = await mediator.Send(request, cancellationToken);
 
-        return Result("");
-        *//*
-        var result = ApplicationResult<object>.Success();
-
-        return Result(result);
-    }*/
+        return Result(output);
+    }
 }

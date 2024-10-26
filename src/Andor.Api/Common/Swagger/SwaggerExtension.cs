@@ -61,8 +61,8 @@ public static class SwaggerExtension
 
                 o.RoutePrefix = string.Empty;
 
-                o.OAuthClientId(configuration.Value.IdentityProvider?.SwaggerClientId);
-                o.OAuthClientSecret(configuration.Value.IdentityProvider?.SecretKey);
+                o.OAuthClientId(configuration.Value.IdentityProvider?.SwaggerClientId ?? "");
+                o.OAuthClientSecret(configuration.Value.IdentityProvider?.SecretKey ?? "");
                 o.OAuthAppName("Andor - Swagger");
                 o.OAuthUsePkce();
             }

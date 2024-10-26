@@ -3,11 +3,7 @@ using Andor.Application.Administrations.Configurations.Services;
 using Andor.Application.Common.Behaviors;
 using Andor.Application.Common.Interfaces;
 using Andor.Application.Common.Models.Authorizations;
-using Andor.Application.Communications.Interfaces;
 using Andor.Application.Communications.Services.Manager;
-using Andor.Application.Communications.Services.PartnerHandler;
-using Andor.Infrastructure.Common.FeatureFlag;
-using Andor.Infrastructure.Communication.Gateway;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -29,10 +25,7 @@ public static class ApplicationExtension
         builder.Services.AddScoped<IConfigurationServices, ConfigurationServices>();
         builder.Services.AddScoped<IPartnerManager, PartnerManager>();
         builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-        builder.Services.AddScoped<IPartner, InHousePartner>();
 
-        builder.Services.AddScoped<ISMTP, Smtp>();
-        builder.Services.AddScoped<IFeatureFlagService, FeatureFlagService>();
 
         return builder;
     }

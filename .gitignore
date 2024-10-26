@@ -353,3 +353,5 @@ MigrationBackup/
 .postgres/
 /src/Andor.Api/secrets.json
 /src/Andor.Api/Properties/launchSettings.json
+/src/Tests/Andor.Component.Tests/pacts/MyTest.txt
+/src/Tests/Andor.Component.Tests/secrets.json
