@@ -1,4 +1,9 @@
 ﻿using Andor.Application.Common.Interfaces;
+using Andor.Application.Dto.Engagement.Budget.FinancialMovements.Response;
+using Andor.Application.Dto.Engagement.Budget.FinancialMovementStatuses;
+using Andor.Application.Dto.Engagement.Budget.MovementTypes;
+using Andor.Application.Dto.Engagement.Budget.PaymentMethods.Responses;
+using Andor.Application.Dto.Engagement.Budget.SubCategories.Responses;
 using Andor.Domain.Common.ValuesObjects;
 using Andor.Domain.Engagement.Budget.Accounts.Accounts.Repositories;
 using Andor.Domain.Engagement.Budget.FinancialMovements.FinancialMovements;
@@ -21,7 +26,7 @@ public class QueriesFinancialMovementRepository :
         loggedUserFilter = x => x.Account.Users.Any(z => z.UserId == currentUserService.User.UserId);
     }
 
-    public async Task<List<FinancialMovement>> GetAllFinancialMovementsByMonth(
+    public async Task<List<FinancialMovementOutput>> GetAllFinancialMovementsByMonth(
         Domain.Engagement.Budget.Accounts.Accounts.ValueObjects.AccountId accountId,
         Year year,
         Month month,
@@ -35,7 +40,7 @@ public class QueriesFinancialMovementRepository :
         query = query.Where(x => x.AccountId == accountId);
         query = query.Where(x => x.Date >= startDate && x.Date <= endDate && x.IsDeleted == false);
 
-        return await query.ToListAsync(cancellationToken);
+        return await query.Select(GetProjection()).ToListAsync(cancellationToken);
     }
 
     public async Task<DateTime?> GetFirstMovement(
@@ -52,7 +57,7 @@ public class QueriesFinancialMovementRepository :
             .Select(x => x.Date)
             .FirstOrDefaultAsync(cancellationToken);
 
-    public Task<SearchOutput<FinancialMovement>> SearchAsync(SearchInputMovement input, CancellationToken cancellationToken)
+    public Task<SearchOutput<FinancialMovementOutput>> SearchOutputAsync(SearchInputMovement input, CancellationToken cancellationToken)
     {
         List<Expression<Func<FinancialMovement, bool>>> where = [];
 
@@ -65,13 +70,49 @@ public class QueriesFinancialMovementRepository :
             where.Add(x => x.Description.Contains(input.Search, StringComparison.CurrentCultureIgnoreCase));
         }
 
-        var items = GetManyPaginated(where,
+        var items = base.GetManyPaginated(where,
             input.OrderBy,
             input.Order,
             input.Page,
             input.PerPage,
-            out var total).ToList();
+            out var total)
+            .Select(GetProjection()).ToList();
 
-        return Task.FromResult(new SearchOutput<FinancialMovement>(input.Page, input.PerPage, total, items!));
+        return Task.FromResult(new SearchOutput<FinancialMovementOutput>(input.Page, input.PerPage, total, items!));
+    }
+
+    private static Expression<Func<FinancialMovement, FinancialMovementOutput>> GetProjection()
+    {
+        return x => new FinancialMovementOutput()
+        {
+            Date = x.Date,
+            Description = x.Description,
+            Id = x.Id,
+            PaymentMethod = new PaymentMethodOutput()
+            {
+                Id = x.PaymentMethodId,
+                Name = x.PaymentMethod.Name,
+                DeactivationDate = x.PaymentMethod.DeactivationDate,
+                Description = x.PaymentMethod.Description,
+                StartDate = x.PaymentMethod.StartDate
+            },
+            Status = new FinancialMovementStatusOutput(x.Status.Key, x.Status.Name),
+            Type = new MovementTypeOutput(x.Type.Key, x.Type.Name),
+            SubCategory = new SubCategoryOutput()
+            {
+                Name = x.SubCategory.Name,
+                Description = x.SubCategory.Description,
+                Id = x.SubCategory.Id,
+                Category = new Application.Dto.Engagement.Budget.Categories.Response.CategoryOutput()
+                {
+                    Id = x.SubCategory.Category.Id,
+                    Name = x.SubCategory.Category.Name,
+                    Type = new Application.Dto.Engagement.Budget.Categories.Response.CategoryTypeOutput(
+                        x.SubCategory.Category.Type.Key,
+                        x.SubCategory.Category.Type.Name)
+                },
+            },
+            Value = x.Value
+        };
     }
 }

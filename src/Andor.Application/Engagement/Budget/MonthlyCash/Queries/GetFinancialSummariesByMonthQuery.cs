@@ -31,7 +31,7 @@ public class GetFinancialSummariesByMonthHandler(IQueriesFinancialMovementReposi
             request.Month,
             cancellationToken);
 
-        var it = listFinancialMovements.Where(x => x.Status == MovementStatus.Accomplished).Select(x => new
+        var it = listFinancialMovements.Where(x => x.Status.Key == MovementStatus.Accomplished.Key).Select(x => new
         {
             Category = new KeyValuePair<CategoryId, string>(x.SubCategory.Category.Id, x.SubCategory.Category.Name),
             SubCategory = new KeyValuePair<SubCategoryId, string>(x.SubCategory.Id, x.SubCategory.Name),

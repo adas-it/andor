@@ -22,4 +22,8 @@
     <Folder Include="Onboarding\Users\Repositories\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Andor.Application.Dto\Andor.Application.Dto.csproj" />
+  </ItemGroup>
+
 </Project>

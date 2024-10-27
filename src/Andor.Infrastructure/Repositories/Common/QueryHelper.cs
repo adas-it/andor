@@ -116,10 +116,10 @@ public static class Extension
         return query.Skip(page * perPage).Take(perPage);
     }
 
-    public static IQueryable<TOutput> GetManyPaginated<TOutput, TDbSet, TEntity, TEntityId>(
+    public static IQueryable<TOutput> GetManyPaginated<TOutput, TDbSet, TEntity>(
         TDbSet _dbSet,
         Expression<Func<TEntity, bool>>? loggedUserFilter,
-        Func<IQueryable<TOutput>>? where,
+        List<Expression<Func<TEntity, bool>>>? where,
         Dictionary<string, SearchOrder>? orderBy,
         Expression<Func<TEntity, TOutput>> project,
         int? page,
@@ -128,23 +128,28 @@ public static class Extension
         where TDbSet : DbSet<TEntity>
         where TEntity : class
     {
-        IQueryable<TOutput> query;
+        IQueryable<TEntity> query;
 
         if (loggedUserFilter is not null)
         {
-            query = _dbSet.AsNoTracking().Where(loggedUserFilter).Select(project);
+            query = _dbSet.AsNoTracking().Where(loggedUserFilter);
         }
         else
         {
-            query = _dbSet.AsNoTracking().Select(project);
+            query = _dbSet.AsNoTracking();
         }
 
-        if (where != null)
+        if (where != null && where.Any())
         {
-            query = where.Invoke();
+            foreach (var item in where)
+            {
+                query = query.Where(item);
+            }
         }
 
-        total = query.Count();
+        var queryProjected = query.Select(project);
+
+        total = queryProjected.Count();
 
         orderBy ??= [];
 
@@ -157,19 +162,19 @@ public static class Extension
             if (field != null)
             {
                 if (item.Value == SearchOrder.Asc)
-                    query = ((IOrderedQueryable<TOutput>)query).ThenBy(ToLambda<TOutput>(field.Name));
+                    queryProjected = ((IOrderedQueryable<TOutput>)queryProjected).ThenBy(ToLambda<TOutput>(field.Name));
 
                 if (item.Value == SearchOrder.Desc)
-                    query = ((IOrderedQueryable<TOutput>)query).ThenByDescending(ToLambda<TOutput>(field.Name));
+                    queryProjected = ((IOrderedQueryable<TOutput>)queryProjected).ThenByDescending(ToLambda<TOutput>(field.Name));
             }
         }
 
         if (page.HasValue && perPage.HasValue)
         {
-            return query.Skip(page.Value * perPage.Value).Take(perPage.Value);
+            return queryProjected.Skip(page.Value * perPage.Value).Take(perPage.Value);
         }
 
-        return query;
+        return queryProjected;
     }
 
     public static Expression<Func<TProp, object>> ToLambda<TProp>(string propertyName)

@@ -6,7 +6,6 @@ using Andor.Domain.Engagement.Budget.Accounts.Accounts.Repositories;
 using Andor.Domain.Engagement.Budget.FinancialMovements.FinancialMovements;
 using Andor.Domain.Engagement.Budget.FinancialMovements.FinancialMovements.ValueObjects;
 using Andor.Domain.Engagement.Budget.FinancialMovements.MovementTypes;
-using Mapster;
 using MediatR;
 
 namespace Andor.Application.Engagement.Budget.FinancialMovements.Queries;
@@ -30,7 +29,7 @@ public class ListFinancialMovementsQueryHandler(IQueriesFinancialMovementReposit
         var movementType = request.Type == MovementType.MoneyDeposit.Key ? MovementType.MoneyDeposit : MovementType.MoneySpending;
         try
         {
-            var searchOutput = await _repository.SearchAsync(
+            var searchOutput = await _repository.SearchOutputAsync(
                 new SearchInputMovement(
                     request.Page,
                     request.PerPage,
@@ -49,7 +48,7 @@ public class ListFinancialMovementsQueryHandler(IQueriesFinancialMovementReposit
                 searchOutput.CurrentPage,
                 searchOutput.PerPage,
                 searchOutput.Total,
-                searchOutput.Items.Select(x => x.Adapt<FinancialMovementOutput>()).ToList()
+                searchOutput.Items.ToList()
             );
 
             response.SetData(output);

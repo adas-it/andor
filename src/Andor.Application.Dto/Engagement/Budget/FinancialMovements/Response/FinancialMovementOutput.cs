@@ -8,7 +8,7 @@ namespace Andor.Application.Dto.Engagement.Budget.FinancialMovements.Response;
 public record FinancialMovementOutput
 {
     public Guid Id { get; set; }
-    public DateTime? Date { get; set; }
+    public DateTime Date { get; set; }
     public string? Description { get; set; }
     public decimal Value { get; set; }
     public SubCategoryOutput SubCategory { get; set; }
