@@ -104,7 +104,7 @@ public class Invite : AggregateRoot<InviteId>
     {
         var status = accepeted ? InviteStatus.Accepted : InviteStatus.Refused;
 
-        var result = SetValues(Id, Email, AccountId, status, InvitingId, null);
+        var result = SetValues(Id, Email, AccountId, status, InvitingId, GuestId);
 
         if (result.IsFailure)
         {
