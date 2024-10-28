@@ -60,12 +60,15 @@ public class GetFinancialSummariesByMonthHandler(IQueriesFinancialMovementReposi
 
         return response;
     }
-
     private static int GetWeekOfMonth(DateTime date)
     {
+        DateTime firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
         int firstDayOfWeek = (int)CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
 
-        int weekOfMonth = (date.Day + (int)date.DayOfWeek - firstDayOfWeek) / 7 + 1;
+        int offset = (int)firstDayOfMonth.DayOfWeek - firstDayOfWeek;
+        offset = offset < 0 ? offset + 7 : offset;
+
+        int weekOfMonth = (date.Day + offset - 1) / 7 + 1;
 
         return weekOfMonth;
     }
