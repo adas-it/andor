@@ -3,6 +3,7 @@ using Andor.Application.Dto.Engagement.Budget.Account.Responses;
 using Andor.Domain.Common.ValuesObjects;
 using Andor.Domain.Engagement.Budget.Accounts.Accounts.Repositories;
 using Andor.Domain.Engagement.Budget.Accounts.Accounts.ValueObjects;
+using Andor.Domain.Engagement.Budget.FinancialMovements.MovementStatuses;
 using MediatR;
 
 namespace Andor.Application.Engagement.Budget.MonthlyCash.Queries;
@@ -26,7 +27,7 @@ public class GetFinancialSummariesByMonthQueryHandler(IQueriesFinancialMovementR
             request.Month,
             cancellationToken);
 
-        var items = listFinancialMovements.Select(x => new
+        var items = listFinancialMovements.Where(x => x.Status.Key == MovementStatus.Accomplished.Key).Select(x => new
         {
             Category = new KeyValuePair<Guid, string>(x.SubCategory.Category.Id, x.SubCategory.Category.Name),
             CategoryType = new KeyValuePair<int, string>(x.SubCategory.Category.Type.Key, x.SubCategory.Category.Type.Name),
