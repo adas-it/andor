@@ -40,28 +40,20 @@ public static class MessagingExtension
         {
             x.SetKebabCaseEndpointNameFormatter();
 
-            if (applicationSettings?.MassTransit?.OutBox ?? false)
+            x.AddEntityFrameworkOutbox<PrincipalContext>(o =>
             {
-                x.AddEntityFrameworkOutbox<PrincipalContext>(o =>
-                {
-                    o.QueryDelay = TimeSpan.FromMilliseconds(500);
+                o.QueryDelay = TimeSpan.FromMilliseconds(500);
 
-                    o.UsePostgres()
-                    .UseBusOutbox();
-                });
-            }
+                o.UsePostgres()
+                .UseBusOutbox();
+            });
+            x.AddSagaStateMachine<InviteSaga, InviteSagaState>()
+            .EntityFrameworkRepository(r =>
+             {
+                 r.ExistingDbContext<PrincipalContext>();
 
-            if (applicationSettings?.MassTransit?.OutBox ?? false)
-            {
-                x.AddSagaStateMachine<InviteSaga, InviteSagaState>()
-                .EntityFrameworkRepository(r =>
-                 {
-                     r.ExistingDbContext<PrincipalContext>();
-
-                     r.UsePostgres();
-                 });
-            }
-
+                 r.UsePostgres();
+             });
             x.AddConfigureEndpointsCallback((_, cfg) =>
             {
                 if (cfg is IServiceBusReceiveEndpointConfigurator sb)
