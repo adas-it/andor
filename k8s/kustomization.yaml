@@ -8,4 +8,4 @@ namespace: prod
 images:
 - name: andor-familybudget
   newName: lucashigor/andor
-  newTag: 0133e6a2844d99edb440e48bc9a542ba7e195a02
+  newTag: 622b8f53f86dda29bb7736725c8f8b5dc825660b
