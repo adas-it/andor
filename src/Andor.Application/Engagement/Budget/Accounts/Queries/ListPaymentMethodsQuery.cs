@@ -4,7 +4,6 @@ using Andor.Application.Dto.Engagement.Budget.PaymentMethods.Responses;
 using Andor.Domain.Engagement.Budget.Accounts.Accounts.Repositories;
 using Andor.Domain.Engagement.Budget.Accounts.Accounts.ValueObjects;
 using Andor.Domain.Engagement.Budget.FinancialMovements.MovementTypes;
-using Mapster;
 using MediatR;
 
 namespace Andor.Application.Engagement.Budget.Accounts.Queries;
@@ -37,14 +36,7 @@ public class ListPaymentMethodsQueryHandler(IQueriesAccountPaymentMethodReposito
             cancellationToken
         );
 
-        var output = new ListPaymentMethodsOutput(
-            searchOutput.CurrentPage,
-            searchOutput.PerPage,
-            searchOutput.Total,
-            searchOutput.Items.Select(x => x.Adapt<PaymentMethodOutput>()).ToList()
-        );
-
-        response.SetData(output);
+        response.SetData(searchOutput);
 
         return response;
     }

@@ -109,10 +109,13 @@ public class QueriesFinancialMovementRepository :
                     Name = x.SubCategory.Category.Name,
                     Type = new Application.Dto.Engagement.Budget.Categories.Response.CategoryTypeOutput(
                         x.SubCategory.Category.Type.Key,
-                        x.SubCategory.Category.Type.Name)
+                        x.SubCategory.Category.Type.Name),
+                    Order = x.Account.Categories.FirstOrDefault(z => z.CategoryId == x.SubCategory.Category.Id).Order,
                 },
+                Order = x.Account.Categories.FirstOrDefault(z => z.CategoryId == x.SubCategory.Category.Id).Order
             },
             Value = x.Value
+
         };
     }
 }

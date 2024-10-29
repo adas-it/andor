@@ -7,4 +7,5 @@ public record PaymentMethodOutput
     public string Description { get; set; }
     public DateTime? StartDate { get; set; }
     public DateTime? DeactivationDate { get; set; }
+    public int Order { get; set; }
 }

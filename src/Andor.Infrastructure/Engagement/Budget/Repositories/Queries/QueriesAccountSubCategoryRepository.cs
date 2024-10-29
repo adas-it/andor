@@ -1,10 +1,11 @@
 ﻿using Andor.Application.Common.Interfaces;
+using Andor.Application.Dto.Engagement.Budget.Categories.Response;
+using Andor.Application.Dto.Engagement.Budget.SubCategories.Responses;
 using Andor.Domain.Engagement.Budget.Accounts.Accounts;
 using Andor.Domain.Engagement.Budget.Accounts.Accounts.ValueObjects;
 using Andor.Domain.Engagement.Budget.Accounts.Categories.Repositories;
 using Andor.Domain.Engagement.Budget.Accounts.SubCategories;
 using Andor.Domain.Engagement.Budget.Accounts.SubCategories.ValueObjects;
-using Andor.Domain.SeedWork.Repositories.ResearchableRepository;
 using Andor.Infrastructure.Repositories.Common;
 using Andor.Infrastructure.Repositories.Context;
 using MassTransit.Initializers;
@@ -42,7 +43,7 @@ public class QueriesAccountSubCategoryRepository : IQueriesAccountSubCategoryRep
             .Select(x => x.SubCategory);
     }
 
-    public Task<SearchOutput<SubCategory>> SearchAsync(SearchInputSubCategory input, CancellationToken cancellationToken)
+    public Task<ListSubCategoriesOutput> SearchAsync(SearchInputSubCategory input, CancellationToken cancellationToken)
     {
         List<Expression<Func<AccountSubCategory, bool>>> where = [];
 
@@ -67,10 +68,43 @@ public class QueriesAccountSubCategoryRepository : IQueriesAccountSubCategoryRep
             input.Page,
             input.PerPage,
             out var total)
-            .Select(x => x.SubCategory);
+            .Select(GetProjection())
+            .OrderBy(x => x.Order);
 
         var items = query.ToList();
 
-        return Task.FromResult(new SearchOutput<SubCategory>(input.Page, input.PerPage, total, items!));
+        return Task.FromResult(new ListSubCategoriesOutput(input.Page, input.PerPage, total, items!));
+    }
+
+    private static Expression<Func<AccountSubCategory, SubCategoryOutput>> GetProjection()
+    {
+        return x => new SubCategoryOutput()
+        {
+            Id = x.SubCategory.Id,
+            Name = x.SubCategory.Name,
+            Description = x.SubCategory.Description,
+            StartDate = x.SubCategory.StartDate,
+            DeactivationDate = x.SubCategory.DeactivationDate,
+            Category = new CategoryOutput()
+            {
+                Id = x.SubCategory.Category.Id,
+                Name = x.SubCategory.Category.Name,
+                Description = x.SubCategory.Category.Description,
+                StartDate = x.SubCategory.Category.StartDate,
+                DeactivationDate = x.SubCategory.Category.DeactivationDate,
+                Type = new CategoryTypeOutput(
+                        x.SubCategory.Category.Type.Key,
+                        x.SubCategory.Category.Type.Name)
+            },
+            DefaultPaymentMethod = new Application.Dto.Engagement.Budget.PaymentMethods.Responses.PaymentMethodOutput()
+            {
+                Id = x.SubCategory.DefaultPaymentMethod.Id,
+                Name = x.SubCategory.DefaultPaymentMethod.Name,
+                Description = x.SubCategory.DefaultPaymentMethod.Description,
+                StartDate = x.SubCategory.DefaultPaymentMethod.StartDate,
+                DeactivationDate = x.SubCategory.DefaultPaymentMethod.DeactivationDate,
+            },
+            Order = x.Order
+        };
     }
 }

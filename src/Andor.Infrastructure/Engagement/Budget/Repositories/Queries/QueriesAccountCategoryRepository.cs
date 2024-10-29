@@ -1,10 +1,10 @@
 ﻿using Andor.Application.Common.Interfaces;
+using Andor.Application.Dto.Engagement.Budget.Categories.Response;
 using Andor.Domain.Engagement.Budget.Accounts.Accounts;
 using Andor.Domain.Engagement.Budget.Accounts.Accounts.ValueObjects;
 using Andor.Domain.Engagement.Budget.Accounts.Categories;
 using Andor.Domain.Engagement.Budget.Accounts.Categories.Repositories;
 using Andor.Domain.Engagement.Budget.Accounts.Categories.ValueObjects;
-using Andor.Domain.SeedWork.Repositories.ResearchableRepository;
 using Andor.Infrastructure.Repositories.Common;
 using Andor.Infrastructure.Repositories.Context;
 using MassTransit.Initializers;
@@ -41,7 +41,7 @@ public class QueriesAccountCategoryRepository : IQueriesAccountCategoryRepositor
             .Select(x => x.Category);
     }
 
-    public Task<SearchOutput<Category>> SearchAsync(SearchInputCategory input, CancellationToken cancellationToken)
+    public Task<ListCategoriesOutput> SearchAsync(SearchInputCategory input, CancellationToken cancellationToken)
     {
         List<Expression<Func<AccountCategory, bool>>> where = [];
 
@@ -62,9 +62,26 @@ public class QueriesAccountCategoryRepository : IQueriesAccountCategoryRepositor
             input.Page,
             input.PerPage,
             out var total)
-            .Select(x => x.Category)
+            .Select(GetProjection())
+            .OrderBy(x => x.Order)
             .ToList();
 
-        return Task.FromResult(new SearchOutput<Category>(input.Page, input.PerPage, total, items!));
+        return Task.FromResult(new ListCategoriesOutput(input.Page, input.PerPage, total, items!));
+    }
+
+    private static Expression<Func<AccountCategory, CategoryOutput>> GetProjection()
+    {
+        return x => new CategoryOutput()
+        {
+            Id = x.Category.Id,
+            Name = x.Category.Name,
+            Description = x.Category.Description,
+            StartDate = x.Category.StartDate,
+            DeactivationDate = x.Category.DeactivationDate,
+            Type = new CategoryTypeOutput(
+                        x.Category.Type.Key,
+                        x.Category.Type.Name),
+            Order = x.Order
+        };
     }
 }

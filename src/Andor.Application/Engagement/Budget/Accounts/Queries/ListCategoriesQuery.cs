@@ -3,7 +3,6 @@ using Andor.Application.Dto.Common.Responses;
 using Andor.Application.Dto.Engagement.Budget.Categories.Response;
 using Andor.Domain.Engagement.Budget.Accounts.Categories.Repositories;
 using Andor.Domain.Engagement.Budget.FinancialMovements.MovementTypes;
-using Mapster;
 using MediatR;
 
 namespace Andor.Application.Engagement.Budget.Accounts.Queries;
@@ -36,14 +35,7 @@ public class ListCategoriesQueryHandler(IQueriesAccountCategoryRepository reposi
             cancellationToken
         );
 
-        var output = new ListCategoriesOutput(
-            searchOutput.CurrentPage,
-            searchOutput.PerPage,
-            searchOutput.Total,
-            searchOutput.Items.Select(x => x.Adapt<CategoryOutput>()).ToList()
-        );
-
-        response.SetData(output);
+        response.SetData(searchOutput);
 
         return response;
     }

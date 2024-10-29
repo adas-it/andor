@@ -7,9 +7,9 @@ public record FinancialSummariesOutput
     public decimal Week3 { get; set; }
     public decimal Week4 { get; set; }
     public decimal Week5 { get; set; }
-    public decimal Week6 { get; set; }
-    public string Avatar { get; set; }
-    public KeyValuePair<Guid, string> SubCategory { get; set; }
-    public KeyValuePair<Guid, string> Category { get; set; }
+    public CategorySummarieOutuput SubCategory { get; set; }
+    public CategorySummarieOutuput Category { get; set; }
     public KeyValuePair<int, string> CategoryType { get; set; }
+
+    public record CategorySummarieOutuput(Guid key, string value, int order);
 }

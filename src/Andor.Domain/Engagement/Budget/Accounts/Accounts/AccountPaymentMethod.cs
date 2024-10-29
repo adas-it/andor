@@ -10,4 +10,5 @@ public class AccountPaymentMethod
     public Account? Account { get; set; }
     public PaymentMethodId PaymentMethodId { get; set; }
     public PaymentMethod? PaymentMethod { get; set; }
+    public int Order { get; set; }
 }

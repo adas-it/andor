@@ -5,6 +5,7 @@ using Andor.Domain.Engagement.Budget.Accounts.Accounts.Repositories;
 using Andor.Domain.Engagement.Budget.Accounts.Accounts.ValueObjects;
 using Andor.Domain.Engagement.Budget.FinancialMovements.MovementStatuses;
 using MediatR;
+using static Andor.Application.Dto.Engagement.Budget.Account.Responses.CategorySummariesOutput;
 
 namespace Andor.Application.Engagement.Budget.MonthlyCash.Queries;
 
@@ -29,17 +30,21 @@ public class GetFinancialSummariesByMonthQueryHandler(IQueriesFinancialMovementR
 
         var items = listFinancialMovements.Where(x => x.Status.Key == MovementStatus.Accomplished.Key).Select(x => new
         {
-            Category = new KeyValuePair<Guid, string>(x.SubCategory.Category.Id, x.SubCategory.Category.Name),
+            Category = new CategoryOutuput(x.SubCategory.Category.Id, x.SubCategory.Category.Name, x.SubCategory.Category.Order ?? 0),
             CategoryType = new KeyValuePair<int, string>(x.SubCategory.Category.Type.Key, x.SubCategory.Category.Type.Name),
             Value = x.Value
         }).GroupBy(x => new { x.Category, x.CategoryType })
         .Select(x => new CategorySummariesOutput()
         {
-            Category = new KeyValuePair<Guid, string>(x.Key.Category.Key, x.Key.Category.Value),
+            Category = x.Key.Category,
             CategoryType = new KeyValuePair<int, string>(x.Key.CategoryType.Key, x.Key.CategoryType.Value),
             Value = x.Sum(z => z.Value)
         }).ToList();
 
-        return items;
+        var output = items
+            .OrderBy(x => x.CategoryType.Key)
+            .ThenBy(x => x.Category.order).ToList();
+
+        return output;
     }
 }

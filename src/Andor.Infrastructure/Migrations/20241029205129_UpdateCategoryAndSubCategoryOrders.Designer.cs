@@ -3,6 +3,7 @@ using System;
 using Andor.Infrastructure.Repositories.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Andor.Infrastructure.Migrations
 {
     [DbContext(typeof(PrincipalContext))]
-    partial class PrincipalContextModelSnapshot : ModelSnapshot
+    [Migration("20241029205129_UpdateCategoryAndSubCategoryOrders")]
+    partial class UpdateCategoryAndSubCategoryOrders
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -264,7 +267,7 @@ namespace Andor.Infrastructure.Migrations
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Order")
+                    b.Property<int?>("Order")
                         .HasColumnType("integer");
 
                     b.HasKey("AccountId", "CategoryId");
@@ -282,9 +285,6 @@ namespace Andor.Infrastructure.Migrations
                     b.Property<Guid>("PaymentMethodId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Order")
-                        .HasColumnType("integer");
-
                     b.HasKey("AccountId", "PaymentMethodId");
 
                     b.HasIndex("PaymentMethodId");
@@ -300,7 +300,7 @@ namespace Andor.Infrastructure.Migrations
                     b.Property<Guid>("SubCategoryId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Order")
+                    b.Property<int?>("Order")
                         .HasColumnType("integer");
 
                     b.HasKey("AccountId", "SubCategoryId");
@@ -421,9 +421,6 @@ namespace Andor.Infrastructure.Migrations
 
                     b.Property<DateTime?>("DeactivationDate")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<int?>("DefaultOrder")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Description")
                         .IsRequired()

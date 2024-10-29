@@ -10,4 +10,5 @@ public class AccountSubCategory
     public Account? Account { get; set; }
     public SubCategoryId SubCategoryId { get; set; }
     public SubCategory? SubCategory { get; set; }
+    public int Order { get; set; }
 }

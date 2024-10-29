@@ -1,10 +1,10 @@
 ﻿using Andor.Application.Common.Interfaces;
+using Andor.Application.Dto.Engagement.Budget.PaymentMethods.Responses;
 using Andor.Domain.Engagement.Budget.Accounts.Accounts;
 using Andor.Domain.Engagement.Budget.Accounts.Accounts.Repositories;
 using Andor.Domain.Engagement.Budget.Accounts.Accounts.ValueObjects;
 using Andor.Domain.Engagement.Budget.Accounts.PaymentMethods;
 using Andor.Domain.Engagement.Budget.Accounts.PaymentMethods.ValueObjects;
-using Andor.Domain.SeedWork.Repositories.ResearchableRepository;
 using Andor.Infrastructure.Repositories.Common;
 using Andor.Infrastructure.Repositories.Context;
 using MassTransit.Initializers;
@@ -41,7 +41,7 @@ public class QueriesAccountPaymentMethodRepository : IQueriesAccountPaymentMetho
             .Select(x => x.PaymentMethod);
     }
 
-    public Task<SearchOutput<PaymentMethod>> SearchAsync(SearchInputAccountPayment input, CancellationToken cancellationToken)
+    public Task<ListPaymentMethodsOutput> SearchAsync(SearchInputAccountPayment input, CancellationToken cancellationToken)
     {
         List<Expression<Func<AccountPaymentMethod, bool>>> where = [];
 
@@ -53,7 +53,7 @@ public class QueriesAccountPaymentMethodRepository : IQueriesAccountPaymentMetho
             where.Add(x => x.PaymentMethod.Name.Contains(input.Search, StringComparison.CurrentCultureIgnoreCase));
         }
 
-        var items = Extension.GetManyPaginated(
+        var query = Extension.GetManyPaginated(
             _dbSet,
             loggedUserFilter,
             where,
@@ -62,9 +62,23 @@ public class QueriesAccountPaymentMethodRepository : IQueriesAccountPaymentMetho
             input.Page,
             input.PerPage,
             out var total)
-            .Select(x => x.PaymentMethod)
-            .ToList();
+            .Select(GetProjection())
+            .OrderBy(x => x.Order);
 
-        return Task.FromResult(new SearchOutput<PaymentMethod>(input.Page, input.PerPage, total, items!));
+        var items = query.ToList(); ;
+
+        return Task.FromResult(new ListPaymentMethodsOutput(input.Page, input.PerPage, total, items!));
+    }
+    private static Expression<Func<AccountPaymentMethod, PaymentMethodOutput>> GetProjection()
+    {
+        return x => new PaymentMethodOutput()
+        {
+            Id = x.PaymentMethod.Id,
+            Name = x.PaymentMethod.Name,
+            Description = x.PaymentMethod.Description,
+            StartDate = x.PaymentMethod.StartDate,
+            DeactivationDate = x.PaymentMethod.DeactivationDate,
+            Order = x.Order
+        };
     }
 }

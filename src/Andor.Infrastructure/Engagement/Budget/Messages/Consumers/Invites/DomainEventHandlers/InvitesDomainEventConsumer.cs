@@ -1,5 +1,6 @@
 ﻿using Andor.Application.Engagement.Budget.Invites.Commands;
 using Andor.Application.Engagement.Budget.Invites.DomainEventHandlers;
+using Andor.Domain.Engagement.Budget.Accounts.Accounts.DomainEvents;
 using Andor.Domain.Engagement.Budget.Accounts.Invites.DomainEvents;
 using Andor.Domain.Engagement.Budget.Accounts.Users.DomainEvents;
 using MassTransit;
@@ -8,6 +9,9 @@ using MediatR;
 namespace Andor.Infrastructure.Engagement.Budget.Messages.Consumers.Invites.DomainEventHandlers;
 
 public class InvitesDomainEventConsumer(IMediator _mediator) :
+    IConsumer<FinancialMovementDeletedDomainEvent>,
+    IConsumer<FinancialMovementChangedDomainEvent>,
+    IConsumer<FinancialMovementCreatedDomainEvent>,
     IConsumer<InviteCreatedDomainEvent>,
     IConsumer<GuestNotFoundDomainEvent>,
     IConsumer<GuestFoundDomainEvent>,
@@ -52,5 +56,26 @@ public class InvitesDomainEventConsumer(IMediator _mediator) :
         };
 
         await _mediator.Send(command);
+    }
+
+    public Task Consume(ConsumeContext<FinancialMovementDeletedDomainEvent> context)
+    {
+        //DUMMY
+
+        return Task.CompletedTask;
+    }
+
+    public Task Consume(ConsumeContext<FinancialMovementChangedDomainEvent> context)
+    {
+        //DUMMY
+
+        return Task.CompletedTask;
+    }
+
+    public Task Consume(ConsumeContext<FinancialMovementCreatedDomainEvent> context)
+    {
+        //DUMMY
+
+        return Task.CompletedTask;
     }
 }

@@ -14,6 +14,7 @@ public class PaymentMethod : AggregateRoot<PaymentMethodId>
     public DateTime? StartDate { get; private set; }
     public DateTime? DeactivationDate { get; private set; }
     public MovementType Type { get; private set; } = MovementType.Undefined;
+    public int? DefaultOrder { get; private set; }
 
     public ICollection<SubCategory> SubCategories { get; set; }
 
@@ -26,7 +27,8 @@ public class PaymentMethod : AggregateRoot<PaymentMethodId>
     }
 
     private DomainResult SetValues(PaymentMethodId id,
-        string name)
+        string name,
+        int order)
     {
         AddNotification(name.NotNullOrEmptyOrWhiteSpace());
         AddNotification(name.BetweenLength(3, 70));
@@ -38,6 +40,7 @@ public class PaymentMethod : AggregateRoot<PaymentMethodId>
 
         Id = id;
         Name = name;
+        DefaultOrder = order;
 
         var result = Validate();
 
@@ -45,11 +48,12 @@ public class PaymentMethod : AggregateRoot<PaymentMethodId>
     }
 
     public static (DomainResult, PaymentMethod?) New(
-        string name)
+        string name,
+        int order)
     {
         var entity = new PaymentMethod();
 
-        var result = entity.SetValues(PaymentMethodId.New(), name);
+        var result = entity.SetValues(PaymentMethodId.New(), name, order);
 
         if (result.IsFailure)
         {

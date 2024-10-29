@@ -12,4 +12,5 @@ public record SubCategoryOutput
     public DateTimeOffset? DeactivationDate { get; set; }
     public CategoryOutput Category { get; set; }
     public PaymentMethodOutput? DefaultPaymentMethod { get; set; }
+    public int? Order { get; set; }
 }

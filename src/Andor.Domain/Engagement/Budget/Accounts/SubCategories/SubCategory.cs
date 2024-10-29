@@ -19,9 +19,11 @@ public class SubCategory : AggregateRoot<SubCategoryId>
     public Category? Category { get; private set; }
     public PaymentMethodId? DefaultPaymentMethodId { get; private set; }
     public PaymentMethod? DefaultPaymentMethod { get; private set; }
+    public int? DefaultOrder { get; private set; }
 
     private DomainResult SetValues(SubCategoryId id,
-        string name)
+        string name,
+        int order)
     {
         AddNotification(name.NotNullOrEmptyOrWhiteSpace());
         AddNotification(name.BetweenLength(3, 70));
@@ -40,11 +42,12 @@ public class SubCategory : AggregateRoot<SubCategoryId>
     }
 
     public static (DomainResult, SubCategory?) New(
-        string name)
+        string name,
+        int order)
     {
         var entity = new SubCategory();
 
-        var result = entity.SetValues(SubCategoryId.New(), name);
+        var result = entity.SetValues(SubCategoryId.New(), name, order);
 
         if (result.IsFailure)
         {

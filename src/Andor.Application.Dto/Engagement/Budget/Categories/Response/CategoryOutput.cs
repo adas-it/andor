@@ -8,7 +8,7 @@ public record CategoryOutput
     public DateTimeOffset? StartDate { get; set; }
     public DateTimeOffset? DeactivationDate { get; set; }
     public CategoryTypeOutput Type { get; set; }
-    public string Avatar { get; set; }
+    public int? Order { get; set; }
 }
 
 public record CategoryTypeOutput(int Key, string Name);

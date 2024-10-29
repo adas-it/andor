@@ -22,7 +22,6 @@ public record CashFlowConfig : IEntityTypeConfiguration<CashFlow>
         entity.Property(k => k.AccountBalance).HasColumnType("decimal(18,2)");
         entity.Property(k => k.MonthRevenues).HasColumnType("decimal(18,2)");
         entity.Property(k => k.ForecastUpcomingRevenues).HasColumnType("decimal(18,2)");
-        entity.Property(k => k.BalanceForecast).HasColumnType("decimal(18,2)");
         entity.Property(k => k.Expenses).HasColumnType("decimal(18,2)");
         entity.Property(k => k.ForecastExpenses).HasColumnType("decimal(18,2)");
         entity.Property(k => k.FinalBalancePreviousMonth).HasColumnType("decimal(18,2)");

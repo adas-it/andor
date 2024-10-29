@@ -14,7 +14,8 @@ public class Category : AggregateRoot<CategoryId>
     public DateTime? StartDate { get; private set; }
     public DateTime? DeactivationDate { get; private set; }
     public MovementType Type { get; private set; } = MovementType.Undefined;
-    public ICollection<SubCategory> SubCategories { get; set; }
+    public ICollection<SubCategory> SubCategories { get; private set; }
+    public int? DefaultOrder { get; private set; }
 
     public Category()
     {
@@ -25,7 +26,8 @@ public class Category : AggregateRoot<CategoryId>
     }
 
     private DomainResult SetValues(CategoryId id,
-        string name)
+        string name,
+        int order)
     {
         AddNotification(name.NotNullOrEmptyOrWhiteSpace());
         AddNotification(name.BetweenLength(3, 70));
@@ -37,6 +39,7 @@ public class Category : AggregateRoot<CategoryId>
 
         Id = id;
         Name = name;
+        DefaultOrder = order;
 
         var result = Validate();
 
@@ -44,11 +47,12 @@ public class Category : AggregateRoot<CategoryId>
     }
 
     public static (DomainResult, Category?) New(
-        string name)
+        string name,
+        int order)
     {
         var entity = new Category();
 
-        var result = entity.SetValues(CategoryId.New(), name);
+        var result = entity.SetValues(CategoryId.New(), name, order);
 
         if (result.IsFailure)
         {
