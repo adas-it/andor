@@ -14,7 +14,6 @@ public static class BudgetConsumerDomainEventHandler
         config.AddConsumer<_accounts.FinancialMovementDomainEventConsumer>();
         config.AddConsumer<_monthlyCash.FinancialMovementDomainEventConsumer>();
         config.AddConsumer<_monthlyCash.CashFlowDomainEventConsumer>();
-        config.AddConsumer<_monthlyCash.CashFlowDomainEventConsumer>();
         config.AddConsumer<_invites.InvitesDomainEventConsumer>();
         config.AddConsumer<UserDomainEventConsumer>();
 

@@ -4,6 +4,7 @@ using Andor.Domain.Onboarding.Registrations.DomainEvents;
 using Andor.Domain.Onboarding.Users.DomainEvents;
 using MassTransit;
 using MediatR;
+using System.Threading.Tasks;
 
 public class RegistrationDomainEventConsumer(IMediator _mediator) :
     IConsumer<RegistrationCreatedDomainEvent>,
@@ -29,7 +30,7 @@ public class RegistrationDomainEventConsumer(IMediator _mediator) :
     {
         var tasks = new Task[]
         {
-            _mediator.Send(new CreateKeycloakUserCommand(context.Message)),
+           _mediator.Send(new CreateKeycloakUserCommand(context.Message)),
            _mediator.Send(new NotifyRegistrationCompletedCommand(context.Message))
         };
 
@@ -38,8 +39,16 @@ public class RegistrationDomainEventConsumer(IMediator _mediator) :
         return Task.CompletedTask;
     }
 
-    public async Task Consume(ConsumeContext<UserCreatedDomainEvent> context)
+    public Task Consume(ConsumeContext<UserCreatedDomainEvent> context)
     {
-        await _mediator.Send(new NotifyUserCreatedCommand(context.Message));
+        var tasks = new Task[]
+        {
+            _mediator.Send(new NotifyUserCreatedCommand(context.Message)),
+            _mediator.Send(new SendWellcomeEmailCommand(context.Message.FirstName,context.Message.Email))
+        };
+
+        Task.WaitAll(tasks);
+
+        return Task.CompletedTask;
     }
 }
