@@ -1,7 +1,9 @@
 using Andor.Api.Common.Middlewares;
 using Andor.Api.Common.Swagger;
+using Andor.Api.WebSocketTest;
 using Andor.Application.Common;
 using Andor.Application.Dto.Common.ApplicationsErrors.Models;
+using Andor.Application.WebSocket;
 using Andor.Kernel.Extensions;
 using Andor.Kernel.Extensions.Api;
 using Andor.Kernel.Extensions.Infrastructures;
@@ -10,82 +12,140 @@ using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Options;
+using System.Net.WebSockets;
+using static Andor.Api.WebSocketTest.WebSocketMessages;
 
-var builder = WebApplication.CreateBuilder(args);
-string? appConfig = Environment.GetEnvironmentVariable("APP_CONFIGURATION");
-
-if (appConfig is not null)
+public class Program
 {
-    builder.Configuration.AddAzureAppConfiguration(appConfig);
-}
-
-builder.AddOpenTelemetry();
-
-builder.Services
-    .AddControllers(options =>
+    public static void Main(string[] args)
     {
-        options.InputFormatters.Insert(0, MyJPIF.GetJsonPatchInputFormatter());
-    })
-    .AddNewtonsoftJson();
+        var builder = WebApplication.CreateBuilder(args);
+        string? appConfig = Environment.GetEnvironmentVariable("APP_CONFIGURATION");
 
-builder.Services.Configure<ApplicationSettings>(builder.Configuration);
+        if (appConfig is not null)
+        {
+            builder.Configuration.AddAzureAppConfiguration(appConfig);
+        }
 
-var applicationSettings = builder.Configuration
-    .Get<ApplicationSettings>();
+        builder.AddOpenTelemetry();
 
-builder.AddDbExtension()
-    .AddDbMessagingExtension(applicationSettings)
-    .AddApplicationExtensionServices()
-    .AddApiExtensionServices()
-    .AddServicesExtensionServices()
-    //.ConfigureHealthChecks()
-    ;
+        builder.Services
+            .AddControllers(options =>
+            {
+                options.InputFormatters.Insert(0, MyJPIF.GetJsonPatchInputFormatter());
+            })
+            .AddNewtonsoftJson();
 
-builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(opts =>
-                opts.SerializerOptions.Converters.Add(new ErrorCodeConverter()));
-builder.Services.AddTransient<GlobalExceptionHandlerMiddleware>();
+        builder.Services.Configure<ApplicationSettings>(builder.Configuration);
 
-builder.Services
-    .ConfigureJWT(builder.Configuration);
+        var applicationSettings = builder.Configuration
+            .Get<ApplicationSettings>();
 
-builder.Services.AddSwagger(builder.Configuration);
+        builder.AddDbExtension()
+            .AddDbMessagingExtension(applicationSettings)
+            .AddApplicationExtensionServices()
+            .AddApiExtensionServices()
+            .AddServicesExtensionServices();
 
-var app = builder.Build();
+        var _webSocketMessages = new WebSocketMessages();
 
-app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwaggerUI();
-}
+        builder.Services.AddSingleton<WebSocketMessages>(_webSocketMessages);
+        builder.Services.AddSingleton<IWebSocketMessage>(_webSocketMessages);
 
-app.ConfigureHealthChecks();
+        builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(opts =>
+                        opts.SerializerOptions.Converters.Add(new ErrorCodeConverter()));
+        builder.Services.AddTransient<GlobalExceptionHandlerMiddleware>();
 
-var configs = app.Services.GetRequiredService<IOptions<ApplicationSettings>>();
+        builder.Services
+            .ConfigureJWT(builder.Configuration);
 
-app.UseCustomSwagger(configs,
-    app.Services.GetRequiredService<IApiVersionDescriptionProvider>());
+        builder.Services.AddSwagger(builder.Configuration);
 
+        var app = builder.Build();
 
-if (configs.Value?.Cors != null)
-{
-    app.UseCors(options =>
+        app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwaggerUI();
+        }
+
+        app.UseWebSockets();
+
+        app.Use(async (context, next) =>
+        {
+            if (context.Request.Path == "/ws")
+            {
+                if (context.WebSockets.IsWebSocketRequest)
+                {
+                    var clientId = context.Request.Query["id"].ToString();
+                    var sessionId = context.Request.Query["sessionId"].ToString();
+
+                    if (string.IsNullOrEmpty(clientId) is false)
+                    {
+                        var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                        WebSocketConnections.Add(new WebSocketConnection(Guid.Parse(clientId),
+                            Guid.Parse(sessionId),
+                            webSocket));
+
+                        await EchoWebSocket(Guid.Parse(clientId), Guid.Parse(sessionId), webSocket);
+                    }
+                }
+                else
+                {
+                    context.Response.StatusCode = 400;
+                }
+            }
+            else
+            {
+                await next();
+            }
+        });
+
+        app.ConfigureHealthChecks();
+
+        var configs = app.Services.GetRequiredService<IOptions<ApplicationSettings>>();
+
+        app.UseCustomSwagger(configs,
+            app.Services.GetRequiredService<IApiVersionDescriptionProvider>());
+
+        if (configs.Value?.Cors != null)
+        {
+            app.UseCors(options =>
+            {
+                options
+                    .WithOrigins(configs.Value?.Cors?.AllowedOrigins?.ToArray()!)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials()
+                    .WithExposedHeaders("Content-Language");
+            });
+        }
+
+        app.UseHttpsRedirection();
+
+        app.UseAuthorization();
+
+        app.MapControllers();
+
+        app.Run();
+
+    }
+
+    private static async Task EchoWebSocket(Guid clientId, Guid sessionId, WebSocket webSocket)
     {
-        options
-            .WithOrigins(configs.Value?.Cors?.AllowedOrigins?.ToArray()!)
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials()
-            .WithExposedHeaders("Content-Language");
-    });
+        var buffer = new byte[1024 * 4];
+        WebSocketReceiveResult result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+
+        while (!result.CloseStatus.HasValue)
+        {
+            result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+        }
+
+        WebSocketConnections.Where(x => x.id == clientId && x.sessionId == sessionId).ToList().ForEach(x => WebSocketConnections.Remove(x));
+        await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
+    }
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
 
 public static class MyJPIF
 {

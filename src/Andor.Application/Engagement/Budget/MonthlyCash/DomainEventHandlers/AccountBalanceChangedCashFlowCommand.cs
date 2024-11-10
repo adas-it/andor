@@ -1,4 +1,5 @@
 ﻿using Andor.Application.Common.Interfaces;
+using Andor.Application.WebSocket;
 using Andor.Domain.Common.ValuesObjects;
 using Andor.Domain.Engagement.Budget.Accounts.Accounts.Repositories;
 using Andor.Domain.Engagement.Budget.Accounts.Accounts.ValueObjects;
@@ -13,11 +14,14 @@ public record AccountBalanceChangedCashFlowCommand(AccountBalanceChangedDomainEv
 
 public class AccountBalanceChangedCashFlowCommandHandler(
         IUnitOfWork _unitOfWork,
-        ICommandsCashFlowRepository _cashFlowRepository) : IRequestHandler<AccountBalanceChangedCashFlowCommand>
+        ICommandsCashFlowRepository _cashFlowRepository,
+        IWebSocketMessage webSocketMessage) : IRequestHandler<AccountBalanceChangedCashFlowCommand>
 {
     public async Task Handle(AccountBalanceChangedCashFlowCommand request, CancellationToken cancellationToken)
     {
         var current = request.context.Current;
+
+        await webSocketMessage.SendAsync(current.Id, current);
 
         if (current.Month == 12)
         {
