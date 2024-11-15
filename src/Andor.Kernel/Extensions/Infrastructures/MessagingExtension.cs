@@ -42,7 +42,7 @@ public static class MessagingExtension
 
             x.AddEntityFrameworkOutbox<PrincipalContext>(o =>
             {
-                o.QueryDelay = TimeSpan.FromMilliseconds(500);
+                o.QueryDelay = TimeSpan.FromMilliseconds(1000);
 
                 o.UsePostgres()
                 .UseBusOutbox();
