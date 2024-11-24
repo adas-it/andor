@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Npgsql;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -38,7 +37,7 @@ public static class AddOpenTelemetryExtension
         {
             tracing.AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
-            .AddNpgsql()
+            //.AddNpgsql()
             .AddAzureMonitorTraceExporter(o =>
             {
                 o.ConnectionString = _applicationInsights;
