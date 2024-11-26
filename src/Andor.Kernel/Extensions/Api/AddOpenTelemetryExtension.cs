@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Npgsql;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -19,9 +22,7 @@ public static class AddOpenTelemetryExtension
             .GetSection(nameof(OpenTelemetryConfig))
             .Get<OpenTelemetryConfig>();
 
-        var _applicationInsights = Environment.GetEnvironmentVariable("APPLICATION_INSIGHTS_CONNECTION_STRING"); ;
-
-        if (configs is null || _applicationInsights is null)
+        if (configs is null)
         {
             return builder;
         }
@@ -37,13 +38,28 @@ public static class AddOpenTelemetryExtension
         {
             tracing.AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
-            //.AddNpgsql()
-            .AddAzureMonitorTraceExporter(o =>
+            .AddNpgsql();
+
+            if (string.IsNullOrEmpty(configs.ApplicationInsights) is false)
             {
-                o.ConnectionString = _applicationInsights;
-            });
+                tracing.AddAzureMonitorTraceExporter(o =>
+                {
+                    o.ConnectionString = configs.ApplicationInsights;
+                });
+            }
+
+            if (string.IsNullOrEmpty(configs.Endpoint) is false)
+            {
+                tracing.AddOtlpExporter(opt =>
+                {
+                    opt.Endpoint = new Uri(configs.Endpoint!);
+                    opt.Protocol = OtlpExportProtocol.Grpc;
+                });
+            }
         })
-        .WithMetrics(metrics => metrics
+        .WithMetrics(metrics =>
+        {
+            metrics
             .AddAspNetCoreInstrumentation()
             .AddHttpClientInstrumentation()
             .AddRuntimeInstrumentation()
@@ -54,21 +70,47 @@ public static class AddOpenTelemetryExtension
             {
                 o.StatusGaugeName = configs.StatusGaugeName!;
                 o.DurationGaugeName = configs.DurationGaugeName!;
-            })
-            .AddAzureMonitorMetricExporter(o =>
+            });
+
+            if (string.IsNullOrEmpty(configs.ApplicationInsights) is false)
             {
-                o.ConnectionString = _applicationInsights;
-            }));
+                metrics.AddAzureMonitorMetricExporter(o =>
+                {
+                    o.ConnectionString = configs.ApplicationInsights;
+                });
+            }
+
+            if (string.IsNullOrEmpty(configs.Endpoint) is false)
+            {
+                metrics.AddOtlpExporter(opt =>
+                {
+                    opt.Endpoint = new Uri(configs.Endpoint!);
+                    opt.Protocol = OtlpExportProtocol.Grpc;
+                });
+            }
+        });
 
         builder.Logging.ClearProviders();
 
         builder.Logging
         .AddOpenTelemetry(options =>
         {
-            options.AddAzureMonitorLogExporter(o =>
+            if (string.IsNullOrEmpty(configs.ApplicationInsights) is false)
             {
-                o.ConnectionString = _applicationInsights;
-            });
+                options.AddAzureMonitorLogExporter(o =>
+                {
+                    o.ConnectionString = configs.ApplicationInsights;
+                });
+            }
+
+            if (string.IsNullOrEmpty(configs.Endpoint) is false)
+            {
+                options.AddOtlpExporter(opt =>
+                {
+                    opt.Endpoint = new Uri(configs.Endpoint!);
+                    opt.Protocol = OtlpExportProtocol.Grpc;
+                });
+            }
         });
 
 

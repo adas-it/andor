@@ -24,7 +24,13 @@ public record IdentityProvider
     public string? PublicKeyJwt { get; set; }
 }
 
-public record OpenTelemetryConfig(string? StatusGaugeName, string? DurationGaugeName);
+public record OpenTelemetryConfig
+{
+    public string? StatusGaugeName { get; init; }
+    public string? DurationGaugeName { get; init; }
+    public string? Endpoint { get; init; }
+    public string? ApplicationInsights { get; init; }
+}
 
 public record Keycloak(string? Url, string? Realm, string? ClientId, string? ClientSecret, string? GrantType);
 
