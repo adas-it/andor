@@ -1,4 +1,4 @@
-﻿namespace Andor.Kernel.Extensions.Api;
+﻿namespace Andor.Ioc.Extensions.Api;
 
 using Andor.Application.Common;
 using Azure.Monitor.OpenTelemetry.Exporter;
@@ -90,7 +90,9 @@ public static class AddOpenTelemetryExtension
             }
         });
 
+#if !DEBUG
         builder.Logging.ClearProviders();
+#endif
 
         builder.Logging
         .AddOpenTelemetry(options =>

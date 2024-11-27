@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace Andor.Kernel.Extensions.Api;
+namespace Andor.Ioc.Extensions.Api;
 
 public static class HealthChecksExtension
 {

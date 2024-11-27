@@ -14,7 +14,7 @@ using Polly.Extensions.Http;
 using Polly.Timeout;
 using Refit;
 
-namespace Andor.Kernel.Extensions.Services;
+namespace Andor.Ioc.Extensions.Services;
 
 public static class ServicesExtension
 {

@@ -26,7 +26,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Andor.Kernel.Extensions.Infrastructures;
+namespace Andor.Ioc.Extensions.Infrastructures;
 
 public static class DbExtension
 {
