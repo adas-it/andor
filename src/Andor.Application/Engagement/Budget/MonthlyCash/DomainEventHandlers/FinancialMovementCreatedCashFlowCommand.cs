@@ -20,6 +20,11 @@ public class FinancialMovementCreatedCashFlowCommandHandler(
 {
     public async Task Handle(FinancialMovementCreatedCashFlowCommand request, CancellationToken cancellationToken)
     {
+        if (request.context.Current.IsItCreditHandling)
+        {
+            return;
+        }
+
         var current = request.context.Current;
 
         var _month = Month.Load(current.Date.Month);

@@ -11,6 +11,7 @@ public record FinancialMovementDomainEvent
     public Guid AccountId { get; init; }
     public decimal Value { get; init; }
     public bool IsDeleted { get; init; }
+    public bool IsItCreditHandling { get; init; }
 
     public static FinancialMovementDomainEvent FromAggregator(FinancialMovement entity)
         => new FinancialMovementDomainEvent() with
@@ -21,7 +22,8 @@ public record FinancialMovementDomainEvent
             Status = entity.Status.Key,
             AccountId = entity.Account.Id,
             Value = entity.Value,
-            IsDeleted = entity.IsDeleted
+            IsDeleted = entity.IsDeleted,
+            IsItCreditHandling = entity.IsItCreditHandling
         };
 }
 

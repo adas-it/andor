@@ -20,6 +20,11 @@ public class FinancialMovementChangedCashFlowCommandHandler(
 {
     public async Task Handle(FinancialMovementChangedCashFlowCommand request, CancellationToken cancellationToken)
     {
+        if (request.context.Current.IsItCreditHandling)
+        {
+            return;
+        }
+
         var current = request.context.Current;
         var old = request.context.Old;
 

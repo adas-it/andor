@@ -19,6 +19,11 @@ public class FinancialMovementDeletedCashFlowCommandHandler(
 {
     public async Task Handle(FinancialMovementDeletedCashFlowCommand request, CancellationToken cancellationToken)
     {
+        if (request.context.Current.IsItCreditHandling)
+        {
+            return;
+        }
+
         var current = request.context.Current;
 
         var _account = await _accountRepository.GetByIdAsync(current.AccountId, cancellationToken);

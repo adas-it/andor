@@ -35,6 +35,8 @@ public record FinancialMovementConfig : IEntityTypeConfiguration<FinancialMoveme
         entity.Navigation(x => x.PaymentMethod).AutoInclude();
         entity.Navigation(x => x.SubCategory).AutoInclude();
         entity.Navigation(x => x.Account).AutoInclude();
+
+        entity.Ignore(x => x.IsItCreditHandling);
     }
 
     public static ValueConverter<FinancialMovementId, Guid> GetFinancialMovementIdConverter()
