@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Reflection;
 
-namespace Andor.Kernel.Extensions.Api;
+namespace Andor.Ioc.Extensions.Api;
 
 public static class ApplicationInitializer
 {

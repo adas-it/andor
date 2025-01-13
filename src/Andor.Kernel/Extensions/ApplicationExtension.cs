@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace Andor.Kernel.Extensions;
+namespace Andor.Ioc.Extensions;
 
 public static class ApplicationExtension
 {

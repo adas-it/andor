@@ -5,7 +5,7 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andor.Api", "src\Andor.Api\Andor.Api.csproj", "{90896E21-0D28-437E-9AFD-1FEEED07A739}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andor.Kernel", "src\Andor.Kernel\Andor.Kernel.csproj", "{2522746C-9921-4517-9BAA-B3F4D7092B0C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andor.Ioc", "src\Andor.Kernel\Andor.Ioc.csproj", "{2522746C-9921-4517-9BAA-B3F4D7092B0C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Andor.Domain", "src\Andor.Domain\Andor.Domain.csproj", "{8FA3B9D5-C937-494C-AFED-7389EACABD99}"
 EndProject

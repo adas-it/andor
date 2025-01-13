@@ -4,10 +4,10 @@ using Andor.Api.WebSocketTest;
 using Andor.Application.Common;
 using Andor.Application.Dto.Common.ApplicationsErrors.Models;
 using Andor.Application.WebSocket;
-using Andor.Kernel.Extensions;
-using Andor.Kernel.Extensions.Api;
-using Andor.Kernel.Extensions.Infrastructures;
-using Andor.Kernel.Extensions.Services;
+using Andor.Ioc.Extensions;
+using Andor.Ioc.Extensions.Api;
+using Andor.Ioc.Extensions.Infrastructures;
+using Andor.Ioc.Extensions.Services;
 using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -27,14 +27,14 @@ public class Program
             builder.Configuration.AddAzureAppConfiguration(appConfig);
         }
 
-        builder.AddOpenTelemetry();
-
         builder.Services
             .AddControllers(options =>
             {
                 options.InputFormatters.Insert(0, MyJPIF.GetJsonPatchInputFormatter());
             })
             .AddNewtonsoftJson();
+
+        builder.AddOpenTelemetry();
 
         builder.Services.Configure<ApplicationSettings>(builder.Configuration);
 

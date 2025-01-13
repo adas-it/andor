@@ -10,7 +10,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/Andor.Api/Andor.Api.csproj", "src/Andor.Api/"]
-COPY ["src/Andor.Kernel/Andor.Kernel.csproj", "src/Andor.Kernel/"]
+COPY ["src/Andor.Kernel/Andor.Ioc.csproj", "src/Andor.Kernel/"]
 COPY ["src/Andor.Infrastructure/Andor.Infrastructure.csproj", "src/Andor.Infrastructure/"]
 COPY ["src/Andor.Domain/Andor.Domain.csproj", "src/Andor.Domain/"]
 COPY ["src/Andor.Application/Andor.Application.csproj", "src/Andor.Application/"]

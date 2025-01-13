@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Andor.Kernel\Andor.Kernel.csproj" />
+    <ProjectReference Include="..\Andor.Kernel\Andor.Ioc.csproj" />
     <ProjectReference Include="..\Andor.Application\Andor.Application.csproj" />
     <ProjectReference Include="..\Andor.Application.Dto\Andor.Application.Dto.csproj" />
   </ItemGroup>
