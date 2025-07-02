@@ -15,7 +15,7 @@ using Andor.Domain.Validation;
 
 namespace Andor.Domain.Engagement.Budget.FinancialMovements.FinancialMovements;
 
-public class FinancialMovement : AggregateRoot<FinancialMovementId>, ISoftDeletableEntity
+public class FinancialMovement : Entity<FinancialMovementId>, ISoftDeletableEntity
 {
     public DateTime Date { get; private set; }
     public string? Description { get; private set; }
@@ -75,11 +75,11 @@ public class FinancialMovement : AggregateRoot<FinancialMovementId>, ISoftDeleta
 
     private bool CheckIsItCreditHandling()
     {
-        var CreditPaymentMethodId = new PaymentMethodId[] {
+        var creditPaymentMethodId = new PaymentMethodId[] {
             PaymentMethodId.Load("b72a24e3-7c5f-4790-9a3b-959ddf3c8315"),
             PaymentMethodId.Load("93cef651-35c5-4486-81e4-a61962695b81") };
 
-        return CreditPaymentMethodId.Contains(PaymentMethodId);
+        return creditPaymentMethodId.Contains(PaymentMethodId);
     }
 
     public static (DomainResult, FinancialMovement) New(DateTime date,

@@ -33,7 +33,7 @@ public static class DomainValidation
         return notification;
     }
 
-    public static Notification? NotNullOrEmptyOrWhiteSpace(this string target,
+    public static Notification? NotNullOrEmptyOrWhiteSpace(this string? target,
                               [CallerArgumentExpression("target")] string fieldName = "")
     {
         Notification? notification = null;
