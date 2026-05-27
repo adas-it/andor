@@ -1,0 +1,8 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <Folder Include="Categories\Repositories\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Src\Foundation\Andor.Foundation.Domain\Andor.Foundation.Domain.csproj" />
+  </ItemGroup>
+</Project>

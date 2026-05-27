@@ -1,47 +1,78 @@
-name: CI build
+name: .NET
+
 on:
   push:
-    branches:
-      - main
-      - Refactory
+    branches: [ "main" ]
+    tags:
+      - 'v*'
   pull_request:
-    types: [opened, synchronize, reopened]
+    branches: [ "main" ]
+
 jobs:
   build:
-    name: Build and analyze
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Andor Accounts
+            projectName: src/Budget/Andor.Accounts.Domain/Andor.Accounts.Domain.csproj
+            projectTestName: tests/Budget/Andor.Accounts.Domain.Tests/Andor.Accounts.Domain.Tests.csproj
+            sonarProjectKey: adas-it_andor-accounts
+            coverageFile: coverage-andor-accounts.xml
+
     steps:
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
+      - uses: actions/checkout@v4
         with:
-          java-version: 17
-          distribution: 'zulu' # Alternative distribution options are available.
-      - uses: actions/checkout@v3
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v3
-        with:
-          path: ~\sonar\cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      - name: Cache SonarCloud scanner
-        id: cache-sonar-scanner
-        uses: actions/cache@v3
-        with:
-          path: .\.sonar\scanner
-          key: ${{ runner.os }}-sonar-scanner
-          restore-keys: ${{ runner.os }}-sonar-scanner
-      - name: Install SonarCloud scanner
-        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+          dotnet-version: 10.0.x
+
+      - name: Install tools
         run: |
-          dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
+          dotnet tool install --global dotnet-sonarscanner
           dotnet tool install --global dotnet-coverage
-      - name: Build and analyze
+
+      - name: Restore dependencies
+        run: |
+          dotnet restore ${{ matrix.projectName }}
+          dotnet restore ${{ matrix.projectTestName }}
+
+      - name: Begin SonarCloud analysis
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          ./.sonar/scanner/dotnet-sonarscanner begin /k:"lucashigor_andor" /o:"lucashigor" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-          dotnet-coverage collect "dotnet test ./Andor.sln" -f xml -o "coverage.xml"
-          ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          dotnet-sonarscanner begin \
+            /k:"${{ matrix.sonarProjectKey }}" \
+            /o:"adas-it" \
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.cs.vscoveragexml.reportsPaths=${{ matrix.coverageFile }}
+
+      - name: Build
+        run: |
+          dotnet build ${{ matrix.projectName }} --no-restore --configuration Release
+          dotnet build ${{ matrix.projectTestName }} --no-restore --configuration Release
+
+      - name: Test with coverage
+        run: dotnet-coverage collect 'dotnet test ${{ matrix.projectTestName }} --no-build --configuration Release --verbosity normal' -f xml -o '${{ matrix.coverageFile }}'
+    
+      - name: End SonarCloud analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+    
+      - name: Pack NuGet package
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+        run: dotnet pack ${{ matrix.projectName }} --configuration Release --no-build --output ./artifacts
+    
+      - name: Display package version
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+        run: ls -la ./artifacts/*.nupkg
+    
+      - name: Publish to GitHub Packages
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+        run: dotnet nuget push ./artifacts/*.nupkg --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key ${{ secrets.ARTIFACTORY_TOKEN }} --skip-duplicate
