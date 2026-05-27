@@ -16,8 +16,8 @@ jobs:
       matrix:
         include:
           - name: Andor Accounts
-            projectName: src/Budget/Andor.Accounts.Domain/Andor.Accounts.Domain.csproj
-            projectTestName: tests/Budget/Andor.Accounts.Domain.Tests/Andor.Accounts.Domain.Tests.csproj
+            projectName: Src/Budget/Andor.Accounts.Domain/Andor.Accounts.Domain.csproj
+            projectTestName: Tests/Budget/Andor.Accounts.Domain.Tests/Andor.Accounts.Domain.Tests.csproj
             sonarProjectKey: adas-it_andor-accounts
             coverageFile: coverage-andor-accounts.xml
 
