@@ -1,4 +1,18 @@
-﻿[*.cs]
+root = true
+
+# All files
+[*]
+indent_style = space
+
+# Xml files
+[*.xml]
+indent_size = 2
+
+[*.cs]
 
 # S1125: Boolean literals should not be redundant
 dotnet_diagnostic.S1125.severity = none
+
+
+# StyleCop: File-scoped namespaces
+csharp_style_namespace_declarations = file_scoped:error

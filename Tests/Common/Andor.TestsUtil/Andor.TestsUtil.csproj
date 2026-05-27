@@ -1,0 +1,8 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="Bogus" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Andor.Accounts.Domain\Andor.Accounts.Domain.csproj" />
+  </ItemGroup>
+</Project>

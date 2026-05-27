@@ -1,0 +1,37 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/Src/" />
+  <Folder Name="/Src/Administrations/" />
+  <Folder Name="/Src/Assets/" />
+  <Folder Name="/Src/Budget/">
+    <Project Path="Andor.Accounts.Domain/Andor.Accounts.Domain.csproj" Id="9244eae7-5422-4e8f-8f1b-6500c3a0ca6b" />
+  </Folder>
+  <Folder Name="/Src/Common/">
+    <Project Path="Src/Foundation/Andor.Foundation.Domain/Andor.Foundation.Domain.csproj" />
+  </Folder>
+  <Folder Name="/Src/Communications/" />
+  <Folder Name="/Src/Goals/" />
+  <Folder Name="/Src/Onboarding/" />
+  <Folder Name="/Src/Tasks/" />
+  <Folder Name="/Src/Users/">
+    <Project Path="Src/Users/Users/Users.csproj" Id="3641a899-9a4d-419b-a4db-807c3f61f128" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <File Path="Tests/Directory.Build.props" />
+    <File Path="Tests/Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/Tests/Budget/">
+    <Project Path="Tests/Budget/Andor.Accounts.Domain.Tests/Andor.Accounts.Domain.Tests.csproj" Id="54dfbead-03d8-4023-a4bc-7638db359c6a" />
+  </Folder>
+  <Folder Name="/Tests/Common/">
+    <Project Path="Tests/Common/Andor.Foundation.Domain.Tests/Andor.Foundation.Domain.Tests.csproj" />
+    <Project Path="Tests/Common/Andor.TestsUtil/Andor.TestsUtil.csproj" Id="e39e672d-0772-40fa-a2e6-0c0472df3e9b" />
+  </Folder>
+  <Folder Name="/Tests/Users/">
+    <Project Path="Tests/Users/Andor.Users.Tests/Andor.Users.Domain.Tests.csproj" Id="af9af97f-89e4-462d-a334-4d346326d48b" />
+  </Folder>
+</Solution>
