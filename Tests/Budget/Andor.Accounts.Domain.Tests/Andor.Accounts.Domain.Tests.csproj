@@ -3,7 +3,7 @@
     <PackageReference Include="Moq" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Andor.Accounts.Domain\Andor.Accounts.Domain.csproj" />
+    <ProjectReference Include="..\..\..\Src\Budget\Andor.Accounts.Domain\Andor.Accounts.Domain.csproj" />
     <ProjectReference Include="..\..\Common\Andor.TestsUtil\Andor.TestsUtil.csproj" />
   </ItemGroup>
 </Project>

@@ -3,6 +3,6 @@
     <Folder Include="Categories\Repositories\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Src\Foundation\Andor.Foundation.Domain\Andor.Foundation.Domain.csproj" />
+    <ProjectReference Include="..\..\Foundation\Andor.Foundation.Domain\Andor.Foundation.Domain.csproj" />
   </ItemGroup>
 </Project>
