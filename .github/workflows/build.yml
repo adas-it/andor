@@ -20,6 +20,11 @@ jobs:
             projectTestName: Tests/Budget/Andor.Accounts.Domain.Tests/Andor.Accounts.Domain.Tests.csproj
             sonarProjectKey: adas-it_andor-accounts
             coverageFile: coverage-andor-accounts.xml
+          - name: Andor Investments
+            projectName: Src/Assets/Andor.Assets.Domain/Andor.Assets.Domain.csproj
+            projectTestName: Tests/Assets/Andor.Assets.Domain.Tests/Andor.Assets.Domain.Tests.csproj
+            sonarProjectKey: adas-it_andor-investments
+            coverageFile: coverage-andor-investments.xml
 
     steps:
       - uses: actions/checkout@v4

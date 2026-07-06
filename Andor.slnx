@@ -30,6 +30,9 @@
     <File Path="Tests/Directory.Build.props" />
     <File Path="Tests/Directory.Packages.props" />
   </Folder>
+  <Folder Name="/Tests/Assets/">
+    <Project Path="Tests/Assets/Andor.Assets.Domain.Tests/Andor.Assets.Domain.Tests.csproj" Id="51fbf9a8-35e2-4664-ae92-522f62302aab" />
+  </Folder>
   <Folder Name="/Tests/Budget/">
     <Project Path="Tests/Budget/Andor.Accounts.Domain.Tests/Andor.Accounts.Domain.Tests.csproj" Id="54dfbead-03d8-4023-a4bc-7638db359c6a" />
   </Folder>
