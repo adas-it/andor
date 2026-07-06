@@ -55,6 +55,9 @@ jobs:
             /o:"adas-it" \
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.exclusions="docs/**" \
+            /d:sonar.exclusions="k8s/**" \
+            /d:sonar.exclusions=".github/**" \
             /d:sonar.cs.vscoveragexml.reportsPaths=${{ matrix.coverageFile }}
 
       - name: Build
