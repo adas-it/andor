@@ -12,6 +12,7 @@ namespace Andor.Accounts.Domain.Categories;
 
 public class Category : Entity<CategoryId>, ISoftDeletableEntity
 {
+    public static Category Empty = new Category();
     public AccountId? Owner { get; private set; }
     public bool IsTemplate => Owner == null;
 
@@ -23,6 +24,10 @@ public class Category : Entity<CategoryId>, ISoftDeletableEntity
 
     protected Category()
     {
+        Id = CategoryId.Empty;
+        Owner = null;
+        Name = Name.Empty;
+        Description = null;
         SubCategories = [];
         Type = MovementType.Undefined;
     }
@@ -84,5 +89,16 @@ public class Category : Entity<CategoryId>, ISoftDeletableEntity
         }
 
         return base.Validate();
+    }
+
+    public bool IsEmpty()
+    {
+        return Id == CategoryId.Empty;
+    }
+
+    public static bool IsNullOrEmpty(Category? category)
+    {
+        return category is null ||
+               category.IsEmpty();
     }
 }

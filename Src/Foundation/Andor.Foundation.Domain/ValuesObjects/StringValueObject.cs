@@ -4,7 +4,12 @@ public abstract record StringValueObject
 {
     public string? Value { get; }
 
-    protected StringValueObject(string value, int minLength, int maxLength, string name)
+    protected StringValueObject()
+    {
+        Value = string.Empty;
+    }
+
+    protected StringValueObject(string? value, int minLength, int maxLength, string name)
     {
         if (value is null)
         {

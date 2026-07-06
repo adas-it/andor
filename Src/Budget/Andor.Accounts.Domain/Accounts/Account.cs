@@ -16,7 +16,6 @@ using Andor.Accounts.Domain.Users.ValueObjects;
 using Andor.Foundation.Domain;
 using Andor.Foundation.Domain.SeedWork;
 using Andor.Foundation.Domain.ValuesObjects;
-using System.Collections.Immutable;
 
 namespace Andor.Accounts.Domain.Accounts;
 
@@ -29,58 +28,86 @@ public class Account : AggregateRoot<AccountId>, ISoftDeletableEntity
     /// <summary>
     /// Gets the account name.
     /// </summary>
-    public Name Name { get; private set; }
+    public Name Name
+    {
+        get;
+        private set;
+    }
 
     /// <summary>
     /// Gets the account description.
     /// </summary>
-    public Description Description { get; private set; }
+    public Description? Description
+    {
+        get; private set;
+    }
 
     /// <summary>
     /// Gets the account currency.
     /// </summary>
-    public Currency Currency { get; private set; }
+    public Currency Currency
+    {
+        get; private set;
+    }
 
     /// <summary>
-    /// Gets a value indicating whether the account is soft deleted.
+    /// Gets a value indicating whether the account is softly deleted.
     /// </summary>
-    public bool IsDeleted { get; private set; }
+    public bool IsDeleted
+    {
+        get; private set;
+    }
 
     /// <summary>
     /// Gets the read-only collection of categories associated with this account.
     /// </summary>
-    public IReadOnlyCollection<AccountCategory> Categories => _categories.ToImmutableArray();
-    private ICollection<AccountCategory> _categories { get; set; }
+    public IReadOnlyCollection<AccountCategory> Categories => [.. _categories];
+    private ICollection<AccountCategory> _categories
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Gets the read-only collection of subcategories associated with this account.
     /// </summary>
-    public IReadOnlyCollection<AccountSubCategory> SubCategories => _subCategories.ToImmutableArray();
-    private ICollection<AccountSubCategory> _subCategories { get; set; }
+    public IReadOnlyCollection<AccountSubCategory> SubCategories => [.. _subCategories];
+    private ICollection<AccountSubCategory> _subCategories
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Gets the read-only collection of payment methods associated with this account.
     /// </summary>
-    public IReadOnlyCollection<AccountPaymentMethod> PaymentMethods => _paymentMethods.ToImmutableArray();
-    private ICollection<AccountPaymentMethod> _paymentMethods { get; set; }
+    public IReadOnlyCollection<AccountPaymentMethod> PaymentMethods => [.. _paymentMethods];
+    private ICollection<AccountPaymentMethod> _paymentMethods
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Gets the read-only collection of members (users) associated with this account.
     /// </summary>
-    public IReadOnlyCollection<AccountUser> Members => _members.ToImmutableArray();
-    private ICollection<AccountUser> _members { get; set; }
+    public IReadOnlyCollection<AccountUser> Members => [.. _members];
+    private ICollection<AccountUser> _members
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Gets the read-only collection of pending invites for this account.
     /// </summary>
-    public IReadOnlyCollection<Invite> Invites => _invites.ToImmutableArray();
-    private ICollection<Invite> _invites { get; set; }
+    public IReadOnlyCollection<Invite> Invites => [.. _invites];
+    private ICollection<Invite> _invites
+    {
+        get; set;
+    }
 
-    private Account()
+    protected Account()
     {
         Id = AccountId.New();
-        Name = string.Empty;
-        Description = string.Empty;
+        Name = Name.Empty;
+        Description = null;
         Currency = Currency.Empty;
         _categories = [];
         _subCategories = [];
@@ -89,7 +116,7 @@ public class Account : AggregateRoot<AccountId>, ISoftDeletableEntity
         _invites = [];
     }
 
-    public Account(AccountId accountId, Name name, Description description, Currency currency,
+    private Account(AccountId accountId, Name name, Description description, Currency currency,
         bool isDeleted)
     {
         Id = accountId;
@@ -126,20 +153,18 @@ public class Account : AggregateRoot<AccountId>, ISoftDeletableEntity
         IAccountValidator validator,
         CancellationToken cancellationToken)
     {
-        DomainResult result;
-
         var entity = new Account(accountId, name, description, currency, false);
 
         entity._members.Add(new AccountUser(entity, new User() { Id = userId }, PermissionType.Owner, 1));
 
-        (result, entity) = await entity.ValidateAsync(validator, cancellationToken);
+        var result = await entity.ValidateAsync(validator, cancellationToken);
 
-        if (result.IsSuccess && entity != null)
+        if (result.IsSuccess)
         {
             entity.RaiseDomainEvent(AccountCreatedDomainEvent.FromAggregator(entity, userId));
         }
 
-        return (result, entity);
+        return (result, result.IsSuccess ? entity : null);
     }
 
     /// <summary>
@@ -153,34 +178,36 @@ public class Account : AggregateRoot<AccountId>, ISoftDeletableEntity
     {
         ValidateEditorOrOwnerPermission(userId);
 
-        if (category == null)
+        if (Category.IsNullOrEmpty(category))
         {
             AddNotification(nameof(Category), AccountErrorMessages.CategoryCannotBeNull, AccountErrorCode.CategoryCannotBeNull);
         }
 
-        if (category != null && !category.IsTemplate)
+        if (category is { IsTemplate: false })
         {
             AddNotification(nameof(Category), AccountErrorMessages.CategoryMustBeTemplate, AccountErrorCode.CategoryMustBeTemplate);
         }
 
-        if (category != null && _categories.Any(x => x.CategoryId == category.Id))
+        if (category is { IsDeleted: false } && _categories.Any(x => x.CategoryId == category.Id))
         {
             AddNotification(nameof(Category), AccountErrorMessages.CategoryAlreadyAdded, AccountErrorCode.CategoryAlreadyAdded);
         }
 
-        if (category != null && category.IsDeleted)
+        if (category is { IsDeleted: true })
         {
             AddNotification(nameof(Category), AccountErrorMessages.CannotAddDeletedCategory, AccountErrorCode.CannotAddDeletedCategory);
         }
 
         var result = Validate();
 
-        if (result.IsSuccess)
-        {
-            var nextOrder = GetNextOrder(_categories, x => x.Order);
-            _categories.Add(new AccountCategory(this, category!, nextOrder));
-            RaiseDomainEvent(AccountCategoryAddedDomainEvent.FromAggregator(this, userId));
-        }
+        if (!result.IsSuccess)
+            return result;
+
+        var nextOrder = GetNextOrder(_categories, x => x.Order);
+
+        _categories.Add(new AccountCategory(this, category!, nextOrder));
+
+        RaiseDomainEvent(AccountCategoryAddedDomainEvent.FromAggregator(this, userId));
 
         return result;
     }
@@ -829,21 +856,21 @@ public class Account : AggregateRoot<AccountId>, ISoftDeletableEntity
     /// </summary>
     private void ValidateCategoryBelongsToAccount(Andor.Accounts.Domain.Categories.ValueObjects.CategoryId categoryId, string propertyName)
     {
-        if (!_categories.Any(x => x.CategoryId == categoryId))
+        if (_categories.Any(x => x.CategoryId == categoryId))
+            return;
+
+        // Use specific error code based on context
+        if (propertyName == nameof(FinancialMovement))
         {
-            // Use specific error code based on context
-            if (propertyName == nameof(FinancialMovement))
-            {
-                AddNotification(propertyName,
-                    FinancialMovementErrorMessages.CategoryNotInAccount,
-                    FinancialMovementErrorCode.CategoryNotInAccount);
-            }
-            else
-            {
-                AddNotification(propertyName,
-                    AccountErrorMessages.SubCategoryCategoryNotInAccount,
-                    AccountErrorCode.SubCategoryCategoryNotInAccount);
-            }
+            AddNotification(propertyName,
+                FinancialMovementErrorMessages.CategoryNotInAccount,
+                FinancialMovementErrorCode.CategoryNotInAccount);
+        }
+        else
+        {
+            AddNotification(propertyName,
+                AccountErrorMessages.SubCategoryCategoryNotInAccount,
+                AccountErrorCode.SubCategoryCategoryNotInAccount);
         }
     }
 
@@ -852,21 +879,21 @@ public class Account : AggregateRoot<AccountId>, ISoftDeletableEntity
     /// </summary>
     private void ValidateSubCategoryBelongsToAccount(Andor.Accounts.Domain.SubCategories.ValueObjects.SubCategoryId subCategoryId, string propertyName)
     {
-        if (!_subCategories.Any(x => x.SubCategoryId == subCategoryId))
+        if (_subCategories.Any(x => x.SubCategoryId == subCategoryId))
+            return;
+
+        // Use specific error code based on context
+        if (propertyName == nameof(FinancialMovement))
         {
-            // Use specific error code based on context
-            if (propertyName == nameof(FinancialMovement))
-            {
-                AddNotification(propertyName,
-                    FinancialMovementErrorMessages.SubCategoryNotInAccount,
-                    FinancialMovementErrorCode.SubCategoryNotInAccount);
-            }
-            else
-            {
-                AddNotification(propertyName,
-                    AccountErrorMessages.FinancialMovementSubCategoryNotInAccount,
-                    AccountErrorCode.FinancialMovementSubCategoryNotInAccount);
-            }
+            AddNotification(propertyName,
+                FinancialMovementErrorMessages.SubCategoryNotInAccount,
+                FinancialMovementErrorCode.SubCategoryNotInAccount);
+        }
+        else
+        {
+            AddNotification(propertyName,
+                AccountErrorMessages.FinancialMovementSubCategoryNotInAccount,
+                AccountErrorCode.FinancialMovementSubCategoryNotInAccount);
         }
     }
 
@@ -875,7 +902,7 @@ public class Account : AggregateRoot<AccountId>, ISoftDeletableEntity
     /// </summary>
     private void ValidatePaymentMethodBelongsToAccount(Andor.Accounts.Domain.PaymentMethods.ValueObjects.PaymentMethodId paymentMethodId, string propertyName, Andor.Domain.Common.ValuesObjects.DomainErrorCode errorCode, string errorMessage)
     {
-        if (!_paymentMethods.Any(x => x.PaymentMethodId == paymentMethodId))
+        if (_paymentMethods.All(x => x.PaymentMethodId != paymentMethodId))
         {
             AddNotification(propertyName, errorMessage, errorCode);
         }

@@ -3,8 +3,10 @@ using Andor.Foundation.Domain.ValuesObjects;
 
 namespace Andor.Accounts.Domain.Users.ValueObjects;
 
-public record struct UserId : IId<UserId>
+public readonly record struct UserId : IId<UserId>
 {
+    public static UserId Empty => new UserId() { Value = Guid.Empty };
+
     private UserId(Guid value)
     {
         if (value == Guid.Empty)
@@ -14,21 +16,18 @@ public record struct UserId : IId<UserId>
 
         Value = value;
     }
-    public Guid Value { get; }
+    public Guid Value { get; init; }
     public static UserId New() => new(Guid.NewGuid());
 
     public static UserId Load(string value)
     {
-        if (!Guid.TryParse(value, out Guid guid))
-        {
-            throw new ArgumentException(DefaultsErrorsMessages.InvalidGuid, nameof(value));
-        }
-        return new UserId(guid);
+        return !Guid.TryParse(value, out var guid) ?
+            throw new ArgumentException(DefaultsErrorsMessages.InvalidGuid, nameof(value)) : new UserId(guid);
     }
 
     public static UserId Load(Guid value) => new(value);
 
-    public override readonly string ToString() => Value.ToString();
+    public override string ToString() => Value.ToString();
 
     public static implicit operator UserId(Guid value) => new(value);
 

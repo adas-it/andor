@@ -6,7 +6,13 @@
   </Folder>
   <Folder Name="/Src/" />
   <Folder Name="/Src/Administrations/" />
-  <Folder Name="/Src/Assets/" />
+  <Folder Name="/Src/Administrations/Users/">
+    <Project Path="Src/Administrations/Users/Andor.Users.WebApi/Andor.Users.WebApi.csproj" Id="2b5d1776-fe05-4b7c-9adc-d35c65898f65" />
+  </Folder>
+  <Folder Name="/Src/Assets/">
+    <Project Path="Src/Assets/Andor.Assets.Domain/Andor.Assets.Domain.csproj" />
+    <Project Path="Src/Assets/Andor.Assets.Infrastructure/Andor.Assets.Infrastructure.csproj" Id="8de78b22-cd74-4688-89f0-fc8710d9028c" />
+  </Folder>
   <Folder Name="/Src/Budget/">
     <Project Path="Src/Budget/Andor.Accounts.Domain/Andor.Accounts.Domain.csproj" />
   </Folder>

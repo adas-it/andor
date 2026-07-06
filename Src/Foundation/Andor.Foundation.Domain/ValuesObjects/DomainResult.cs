@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 
 public sealed class DomainResult
 {
+    public static DomainResult Empty => new(null, null, null);
     public bool IsSuccess => _errors.Count == 0;
     public bool IsFailure => !IsSuccess;
 

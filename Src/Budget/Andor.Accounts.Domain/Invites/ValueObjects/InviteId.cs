@@ -3,8 +3,10 @@ using Andor.Foundation.Domain.ValuesObjects;
 
 namespace Andor.Accounts.Domain.Invites.ValueObjects;
 
-public record struct InviteId : IId<InviteId>
+public readonly record struct InviteId : IId<InviteId>
 {
+    public static InviteId Empty => new InviteId() { Value = Guid.Empty };
+
     private InviteId(Guid value)
     {
         if (value == Guid.Empty)
@@ -15,7 +17,7 @@ public record struct InviteId : IId<InviteId>
         Value = value;
     }
 
-    public Guid Value { get; }
+    public Guid Value { get; init; }
 
     public static InviteId New() => new(Guid.NewGuid());
 
@@ -23,12 +25,8 @@ public record struct InviteId : IId<InviteId>
 
     public static InviteId Load(string value)
     {
-        if (!Guid.TryParse(value, out var guid))
-        {
-            throw new ArgumentException(DefaultsErrorsMessages.InvalidGuid, nameof(value));
-        }
-
-        return new InviteId(guid);
+        return !Guid.TryParse(value, out var guid) ?
+            throw new ArgumentException(DefaultsErrorsMessages.InvalidGuid, nameof(value)) : new InviteId(guid);
     }
 
     public static implicit operator Guid(InviteId id) => id.Value;

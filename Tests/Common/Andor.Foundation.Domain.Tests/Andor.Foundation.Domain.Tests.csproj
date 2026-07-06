@@ -1,8 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
-    <PackageReference Include="Moq" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\..\Src\Foundation\Andor.Foundation.Domain\Andor.Foundation.Domain.csproj" />
   </ItemGroup>
 </Project>

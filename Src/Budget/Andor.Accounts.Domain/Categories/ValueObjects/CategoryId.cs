@@ -3,8 +3,10 @@ using Andor.Foundation.Domain.ValuesObjects;
 
 namespace Andor.Accounts.Domain.Categories.ValueObjects;
 
-public record struct CategoryId : IId<CategoryId>
+public readonly record struct CategoryId : IId<CategoryId>
 {
+    public static CategoryId Empty => new CategoryId() { Value = Guid.Empty };
+
     private CategoryId(Guid value)
     {
         if (value == Guid.Empty)
@@ -14,7 +16,7 @@ public record struct CategoryId : IId<CategoryId>
 
         Value = value;
     }
-    public Guid Value { get; }
+    public Guid Value { get; init; }
     public static CategoryId New() => new(Guid.NewGuid());
 
     public static CategoryId Load(string value)
@@ -28,7 +30,7 @@ public record struct CategoryId : IId<CategoryId>
 
     public static CategoryId Load(Guid value) => new(value);
 
-    public override readonly string ToString() => Value.ToString();
+    public readonly override string ToString() => Value.ToString();
 
     public static implicit operator CategoryId(Guid value) => new(value);
 

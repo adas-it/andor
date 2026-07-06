@@ -1,7 +1,6 @@
-﻿using Andor.Foundation.Domain;
+﻿using System.Net.Mail;
 using Andor.Foundation.Domain.SeedWork;
 using Andor.Foundation.Domain.ValuesObjects;
-using System.Net.Mail;
 using Users.Users.DomainEvents;
 using Users.Users.ValueObjects;
 
@@ -63,7 +62,7 @@ public sealed class User : AggregateRoot<UserId>
             return (result, null);
         }
 
-        (result, entity) = await entity.ValidateAsync(validator, cancellationToken);
+        result = await entity.ValidateAsync(validator, cancellationToken);
 
         if (result.IsFailure)
         {

@@ -3,6 +3,6 @@
     <PackageReference Include="Bogus" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Src\Foundation\Andor.Foundation.Domain\Andor.Foundation.Domain.csproj" />
+    <ProjectReference Include="..\..\..\Src\Budget\Andor.Accounts.Domain\Andor.Accounts.Domain.csproj" />
   </ItemGroup>
 </Project>

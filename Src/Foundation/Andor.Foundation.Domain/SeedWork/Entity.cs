@@ -64,15 +64,15 @@ public abstract class Entity<TEntityId> where TEntityId : IEquatable<TEntityId>,
     protected void AddInformation(string fieldName, string message, DomainErrorCode domainError)
         => AddInformation(new(fieldName, message, domainError));
 
-    protected async Task<(DomainResult, REntity?)> ValidateAsync<REntity>(
-        IDefaultValidator<REntity, TEntityId> validator,
+    protected async Task<DomainResult> ValidateAsync<TREntity>(
+        IDefaultValidator<TREntity, TEntityId> validator,
         CancellationToken cancellationToken)
-        where REntity : Entity<TEntityId>
+        where TREntity : Entity<TEntityId>
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        if (this is not REntity entity)
-            throw new InvalidOperationException($"Entity is not of type {typeof(REntity).Name}");
+        if (this is not TREntity entity)
+            throw new InvalidOperationException($"Entity is not of type {typeof(TREntity).Name}");
 
         var notifications = await validator.ValidateCreationAsync(entity, cancellationToken);
 
@@ -83,8 +83,6 @@ public abstract class Entity<TEntityId> where TEntityId : IEquatable<TEntityId>,
             ? DomainResult.Failure(errors: _notifications)
             : DomainResult.Success(warnings: _warnings);
 
-        return domainResult.IsFailure
-            ? (domainResult, null)
-            : (domainResult, entity);
+        return domainResult;
     }
 }

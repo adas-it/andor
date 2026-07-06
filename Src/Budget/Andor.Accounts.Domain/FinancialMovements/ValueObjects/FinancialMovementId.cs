@@ -3,8 +3,10 @@ using Andor.Foundation.Domain.ValuesObjects;
 
 namespace Andor.Accounts.Domain.FinancialMovements.ValueObjects;
 
-public record struct FinancialMovementId : IId<FinancialMovementId>
+public readonly record struct FinancialMovementId : IId<FinancialMovementId>
 {
+    public static FinancialMovementId Empty => new FinancialMovementId() { Value = Guid.Empty };
+
     private FinancialMovementId(Guid value)
     {
         if (value == Guid.Empty)
@@ -14,21 +16,20 @@ public record struct FinancialMovementId : IId<FinancialMovementId>
 
         Value = value;
     }
-    public Guid Value { get; }
+
+    public Guid Value { get; init; }
+
     public static FinancialMovementId New() => new(Guid.NewGuid());
 
     public static FinancialMovementId Load(string value)
     {
-        if (!Guid.TryParse(value, out Guid guid))
-        {
-            throw new ArgumentException(DefaultsErrorsMessages.InvalidGuid, nameof(value));
-        }
-        return new FinancialMovementId(guid);
+        return !Guid.TryParse(value, out var guid) ?
+            throw new ArgumentException(DefaultsErrorsMessages.InvalidGuid, nameof(value)) : new FinancialMovementId(guid);
     }
 
     public static FinancialMovementId Load(Guid value) => new(value);
 
-    public override readonly string ToString() => Value.ToString();
+    public override string ToString() => Value.ToString();
 
     public static implicit operator FinancialMovementId(Guid value) => new(value);
 
