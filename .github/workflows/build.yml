@@ -25,6 +25,11 @@ jobs:
             projectTestName: Tests/Assets/Andor.Assets.Domain.Tests/Andor.Assets.Domain.Tests.csproj
             sonarProjectKey: adas-it_andor-investments
             coverageFile: coverage-andor-investments.xml
+          - name: Andor User Identity
+            projectName: Src/Administrations/Users/Andor.Users.WebApi/Andor.Users.WebApi.csproj
+            projectTestName: Tests/Administrations/Users/Andor.Users.Domain.Tests/Andor.Users.Domain.Tests.csproj
+            sonarProjectKey: adas-it_andor-users-identity
+            coverageFile: coverage-andor-users-identity.xml
 
     steps:
       - uses: actions/checkout@v4
