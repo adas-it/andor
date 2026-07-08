@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Src\Foundation\Andor.Foundation.Domain\Andor.Foundation.Domain.csproj" />
+    <ProjectReference Include="..\..\..\Src\Shared\Andor.Foundation.Domain\Andor.Foundation.Domain.csproj" />
   </ItemGroup>
 </Project>

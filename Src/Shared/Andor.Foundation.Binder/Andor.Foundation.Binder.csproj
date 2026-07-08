@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <PackageReference Include="Akka.Hosting" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Andor.Foundation.ServerServices\Andor.Foundation.ServerServices.csproj" />
+    </ItemGroup>
+
+</Project>

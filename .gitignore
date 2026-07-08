@@ -357,3 +357,4 @@ MigrationBackup/
 /src/Andor.Api/Properties/launchSettings.json
 /src/Tests/Andor.Component.Tests/pacts/MyTest.txt
 /src/Tests/Andor.Component.Tests/secrets.json
+/Src/Administrations/Users/Andor.Users.WebApi/appsettings.Development.json

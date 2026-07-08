@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Andor.Foundation.Contracts\Andor.Foundation.Contracts.csproj" />
+        <ProjectReference Include="..\Andor.Foundation.Domain\Andor.Foundation.Domain.csproj" />
+        <ProjectReference Include="..\AuthorizationDomain\Andor.Authorizations.Domain\Andor.Authorizations.Domain.csproj" />
+    </ItemGroup>
+
+</Project>

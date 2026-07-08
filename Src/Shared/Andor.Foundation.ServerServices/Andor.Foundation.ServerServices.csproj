@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Andor.Foundation.Contracts\Andor.Foundation.Contracts.csproj" />
+    </ItemGroup>
+
+</Project>

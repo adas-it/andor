@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    </ItemGroup>
+
+    <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Andor.Foundation.Binder\Andor.Foundation.Binder.csproj" />
+    <ProjectReference Include="..\Andor.Assets.Application\Andor.Assets.Application.csproj" />
+    <ProjectReference Include="..\Andor.Assets.Infrastructure\Andor.Assets.Infrastructure.csproj" />
+    <ProjectReference Include="..\Andor.Assets.RestApi\Andor.Assets.RestApi.csproj" />
+  </ItemGroup>
+</Project>

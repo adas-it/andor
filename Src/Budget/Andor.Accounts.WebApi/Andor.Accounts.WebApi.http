@@ -1,0 +1,6 @@
+@Andor.Accounts.WebApi_HostAddress = http://localhost:5237
+
+GET {{Andor.Accounts.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

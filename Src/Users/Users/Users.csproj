@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Foundation\Andor.Foundation.Domain\Andor.Foundation.Domain.csproj" />
+    <ProjectReference Include="..\..\Shared\Andor.Foundation.Domain\Andor.Foundation.Domain.csproj" />
   </ItemGroup>
 
 </Project>

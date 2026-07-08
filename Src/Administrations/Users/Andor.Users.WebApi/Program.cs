@@ -34,6 +34,8 @@ builder.Services.AddOpenIddict()
         opt.AddDevelopmentEncryptionCertificate()
             .AddDevelopmentSigningCertificate();
 
+        opt.DisableAccessTokenEncryption();
+
         opt.UseAspNetCore()
             .EnableTokenEndpointPassthrough();
     })

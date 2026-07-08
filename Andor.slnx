@@ -6,22 +6,47 @@
   </Folder>
   <Folder Name="/Src/" />
   <Folder Name="/Src/Administrations/" />
+  <Folder Name="/Src/Administrations/Aspire/">
+    <Project Path="Src/Administrations/Aspire/Andor.AppHost/Andor.AppHost.csproj" Id="e15950d1-b5c2-448b-ac0f-d6602e7e9c36" />
+    <Project Path="Src/Administrations/Aspire/Andor.ServiceDefaults/Andor.ServiceDefaults.csproj" Id="195dc22e-4981-4d2d-9270-8c75c3740a70" />
+  </Folder>
+  <Folder Name="/Src/Administrations/ReverseProxy/">
+    <Project Path="Src/Administrations/ReverseProxy/Andor.Admin.ReverseProxy.Yarp/Andor.Admin.ReverseProxy.Yarp.csproj" Id="9a5cf5a7-6483-418e-8986-b8e9ad56a41f" />
+  </Folder>
   <Folder Name="/Src/Administrations/Users/">
     <Project Path="Src/Administrations/Users/Andor.Users.WebApi/Andor.Users.WebApi.csproj" Id="2b5d1776-fe05-4b7c-9adc-d35c65898f65" />
   </Folder>
   <Folder Name="/Src/Assets/">
+    <Project Path="Src/Assets/Andor.Assets.Application/Andor.Assets.Application.csproj" />
+    <Project Path="Src/Assets/Andor.Assets.Binder/Andor.Assets.Binder.csproj" Id="79970ead-9ca8-4812-b37e-e9cde5df1f7e" />
+    <Project Path="Src/Assets/Andor.Assets.Contracts/Andor.Assets.Contracts.csproj" Id="2594b17f-156b-463c-99a7-64b04129e0c4" />
     <Project Path="Src/Assets/Andor.Assets.Domain/Andor.Assets.Domain.csproj" />
     <Project Path="Src/Assets/Andor.Assets.Infrastructure/Andor.Assets.Infrastructure.csproj" Id="8de78b22-cd74-4688-89f0-fc8710d9028c" />
+    <Project Path="Src/Assets/Andor.Assets.RestApi/Andor.Assets.RestApi.csproj" Id="b6e12dc9-2b66-4327-bd4e-debece050b36" />
+    <Project Path="Src/Assets/Andor.Assets.Service/Andor.Assets.Service.csproj" />
   </Folder>
   <Folder Name="/Src/Budget/">
     <Project Path="Src/Budget/Andor.Accounts.Domain/Andor.Accounts.Domain.csproj" />
-  </Folder>
-  <Folder Name="/Src/Common/">
-    <Project Path="Src/Foundation/Andor.Foundation.Domain/Andor.Foundation.Domain.csproj" />
+    <Project Path="Src/Budget/Andor.Accounts.WebApi/Andor.Accounts.WebApi.csproj" Id="ea7e414f-32b7-44dd-8d43-c7144a122da4" />
   </Folder>
   <Folder Name="/Src/Communications/" />
   <Folder Name="/Src/Goals/" />
   <Folder Name="/Src/Onboarding/" />
+  <Folder Name="/Src/Shared/">
+    <Project Path="Src/Shared/Andor.Authentication.Jwt/Andor.Authentication.Jwt.csproj" Id="824da1e1-4068-41e9-b4b5-614a0cc1a554" />
+    <Project Path="Src/Shared/Andor.Documentation.Swagger/Andor.Documentation.Swagger.csproj" Id="53f07995-5f59-4135-8287-a595453e4ff1" />
+    <Project Path="Src/Shared/Andor.Foundation.Api/Andor.Foundation.Api.csproj" Id="6babc929-749a-4062-b919-167b5d21ee9b" />
+    <Project Path="Src/Shared/Andor.Foundation.Application/Andor.Foundation.Application.csproj" Id="1bcae2a5-a4f8-4510-b74e-0f3d336c45fe" />
+    <Project Path="Src/Shared/Andor.Foundation.Binder/Andor.Foundation.Binder.csproj" Id="6439ea44-eec7-4d36-9477-25b5395555fb" />
+    <Project Path="Src/Shared/Andor.Foundation.Contracts/Andor.Foundation.Contracts.csproj" />
+    <Project Path="Src/Shared/Andor.Foundation.Domain/Andor.Foundation.Domain.csproj" />
+    <Project Path="Src/Shared/Andor.Foundation.Infrastructure/Andor.Foundation.Infrastructure.csproj" Id="f8818d91-21ce-4cc0-b3b2-39f4b1631c2e" />
+    <Project Path="Src/Shared/Andor.Foundation.ServerServices/Andor.Foundation.ServerServices.csproj" Id="34779c76-d417-442c-94e2-8380cc471299" />
+  </Folder>
+  <Folder Name="/Src/Shared/AuthorizationDomain/">
+    <Project Path="Src/Shared/AuthorizationDomain/Andor.Authorizations.Application/Andor.Authorizations.Application.csproj" Id="c21800ce-ac9f-41ea-84ad-3dfc417c76b1" />
+    <Project Path="Src/Shared/AuthorizationDomain/Andor.Authorizations.Domain/Andor.Authorizations.Domain.csproj" />
+  </Folder>
   <Folder Name="/Src/Tasks/" />
   <Folder Name="/Src/Users/">
     <Project Path="Src/Users/Users/Users.csproj" Id="3641a899-9a4d-419b-a4db-807c3f61f128" />

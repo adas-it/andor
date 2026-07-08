@@ -2,7 +2,6 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Src\Foundation\Andor.Foundation.Domain\Andor.Foundation.Domain.csproj" />
     <ProjectReference Include="..\..\..\Src\Users\Users\Users.csproj" />
   </ItemGroup>
 

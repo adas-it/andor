@@ -1,0 +1,15 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.2.4">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <UserSecretsId>1ac6b2e3-e01d-4049-a803-70ad71331018</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Assets\Andor.Assets.Service\Andor.Assets.Service.csproj" />
+    <ProjectReference Include="..\..\..\Budget\Andor.Accounts.WebApi\Andor.Accounts.WebApi.csproj" />
+    <ProjectReference Include="..\..\ReverseProxy\Andor.Admin.ReverseProxy.Yarp\Andor.Admin.ReverseProxy.Yarp.csproj" />
+    <ProjectReference Include="..\..\Users\Andor.Users.WebApi\Andor.Users.WebApi.csproj" />
+  </ItemGroup>
+
+</Project>
