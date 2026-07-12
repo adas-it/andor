@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" />
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\Shared\Andor.Authentication.Jwt\Andor.Authentication.Jwt.csproj" />
+      <ProjectReference Include="..\..\..\Shared\Andor.Documentation.Swagger\Andor.Documentation.Swagger.csproj" />
+      <ProjectReference Include="..\..\Aspire\Andor.ServiceDefaults\Andor.ServiceDefaults.csproj" />
+      <ProjectReference Include="..\Andor.Configurations.Binder\Andor.Configurations.Binder.csproj" />
+    </ItemGroup>
+
+</Project>

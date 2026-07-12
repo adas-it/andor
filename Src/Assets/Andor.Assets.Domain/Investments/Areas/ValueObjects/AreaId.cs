@@ -5,7 +5,7 @@ namespace Andor.Assets.Domain.Investments.Areas.ValueObjects;
 
 public readonly record struct AreaId : IId<AreaId>
 {
-    public static AreaId Empty => new(Guid.Empty);
+    public static AreaId Empty => new AreaId() { Value = Guid.Empty };
 
     private AreaId(Guid value)
     {
@@ -16,7 +16,7 @@ public readonly record struct AreaId : IId<AreaId>
 
         Value = value;
     }
-    public Guid Value { get; }
+    public Guid Value { get; init; }
     public static AreaId New() => new(Guid.NewGuid());
 
     public static AreaId Load(string value)

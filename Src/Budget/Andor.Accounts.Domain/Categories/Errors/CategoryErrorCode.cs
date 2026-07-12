@@ -15,9 +15,9 @@ public static class CategoryErrorMessages
 /// Error codes for Category domain operations.
 /// Codes in the 6000-6999 range.
 /// </summary>
-public sealed record CategoryErrorCode(int original) : DomainErrorCode(original)
+public sealed record CategoryErrorCode
 {
     // Validation errors (6000-6099)
-    public static readonly DomainErrorCode MovementTypeCannotBeUndefined = new CategoryErrorCode(6_000);
-    public static readonly DomainErrorCode NameCannotBeNull = new CategoryErrorCode(6_001);
+    public static readonly DomainErrorCode MovementTypeCannotBeUndefined = DomainErrorCode.New(6_000);
+    public static readonly DomainErrorCode NameCannotBeNull = DomainErrorCode.New(6_001);
 }

@@ -10,6 +10,15 @@
     <Project Path="Src/Administrations/Aspire/Andor.AppHost/Andor.AppHost.csproj" Id="e15950d1-b5c2-448b-ac0f-d6602e7e9c36" />
     <Project Path="Src/Administrations/Aspire/Andor.ServiceDefaults/Andor.ServiceDefaults.csproj" Id="195dc22e-4981-4d2d-9270-8c75c3740a70" />
   </Folder>
+  <Folder Name="/Src/Administrations/Configurations/">
+    <Project Path="Src/Administrations/Configurations/Andor.Configurations.Application/Andor.Configurations.Application.csproj" Id="3f6bb97b-2c0c-49cf-88f7-97213a1768f5" />
+    <Project Path="Src/Administrations/Configurations/Andor.Configurations.Binder/Andor.Configurations.Binder.csproj" Id="095eb5ff-240b-47ab-bebe-076565416fb2" />
+    <Project Path="Src/Administrations/Configurations/Andor.Configurations.Contracts/Andor.Configurations.Contracts.csproj" Id="1eefb4fa-7dac-4c9b-b484-638733b3af7f" />
+    <Project Path="Src/Administrations/Configurations/Andor.Configurations.Domain/Andor.Configurations.Domain.csproj" Id="e426740c-8a94-44a4-93b6-89bed17f48e2" />
+    <Project Path="Src/Administrations/Configurations/Andor.Configurations.Infrastructure/Andor.Configurations.Infrastructure.csproj" Id="083111b6-76b9-4495-90bf-264a04c3e079" />
+    <Project Path="Src/Administrations/Configurations/Andor.Configurations.RestApi/Andor.Configurations.RestApi.csproj" Id="7ee1f19b-ee8c-44ce-a0c0-ed6f1213c448" />
+    <Project Path="Src/Administrations/Configurations/Andor.Configurations.Service/Andor.Configurations.Service.csproj" />
+  </Folder>
   <Folder Name="/Src/Administrations/ReverseProxy/">
     <Project Path="Src/Administrations/ReverseProxy/Andor.Admin.ReverseProxy.Yarp/Andor.Admin.ReverseProxy.Yarp.csproj" Id="9a5cf5a7-6483-418e-8986-b8e9ad56a41f" />
   </Folder>
@@ -26,8 +35,13 @@
     <Project Path="Src/Assets/Andor.Assets.Service/Andor.Assets.Service.csproj" />
   </Folder>
   <Folder Name="/Src/Budget/">
+    <Project Path="Src/Budget/Andor.Accounts.Application/Andor.Accounts.Application.csproj" Id="051f129c-2a16-46fc-9551-5f0bbd56a123" />
+    <Project Path="Src/Budget/Andor.Accounts.Binder/Andor.Accounts.Binder.csproj" Id="f2a0fa80-a77d-4017-a3ea-7d753b6062c9" />
+    <Project Path="Src/Budget/Andor.Accounts.Contracts/Andor.Accounts.Contracts.csproj" Id="e8ca75de-0578-4cc5-834c-571edafa625b" />
     <Project Path="Src/Budget/Andor.Accounts.Domain/Andor.Accounts.Domain.csproj" />
-    <Project Path="Src/Budget/Andor.Accounts.WebApi/Andor.Accounts.WebApi.csproj" Id="ea7e414f-32b7-44dd-8d43-c7144a122da4" />
+    <Project Path="Src/Budget/Andor.Accounts.Infrastructure/Andor.Accounts.Infrastructure.csproj" />
+    <Project Path="Src/Budget/Andor.Accounts.RestApi/Andor.Accounts.RestApi.csproj" Id="4c0368ee-b119-49c4-b504-4e9ce0057baa" />
+    <Project Path="Src/Budget/Andor.Accounts.Service/Andor.Accounts.Service.csproj" />
   </Folder>
   <Folder Name="/Src/Communications/" />
   <Folder Name="/Src/Goals/" />
