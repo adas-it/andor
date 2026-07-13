@@ -15,9 +15,9 @@ public static class PaymentMethodErrorMessages
 /// Error codes for PaymentMethod domain operations.
 /// Codes in the 7000-7999 range.
 /// </summary>
-public sealed record PaymentMethodErrorCode(int original) : DomainErrorCode(original)
+public sealed record PaymentMethodErrorCode
 {
     // Validation errors (7000-7099)
-    public static readonly DomainErrorCode MovementTypeCannotBeUndefined = new PaymentMethodErrorCode(7_000);
-    public static readonly DomainErrorCode NameCannotBeNull = new PaymentMethodErrorCode(7_001);
+    public static readonly DomainErrorCode MovementTypeCannotBeUndefined = DomainErrorCode.New(7_000);
+    public static readonly DomainErrorCode NameCannotBeNull = DomainErrorCode.New(7_001);
 }

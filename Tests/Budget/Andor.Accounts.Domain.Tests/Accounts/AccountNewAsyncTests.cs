@@ -398,7 +398,7 @@ public class AccountNewAsyncTests
 
     private void SetupValidatorToReturnFailure(string errorMessage)
     {
-        var notification = new Notification("Field", errorMessage, DomainErrorCode.Validation);
+        var notification = new Notification("Field", errorMessage, CommonErrorCodes.Validation);
 
         _ = _validatorMock
             .Setup(v => v.ValidateCreationAsync(It.IsAny<Account>(), It.IsAny<CancellationToken>()))

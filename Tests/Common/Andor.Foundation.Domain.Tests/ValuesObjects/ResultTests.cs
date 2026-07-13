@@ -1,6 +1,5 @@
 ﻿using Andor.Domain.Common.ValuesObjects;
 using Andor.Foundation.Domain.ValuesObjects;
-using System.Collections.Generic;
 
 namespace Andor.Foundation.Domain.Tests.ValuesObjects;
 
@@ -26,8 +25,8 @@ public class ResultTests
         // Arrange
         List<Notification> warnings = new List<Notification>
         {
-            new ("FieldName1", "Warning Message 1", DomainErrorCode.Validation),
-            new ("FieldName2", "Warning Message 2", DomainErrorCode.Validation)
+            new ("FieldName1", "Warning Message 1", CommonErrorCodes.Validation),
+            new ("FieldName2", "Warning Message 2", CommonErrorCodes.Validation)
         };
 
         // Act
@@ -45,12 +44,12 @@ public class ResultTests
         // Arrange
         List<Notification> errors = new List<Notification>
         {
-            new ("FieldName1", "Error Message 1", DomainErrorCode.Validation),
-            new ("FieldName2", "Error Message 2", DomainErrorCode.Validation)
+            new ("FieldName1", "Error Message 1", CommonErrorCodes.Validation),
+            new ("FieldName2", "Error Message 2", CommonErrorCodes.Validation)
         };
         List<Notification> warnings = new List<Notification>
         {
-            new ("FieldName3", "Warning Message 1", DomainErrorCode.Validation)
+            new ("FieldName3", "Warning Message 1", CommonErrorCodes.Validation)
         };
 
         // Act
@@ -68,8 +67,8 @@ public class ResultTests
         // Arrange
         List<Notification> errors = new List<Notification>
         {
-            new ("FieldName1", "Error Message 1", DomainErrorCode.Validation),
-            new ("FieldName2", "Error Message 2", DomainErrorCode.Validation)
+            new ("FieldName1", "Error Message 1", CommonErrorCodes.Validation),
+            new ("FieldName2", "Error Message 2", CommonErrorCodes.Validation)
         };
 
         // Act

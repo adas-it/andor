@@ -18,7 +18,7 @@ public static class SwaggerExtension
 
         var scopes = authOptions.Scopes?.ToDictionary(scope => scope);
 
-        builder.Services.AddSwaggerGen(options =>
+        _ = builder.Services.AddSwaggerGen(options =>
         {
             options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
             {
@@ -27,11 +27,16 @@ public static class SwaggerExtension
                 {
                     AuthorizationCode = new OpenApiOAuthFlow
                     {
-                        AuthorizationUrl = new Uri($"{authOptions.Authority}/connect/auth"),
+                        AuthorizationUrl = new Uri($"{authOptions.Authority}/connect/authorize"),
                         TokenUrl = new Uri($"{authOptions.Authority}/connect/token"),
                         Scopes = scopes
                     }
                 }
+            });
+
+            options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+            {
+                [new OpenApiSecuritySchemeReference("oauth2", document)] = []
             });
 
             options.OperationFilter<AuthorizeCheckOperationFilter>();
@@ -39,7 +44,7 @@ public static class SwaggerExtension
         });
 
 
-        builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerGenOptions>();
+        _ = builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerGenOptions>();
 
         AddApiVersioning(builder.Services);
 
@@ -53,8 +58,8 @@ public static class SwaggerExtension
         var authOptions = configuration.GetSection("IdentityProvider").Get<IdentityProvider>()
             ?? new IdentityProvider();
 
-        app.UseSwagger();
-        app.UseSwaggerUI(o =>
+        _ = app.UseSwagger();
+        _ = app.UseSwaggerUI(o =>
         {
             foreach (var description in
                 versionDescription.ApiVersionDescriptions.Select(x => x.GroupName))
@@ -68,6 +73,9 @@ public static class SwaggerExtension
                 o.OAuthClientSecret(authOptions.SecretKey ?? "");
                 o.OAuthAppName("Andor - Swagger");
                 o.OAuthUsePkce();
+
+                if (authOptions.Scopes?.Length > 0)
+                    o.OAuthScopes(authOptions.Scopes);
             }
         });
 
@@ -76,7 +84,7 @@ public static class SwaggerExtension
 
     private static void AddApiVersioning(IServiceCollection services)
     {
-        services.AddApiVersioning(o =>
+        _ = services.AddApiVersioning(o =>
         {
             o.AssumeDefaultVersionWhenUnspecified = true;
             o.DefaultApiVersion = new ApiVersion(1, 0);

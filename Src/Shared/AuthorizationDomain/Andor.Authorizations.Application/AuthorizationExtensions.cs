@@ -7,13 +7,11 @@ public static class AuthorizationExtensions
 {
     public static IServiceCollection UseAuthorizations(this IServiceCollection services)
     {
-        services.AddScoped<AuthorizationDomain>();
-        services.AddScoped<ICurrentUserService, CurrentUserService>();
-        services.AddScoped<IAuthorizationService, AuthorizationService>();
-        services.AddSingleton<IAuthorizationRepository, AuthorizationRepository>();
-
-        services.AddSingleton<IUserContextAccessor, UserContextAccessor>();
-
-        return services;
+        return services.AddHttpContextAccessor()
+            .AddScoped<AuthorizationDomain>()
+            .AddScoped<ICurrentUserService, CurrentUserService>()
+            .AddScoped<IAuthorizationService, AuthorizationService>()
+            .AddSingleton<IAuthorizationRepository, AuthorizationRepository>()
+            .AddSingleton<IUserContextAccessor, UserContextAccessor>();
     }
 }

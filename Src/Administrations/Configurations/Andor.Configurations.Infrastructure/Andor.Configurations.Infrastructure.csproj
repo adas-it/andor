@@ -4,6 +4,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\..\..\Shared\Andor.Foundation.Application\Andor.Foundation.Application.csproj" />

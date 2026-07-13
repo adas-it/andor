@@ -4,8 +4,6 @@ using Andor.Accounts.Domain.Currencies;
 using Andor.Accounts.Domain.PermissionTypes;
 using Andor.Accounts.Domain.Tests.Currencies;
 using Andor.Accounts.Domain.Users;
-using Andor.Foundation.Domain;
-using Andor.Foundation.Domain.SeedWork;
 using Andor.Foundation.Domain.ValuesObjects;
 using Andor.TestsUtil;
 using Moq;
@@ -105,8 +103,8 @@ internal static class AccountFixture
         var members = new[] { (additionalMemberId, additionalMemberPermission) };
 
         var (account, ownerUserId) = await CreateAccountWithMembersAsync(
-            validatorMock, 
-            members, 
+            validatorMock,
+            members,
             cancellationToken);
 
         return (account, ownerUserId, additionalMemberId);
@@ -119,7 +117,7 @@ internal static class AccountFixture
     public static Mock<IAccountValidator> CreateDefaultValidator()
     {
         var validatorMock = new Mock<IAccountValidator>();
-        validatorMock
+        _ = validatorMock
             .Setup(v => v.ValidateCreationAsync(It.IsAny<Account>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<Notification>());
         return validatorMock;
@@ -133,7 +131,7 @@ internal static class AccountFixture
     public static Mock<IAccountValidator> CreateFailingValidator(List<Notification> notifications)
     {
         var validatorMock = new Mock<IAccountValidator>();
-        validatorMock
+        _ = validatorMock
             .Setup(v => v.ValidateCreationAsync(It.IsAny<Account>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(notifications);
         return validatorMock;

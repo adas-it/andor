@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Andor Auth</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        body { font-family: system-ui, sans-serif; background: #f5f5f5; margin: 0; }
+        .container { max-width: 420px; margin: 80px auto; background: #fff; border-radius: 8px; padding: 2rem; box-shadow: 0 2px 12px rgba(0,0,0,.1); }
+        h2 { margin-top: 0; text-align: center; color: #333; }
+        label { display: block; margin-bottom: .25rem; font-weight: 600; color: #555; }
+        input[type=text], input[type=password] { width: 100%; padding: .5rem .75rem; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; margin-bottom: 1rem; }
+        button[type=submit] { width: 100%; padding: .65rem; background: #0078d4; color: #fff; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; }
+        button[type=submit]:hover { background: #005a9e; }
+        .validation-summary-errors { background: #fff0f0; border: 1px solid #f5c2c2; border-radius: 4px; padding: .75rem 1rem; margin-bottom: 1rem; color: #c00; }
+        .field-validation-error { color: #c00; font-size: .875rem; }
+        .app-name { text-align: center; font-size: .875rem; color: #888; margin-bottom: 1.5rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        @RenderBody()
+    </div>
+</body>
+</html>

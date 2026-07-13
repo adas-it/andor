@@ -25,6 +25,7 @@ builder.Services.ConfigureJwt(builder.Configuration);
 builder.UseAkkaModules("AndorAssetsSystem");
 
 builder.UseAssets(builder.Configuration);
+
 builder.Services.UseAuthorizations();
 
 var app = builder.Build();

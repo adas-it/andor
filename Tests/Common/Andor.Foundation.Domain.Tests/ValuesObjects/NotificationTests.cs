@@ -10,12 +10,12 @@ public class NotificationTests
     {
         // Arrange
         var notification = new Notification("FieldName", "Error Message",
-            DomainErrorCode.Validation);
+            CommonErrorCodes.Validation);
 
         // Act
         var result = notification.ToString();
 
         // Assert
-        Assert.Equal($"{DomainErrorCode.Validation}: Message - Error Message", result);
+        Assert.Equal($"{CommonErrorCodes.Validation}: Message - Error Message", result);
     }
 }

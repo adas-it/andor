@@ -23,14 +23,14 @@ public static class FinancialMovementErrorMessages
 /// Error codes for FinancialMovement domain operations.
 /// Codes in the 5000-5099 range.
 /// </summary>
-public sealed record FinancialMovementErrorCode(int original) : DomainErrorCode(original)
+public sealed record FinancialMovementErrorCode
 {
-    public static readonly DomainErrorCode ValueMustBeGreaterThanZero = new FinancialMovementErrorCode(5_000);
-    public static readonly DomainErrorCode DateCannotBeTooFarInFuture = new FinancialMovementErrorCode(5_001);
+    public static readonly DomainErrorCode ValueMustBeGreaterThanZero = DomainErrorCode.New(5_000);
+    public static readonly DomainErrorCode DateCannotBeTooFarInFuture = DomainErrorCode.New(5_001);
 
-    public static readonly DomainErrorCode FinancialMovementCannotBeNull = new FinancialMovementErrorCode(5_002);
-    public static readonly DomainErrorCode SubCategoryNotInAccount = new FinancialMovementErrorCode(5_003);
-    public static readonly DomainErrorCode PaymentMethodNotInAccount = new FinancialMovementErrorCode(5_004);
-    public static readonly DomainErrorCode CategoryNotInAccount = new FinancialMovementErrorCode(5_005);
-    public static readonly DomainErrorCode PaymentMethodTypeMismatch = new FinancialMovementErrorCode(5_006);
+    public static readonly DomainErrorCode FinancialMovementCannotBeNull = DomainErrorCode.New(5_002);
+    public static readonly DomainErrorCode SubCategoryNotInAccount = DomainErrorCode.New(5_003);
+    public static readonly DomainErrorCode PaymentMethodNotInAccount = DomainErrorCode.New(5_004);
+    public static readonly DomainErrorCode CategoryNotInAccount = DomainErrorCode.New(5_005);
+    public static readonly DomainErrorCode PaymentMethodTypeMismatch = DomainErrorCode.New(5_006);
 }

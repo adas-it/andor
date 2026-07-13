@@ -18,7 +18,7 @@ namespace Andor.Configurations.RestApi;
 
 [ApiController]
 [ApiVersion("1.0")]
-[Authorize(AuthenticationSchemes = "Bearer")]
+[Authorize]
 [Route("v{version:apiVersion}/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
 [Consumes(MediaTypeNames.Application.Json)]

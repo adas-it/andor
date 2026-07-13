@@ -7,7 +7,7 @@ public static class UserErrorMessages
     public const string EmailAlreadyInUse = "A user with this e-mail address already exists.";
 }
 
-public sealed record UserErrorCode(int original) : DomainErrorCode(original)
+public sealed record UserErrorCode
 {
-    public static readonly DomainErrorCode EmailAlreadyInUse = new UserErrorCode(4_001);
+    public static readonly DomainErrorCode EmailAlreadyInUse = DomainErrorCode.New(4_001);
 }
