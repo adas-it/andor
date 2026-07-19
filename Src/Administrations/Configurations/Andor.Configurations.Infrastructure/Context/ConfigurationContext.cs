@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Andor.Configurations.Domain;
+using Andor.Foundation.Application;
 using Andor.Foundation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -10,14 +11,21 @@ public class ConfigurationContextFactory : IDesignTimeDbContextFactory<Configura
 {
     public ConfigurationContext CreateDbContext(string[] args)
     {
-        var options = DbContextOptionsFactory.Create<ConfigurationContext>(args);
-        return new ConfigurationContext(options);
+        var optionsBuilder = new DbContextOptionsBuilder<ConfigurationContext>();
+        optionsBuilder.UseSqlServer("Server=.;Database=andor_configurations;Trusted_Connection=True;");
+        return new ConfigurationContext(optionsBuilder.Options);
     }
 }
 
-public class ConfigurationContext(DbContextOptions<ConfigurationContext> options)
-    : PrincipalContext(options, null)
+public class ConfigurationContext : PrincipalContext
 {
+    public ConfigurationContext(
+        DbContextOptions<ConfigurationContext> options,
+        IMessageSenderInterface? messageSenderInterface = null)
+        : base(options, messageSenderInterface)
+    {
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

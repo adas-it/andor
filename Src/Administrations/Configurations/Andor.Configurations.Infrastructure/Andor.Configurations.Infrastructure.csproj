@@ -12,5 +12,8 @@
       <ProjectReference Include="..\Andor.Configurations.Application\Andor.Configurations.Application.csproj" />
       <ProjectReference Include="..\Andor.Configurations.Domain\Andor.Configurations.Domain.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Migrations\" />
+    </ItemGroup>
 
 </Project>

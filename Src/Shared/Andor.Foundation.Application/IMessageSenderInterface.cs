@@ -2,5 +2,5 @@
 
 public interface IMessageSenderInterface
 {
-    Task PubSubSendAsync(object data, CancellationToken cancellationToken);
+    Task PubSubSendAsync(object data, string messageId, CancellationToken cancellationToken);
 }

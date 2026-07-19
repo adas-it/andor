@@ -2,7 +2,8 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-    </PropertyGroup>
+      <UserSecretsId>ef5369e8-01e9-4db3-8bd0-dc0f068e0067</UserSecretsId>
+  </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" />

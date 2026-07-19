@@ -20,4 +20,7 @@ public static class ConfigurationExtensions
 
         return builder;
     }
+
+    public static Task ApplyConfigurationMigrationsAsync(this WebApplication app)
+        => app.Services.ApplyConfigurationMigrationsAsync();
 }

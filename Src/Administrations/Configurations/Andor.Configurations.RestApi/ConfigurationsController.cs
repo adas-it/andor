@@ -124,7 +124,7 @@ public class ConfigurationsController(
 
         var output = await configurationCommands.DeleteConfigurationAsync(command);
 
-        output.SetData((ConfigurationOutput)null!);
+        _ = output.SetData((ConfigurationOutput)null!);
 
         return Result(output);
     }
@@ -142,7 +142,7 @@ public class ConfigurationsController(
 
         var output = await configurationCommands.DeactivateConfigurationAsync(command);
 
-        output.SetData((ConfigurationOutput)null!);
+        _ = output.SetData((ConfigurationOutput)null!);
 
         return Result(output);
     }

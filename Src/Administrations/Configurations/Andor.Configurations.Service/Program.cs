@@ -47,4 +47,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+await app.ApplyConfigurationMigrationsAsync();
+
 app.Run();

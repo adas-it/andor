@@ -63,7 +63,7 @@ public class ConfigurationActor : ReceiveActor, IWithUnboundedStash
         userContext.CurrentUser = cmd.CurrentUser;
 
         var (validator, repo, currentUser, authorizationDomain) = GetDependencies(scope);
-
+        /*
         var hasPermissionToCreate = await authorizationDomain.IsAuthorizedAsync(
             ConfigurationPermissions.CreateConfiguration, null);
 
@@ -96,6 +96,7 @@ public class ConfigurationActor : ReceiveActor, IWithUnboundedStash
                 return;
             }
         }
+        */
 
         var user = currentUser.GetCurrentUser();
 

@@ -8,24 +8,24 @@ namespace Users.Users;
 
 public sealed class User : AggregateRoot<UserId>
 {
-    public string FirstName { get; private set; }
-    public string LastName { get; private set; }
+    public Name FirstName { get; private set; }
+    public Name LastName { get; private set; }
     public MailAddress Email { get; private set; }
     public Guid PreferredCurrencyId { get; private set; }
     public Guid PreferredLanguageId { get; private set; }
 
     protected User()
     {
-        FirstName = string.Empty;
-        LastName = string.Empty;
+        FirstName = Name.Empty;
+        LastName = Name.Empty;
         Email = default!;
     }
 
     private User(
         UserId id,
         MailAddress email,
-        string firstName,
-        string lastName,
+        Name firstName,
+        Name lastName,
         Guid preferredCurrencyId,
         Guid preferredLanguageId)
     {

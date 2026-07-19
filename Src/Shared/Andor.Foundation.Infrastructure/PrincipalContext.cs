@@ -1,7 +1,9 @@
-﻿using Andor.Foundation.Application;
+﻿using System.Text.Json;
+using Andor.Foundation.Application;
 using Andor.Foundation.Domain;
 using Andor.Foundation.Domain.SeedWork;
 using Andor.Foundation.Domain.ValuesObjects;
+using Andor.Foundation.Infrastructure.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
@@ -14,7 +16,7 @@ public static class DbContextOptionsFactory
     {
         var optionsBuilder = new DbContextOptionsBuilder<TContext>();
 
-        //optionsBuilder.UseNpgsql("inmemory");
+        optionsBuilder.UseInMemoryDatabase("inmemory");
 
         return optionsBuilder.Options;
     }
@@ -23,11 +25,15 @@ public static class DbContextOptionsFactory
 public class PrincipalContext(DbContextOptions options, IMessageSenderInterface? messageSenderInterface)
     : DbContext(options)
 {
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Ignore<Name>();
         modelBuilder.Ignore<Description>();
         modelBuilder.Ignore<Value>();
+
+        modelBuilder.ApplyConfiguration(new OutboxMessageConfig());
 
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
@@ -76,50 +82,53 @@ public class PrincipalContext(DbContextOptions options, IMessageSenderInterface?
 
     public override int SaveChanges()
     {
-        DispatchDomainEvents();
+        EnqueueDomainEventsToOutbox();
 
         return base.SaveChanges();
     }
 
     public async override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-
-        await DispatchDomainEventsAsync(cancellationToken);
+        EnqueueDomainEventsToOutbox();
 
         return await base.SaveChangesAsync(cancellationToken);
     }
 
-    private void DispatchDomainEvents()
+    /// <summary>
+    /// Collects the domain events raised by tracked aggregates and persists them as
+    /// <see cref="OutboxMessage"/> entries within the SAME change tracker, so they are
+    /// committed atomically together with the aggregate changes (transactional Outbox).
+    /// </summary>
+    private void EnqueueDomainEventsToOutbox()
     {
-        DispatchDomainEventsAsync(CancellationToken.None)
-            .ConfigureAwait(false)
-            .GetAwaiter()
-            .GetResult();
-    }
+        var domainEntities = this.ChangeTracker
+            .Entries<IAggregateRoot>()
+            .Where(x => x.Entity.Events != null && x.Entity.Events.Any())
+            .ToList();
 
-    private async Task DispatchDomainEventsAsync(CancellationToken cancellationToken)
-    {
-        if (messageSenderInterface == null)
+        if (domainEntities.Count == 0)
         {
             return;
         }
 
-        var domainEntities = this.ChangeTracker
-            .Entries<IAggregateRoot>()
-            .Where(x => x.Entity.Events != null && x.Entity.Events.Any());
-
-        var domainEvents = domainEntities
+        var outboxMessages = domainEntities
             .SelectMany(x => x.Entity.Events)
+            .Select(domainEvent =>
+            {
+                var eventType = domainEvent.GetType();
+
+                return new OutboxMessage
+                {
+                    Id = Guid.NewGuid(),
+                    OccurredOn = DateTimeOffset.UtcNow,
+                    Type = eventType.AssemblyQualifiedName!,
+                    Content = JsonSerializer.Serialize(domainEvent, eventType),
+                };
+            })
             .ToList();
 
-        domainEntities.ToList()
-            .ForEach(entity => entity.Entity.ClearEvents());
+        domainEntities.ForEach(entity => entity.Entity.ClearEvents());
 
-        foreach (var domainEvent in domainEvents)
-        {
-            await messageSenderInterface.PubSubSendAsync(domainEvent, cancellationToken);
-        }
-
-        return;
+        Set<OutboxMessage>().AddRange(outboxMessages);
     }
 }
