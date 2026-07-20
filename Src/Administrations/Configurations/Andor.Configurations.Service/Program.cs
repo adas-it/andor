@@ -49,4 +49,6 @@ app.MapControllers();
 
 await app.ApplyConfigurationMigrationsAsync();
 
+await app.SeedConfigurationPermissionsAsync();
+
 app.Run();

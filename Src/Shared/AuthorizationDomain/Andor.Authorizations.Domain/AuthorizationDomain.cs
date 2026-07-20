@@ -18,15 +18,14 @@ public class AuthorizationDomain
         this.currentUserService = currentUserService;
     }
 
-    public async Task<bool> IsAuthorizedAsync(string permissionName, Dictionary<string, string>? parameters)
+    public Task<bool> IsAuthorizedAsync(string permissionName, Dictionary<string, string>? parameters)
     {
-        var userId = currentUserService.GetCurrentUser().UserId;
+        var currentUser = currentUserService.GetCurrentUser();
 
-        var license = await authorizationService.GetLicenseTypeAsync();
+        var permission = _permissions.FirstOrDefault(x =>
+            x.Name == permissionName && x.GroupName == currentUser.GroupName);
 
-        var permission = _permissions.FirstOrDefault(x => x.Name == permissionName);
-
-        return permission?.Allowed ?? false;
+        return Task.FromResult(permission?.Allowed ?? false);
     }
 
     public async Task<bool> AddPermissionAsync(string permissionName, Dictionary<string, string>? parameters)

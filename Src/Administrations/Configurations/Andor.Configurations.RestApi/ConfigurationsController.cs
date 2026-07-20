@@ -25,7 +25,8 @@ namespace Andor.Configurations.RestApi;
 public class ConfigurationsController(
     IConfigurationCommandsService configurationCommands,
     IConfigurationQueriesService configurationQueries,
-    ICurrentUserService currentUserService)
+    ICurrentUserService currentUserService,
+    AuthorizationDomain authorizationDomain)
     : BaseController
 {
     [HttpGet("{id:guid}")]
@@ -35,6 +36,11 @@ public class ConfigurationsController(
     public async Task<IActionResult> GetConfigurationAsync([FromRoute] Guid id,
         CancellationToken cancellationToken)
     {
+        if (await ForbidIfNotAuthorizedAsync(ConfigurationPermissions.ReadConfiguration) is { } forbidden)
+        {
+            return forbidden;
+        }
+
         var config = await configurationQueries.GetByIdAsync(id, cancellationToken);
 
         return Result(config);
@@ -46,6 +52,11 @@ public class ConfigurationsController(
     public async Task<IActionResult> GetSearchAsync([FromQuery] PaginatedConfigurationListInput input,
         CancellationToken cancellationToken)
     {
+        if (await ForbidIfNotAuthorizedAsync(ConfigurationPermissions.ReadConfiguration) is { } forbidden)
+        {
+            return forbidden;
+        }
+
         var searchInput = new SearchConfigurationInput()
         {
             Page = input.Page,
@@ -76,6 +87,11 @@ public class ConfigurationsController(
         if (input == null)
         {
             return UnprocessableEntity();
+        }
+
+        if (await ForbidIfNotAuthorizedAsync(ConfigurationPermissions.CreateConfiguration) is { } forbidden)
+        {
+            return forbidden;
         }
 
         var command = new CreateConfigurationCommand(ConfigurationId.New(),
@@ -145,5 +161,15 @@ public class ConfigurationsController(
         _ = output.SetData((ConfigurationOutput)null!);
 
         return Result(output);
+    }
+
+    private async Task<IActionResult?> ForbidIfNotAuthorizedAsync(string permissionName)
+    {
+        if (await authorizationDomain.IsAuthorizedAsync(permissionName, null))
+        {
+            return null;
+        }
+
+        return Result<object?>(ApplicationResult<object?>.Failure([Errors.NotAuthorized()]));
     }
 }

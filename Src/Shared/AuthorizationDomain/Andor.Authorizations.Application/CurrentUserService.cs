@@ -22,11 +22,6 @@ internal class CurrentUserService(
 
             if (isAuthenticated)
             {
-                var userName = user.FindFirst("preferred_username")?.Value
-                               ?? user.FindFirst(ClaimTypes.Name)?.Value
-                               ?? user?.Identity?.Name
-                               ?? "Anonymous";
-
                 var userIdClaim = user.FindFirst("sub")?.Value
                                   ?? user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -38,7 +33,14 @@ internal class CurrentUserService(
                                ?? user.FindFirst("organization")?.Value
                                ?? "TenantA";
 
-                return new ApplicationUser(userId, userName, isAuthenticated, tenantId);
+                // "role" is the short claim name OpenIddict issues (see Andor.Users.WebApi's
+                // TokenController); ClaimTypes.Role is populated instead when the principal comes
+                // from an external IdP via ClaimsTransformer. Check both so either path works.
+                var groupName = user.FindFirst("role")?.Value
+                                 ?? user.FindFirst(ClaimTypes.Role)?.Value
+                                 ?? "User";
+
+                return new ApplicationUser(userId, groupName, isAuthenticated, tenantId);
             }
 
             return new ApplicationUser(Guid.NewGuid(), "Anonymous", false, "TenantA");

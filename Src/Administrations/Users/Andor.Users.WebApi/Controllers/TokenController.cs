@@ -56,6 +56,14 @@ public class TokenController : ControllerBase
 
         identity.AddClaim(Claims.Subject, user.Id.ToString());
         identity.AddClaim(Claims.Name, user.UserName!);
+        identity.AddClaim(Claims.Role, user.Group);
+
+        // Coarse-grained group claim only: resource APIs resolve fine-grained permissions
+        // for the group server-side, so a permission change never requires re-issuing tokens.
+        foreach (var claim in identity.Claims)
+        {
+            claim.SetDestinations(Destinations.AccessToken);
+        }
 
         var principal = new ClaimsPrincipal(identity);
         principal.SetScopes(Scopes.OpenId, Scopes.Email, Scopes.Profile);

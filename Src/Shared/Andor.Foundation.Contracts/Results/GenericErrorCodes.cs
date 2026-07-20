@@ -14,6 +14,7 @@ internal sealed record GenericErrorCodes : ApplicationErrorCode
     public static readonly GenericErrorCodes InvalidPathOnPatch = new(10_005);
     public static readonly GenericErrorCodes NotificationValuesError = new(10_006);
     public static readonly GenericErrorCodes DataBaseError = new(10_007);
+    public static readonly GenericErrorCodes NotAuthorized = new(10_008);
 }
 
 public record Errors
@@ -26,4 +27,5 @@ public record Errors
     public static ErrorModel InvalidOperationOnPatch() => new(GenericErrorCodes.InvalidOperationOnPatch, "This operation are not valid on patch.");
     public static ErrorModel InvalidPathOnPatch() => new(GenericErrorCodes.InvalidPathOnPatch, "This path cannot be changed on patch.");
     public static ErrorModel NotificationValuesError() => new(GenericErrorCodes.NotificationValuesError, "Error on creating a notification.");
+    public static ErrorModel NotAuthorized() => new(GenericErrorCodes.NotAuthorized, "You are not authorized to perform this action.");
 }
