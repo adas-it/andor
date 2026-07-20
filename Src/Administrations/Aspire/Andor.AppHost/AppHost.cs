@@ -11,14 +11,19 @@ var assetsApi = builder.AddProject<Projects.Andor_Assets_Service>("assets-servic
 var accountsApi = builder.AddProject<Projects.Andor_Accounts_Service>("accounts-api")
     .WithHttpHealthCheck("/health");
 
+var communicationsApi = builder.AddProject<Projects.Andor_Communications_Service>("communications-api")
+    .WithHttpHealthCheck("/health");
+
 builder.AddProject<Projects.Andor_Admin_ReverseProxy_Yarp>("reverse-proxy")
     .WithReference(configurationsApi)
     .WithReference(usersApi)
     .WithReference(assetsApi)
     .WithReference(accountsApi)
+    .WithReference(communicationsApi)
     .WaitFor(configurationsApi)
     .WaitFor(usersApi)
     .WaitFor(assetsApi)
-    .WaitFor(accountsApi);
+    .WaitFor(accountsApi)
+    .WaitFor(communicationsApi);
 
 builder.Build().Run();

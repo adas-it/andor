@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Administrations\Aspire\Andor.ServiceDefaults\Andor.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\..\Shared\Andor.Authentication.Jwt\Andor.Authentication.Jwt.csproj" />
+    <ProjectReference Include="..\..\Shared\Andor.Documentation.Swagger\Andor.Documentation.Swagger.csproj" />
+    <ProjectReference Include="..\..\Shared\AuthorizationDomain\Andor.Authorizations.Application\Andor.Authorizations.Application.csproj" />
+    <ProjectReference Include="..\Andor.Communications.Binder\Andor.Communications.Binder.csproj" />
+  </ItemGroup>
+
+</Project>

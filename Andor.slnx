@@ -49,6 +49,8 @@
     <Project Path="Src/Communications/Andor.Communications.Contracts/Andor.Communications.Contracts.csproj" />
     <Project Path="Src/Communications/Andor.Communications.Domain/Andor.Communications.Domain.csproj" Id="29d5d72f-8abf-4ddb-bbc3-dbd61e67ab26" />
     <Project Path="Src/Communications/Andor.Communications.Infrastructure/Andor.Communications.Infrastructure.csproj" />
+    <Project Path="Src/Communications/Andor.Communications.RestApi/Andor.Communications.RestApi.csproj" />
+    <Project Path="Src/Communications/Andor.Communications.Service/Andor.Communications.Service.csproj" />
   </Folder>
   <Folder Name="/Src/Goals/" />
   <Folder Name="/Src/Onboarding/" />

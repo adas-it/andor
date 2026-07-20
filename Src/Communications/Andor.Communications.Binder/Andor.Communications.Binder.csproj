@@ -14,6 +14,7 @@
     <ProjectReference Include="..\..\Shared\Andor.Foundation.Binder\Andor.Foundation.Binder.csproj" />
     <ProjectReference Include="..\..\Shared\Andor.Foundation.ServerServices\Andor.Foundation.ServerServices.csproj" />
     <ProjectReference Include="..\Andor.Communications.Infrastructure\Andor.Communications.Infrastructure.csproj" />
+    <ProjectReference Include="..\Andor.Communications.RestApi\Andor.Communications.RestApi.csproj" />
   </ItemGroup>
 
 </Project>

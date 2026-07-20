@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <PackageReference Include="Asp.Versioning.Mvc" />
+    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Andor.Foundation.Api\Andor.Foundation.Api.csproj" />
+    <ProjectReference Include="..\Andor.Communications.Application\Andor.Communications.Application.csproj" />
+    <ProjectReference Include="..\Andor.Communications.Contracts\Andor.Communications.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

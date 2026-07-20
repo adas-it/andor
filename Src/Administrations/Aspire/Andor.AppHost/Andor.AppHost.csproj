@@ -8,6 +8,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Assets\Andor.Assets.Service\Andor.Assets.Service.csproj" />
     <ProjectReference Include="..\..\..\Budget\Andor.Accounts.Service\Andor.Accounts.Service.csproj" />
+    <ProjectReference Include="..\..\..\Communications\Andor.Communications.Service\Andor.Communications.Service.csproj" />
     <ProjectReference Include="..\..\Configurations\Andor.Configurations.Service\Andor.Configurations.Service.csproj" />
     <ProjectReference Include="..\..\ReverseProxy\Andor.Admin.ReverseProxy.Yarp\Andor.Admin.ReverseProxy.Yarp.csproj" />
     <ProjectReference Include="..\..\Users\Andor.Users.WebApi\Andor.Users.WebApi.csproj" />
