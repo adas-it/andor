@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Akka" />
+    <PackageReference Include="Akka.Hosting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Andor.Communications.Domain\Andor.Communications.Domain.csproj" />
+    <ProjectReference Include="..\Andor.Communications.Contracts\Andor.Communications.Contracts.csproj" />
+    <ProjectReference Include="..\..\Shared\Andor.Foundation.Application\Andor.Foundation.Application.csproj" />
+    <ProjectReference Include="..\..\Shared\Andor.Foundation.Contracts\Andor.Foundation.Contracts.csproj" />
+    <ProjectReference Include="..\..\Shared\AuthorizationDomain\Andor.Authorizations.Application\Andor.Authorizations.Application.csproj" />
+    <ProjectReference Include="..\..\Shared\AuthorizationDomain\Andor.Authorizations.Domain\Andor.Authorizations.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
