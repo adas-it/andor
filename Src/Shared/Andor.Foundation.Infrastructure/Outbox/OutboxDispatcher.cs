@@ -105,7 +105,14 @@ public sealed class OutboxDispatcher(
                     ?? throw new InvalidOperationException(
                         $"Could not deserialize outbox message '{message.Id}'.");
 
-                await sender.PubSubSendAsync(payload, message.Id.ToString("N"), cancellationToken);
+                if (string.IsNullOrEmpty(message.TargetQueue))
+                {
+                    await sender.PubSubSendAsync(payload, message.Id.ToString("N"), cancellationToken);
+                }
+                else
+                {
+                    await sender.QueueSendAsync(payload, message.Id.ToString("N"), cancellationToken);
+                }
 
                 message.ProcessedOn = DateTimeOffset.UtcNow;
                 message.Error = null;

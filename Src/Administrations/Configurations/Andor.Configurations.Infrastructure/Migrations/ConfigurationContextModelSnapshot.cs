@@ -115,6 +115,10 @@ namespace Andor.Configurations.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("ProcessedOn")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("TargetQueue")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasMaxLength(512)
@@ -125,7 +129,7 @@ namespace Andor.Configurations.Infrastructure.Migrations
                     b.HasIndex("ProcessedOn", "OccurredOn")
                         .HasDatabaseName("IX_OutboxMessages_ProcessedOn_OccurredOn");
 
-                    b.ToTable("OutboxMessages", "Outbox");
+                    b.ToTable("OutboxMessages", "ConfigurationsOutbox");
                 });
 
             modelBuilder.Entity("Andor.Foundation.Domain.Events.DomainEvent", b =>

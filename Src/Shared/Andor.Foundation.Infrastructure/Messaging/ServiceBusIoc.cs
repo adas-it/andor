@@ -1,4 +1,5 @@
 using Andor.Foundation.Application;
+using Andor.Foundation.Infrastructure;
 using Azure.Identity;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Configuration;
@@ -81,7 +82,13 @@ public static class ServiceBusIoc
             var options = serviceProvider.GetRequiredService<IOptions<ServiceBusOptions>>().Value;
             var client = serviceProvider.GetRequiredService<ServiceBusClient>();
 
-            return client.CreateSender(options.TopicName);
+            return new ServiceBusSenders
+            {
+                Topic = client.CreateSender(options.TopicName),
+                Queue = string.IsNullOrWhiteSpace(options.QueueName)
+                    ? null
+                    : client.CreateSender(options.QueueName),
+            };
         });
 
         services.AddScoped<IMessageSenderInterface, MessageSenderAzure>();

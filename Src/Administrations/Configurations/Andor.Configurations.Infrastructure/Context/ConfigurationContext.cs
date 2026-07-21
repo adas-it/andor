@@ -26,6 +26,8 @@ public class ConfigurationContext : PrincipalContext
     {
     }
 
+    protected override string OutboxSchema => "ConfigurationsOutbox";
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

@@ -23,4 +23,10 @@ public sealed class ServiceBusOptions
     /// The default topic name that messages are published to.
     /// </summary>
     public string TopicName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Optional queue name for point-to-point sends (<see cref="Application.IMessageSenderInterface.QueueSendAsync"/>).
+    /// Leave empty for modules that only publish to <see cref="TopicName"/>.
+    /// </summary>
+    public string? QueueName { get; set; }
 }

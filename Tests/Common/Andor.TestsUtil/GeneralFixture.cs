@@ -30,4 +30,9 @@ public static class GeneralFixture
     public static Description GetValidDescription()
         => GetStringRightSize(Description.MinLength, Description.MaxLength);
 
+    public static Andor.Foundation.Domain.ValuesObjects.Value GetValidValue()
+        => GetStringRightSize(
+            Andor.Foundation.Domain.ValuesObjects.Value.MinLength,
+            Andor.Foundation.Domain.ValuesObjects.Value.MaxLength);
+
 }

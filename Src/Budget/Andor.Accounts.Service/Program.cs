@@ -1,5 +1,9 @@
+using Andor.Accounts.Binder;
+using Andor.Accounts.Service.Consumers;
 using Andor.Authentication.Jwt;
+using Andor.Authorizations.Application;
 using Andor.Documentation.Swagger;
+using Andor.Foundation.Binder;
 using Andor.ServiceDefaults;
 using Asp.Versioning.ApiExplorer;
 
@@ -19,6 +23,17 @@ builder.AddSwagger();
 
 builder.Services.ConfigureJwt(builder.Configuration);
 
+builder.UseAkkaModules("AndorAccountsSystem");
+
+builder.UseAccounts(builder.Configuration);
+
+builder.Services.UseAuthorizations();
+
+builder.Services.Configure<SignupVerifiedSubscriptionOptions>(
+    builder.Configuration.GetSection(SignupVerifiedSubscriptionOptions.SectionName));
+
+builder.Services.AddHostedService<UserVerifiedConsumer>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -37,5 +52,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+await app.ApplyAccountsMigrationsAsync();
+
+await app.SeedDefaultCurrencyAsync();
 
 app.Run();

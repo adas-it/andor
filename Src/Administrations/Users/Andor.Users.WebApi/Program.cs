@@ -1,6 +1,10 @@
 using Andor.Users.WebApi;
+using Andor.Users.WebApi.Consumers;
+using Azure.Identity;
+using Azure.Messaging.ServiceBus;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 using OpenIddict.Abstractions;
 
@@ -98,6 +102,41 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader()
               .AllowAnyMethod());
 });
+
+builder.Services.AddOptions<UserVerifiedSubscriptionOptions>()
+    .Bind(builder.Configuration.GetSection(UserVerifiedSubscriptionOptions.SectionName));
+
+builder.Services.AddSingleton(serviceProvider =>
+{
+    var options = serviceProvider.GetRequiredService<IOptions<UserVerifiedSubscriptionOptions>>().Value;
+
+    var clientOptions = new ServiceBusClientOptions
+    {
+        TransportType = ServiceBusTransportType.AmqpWebSockets,
+    };
+
+    // An explicit connection string takes precedence (e.g. local dev via User Secrets).
+    if (!string.IsNullOrWhiteSpace(options.ConnectionString))
+    {
+        return new ServiceBusClient(options.ConnectionString, clientOptions);
+    }
+
+    var credentialOptions = new DefaultAzureCredentialOptions();
+
+    // Locally there is no IMDS endpoint, so the ManagedIdentity probe hangs and fails.
+    if (builder.Environment.IsDevelopment())
+    {
+        credentialOptions.ExcludeManagedIdentityCredential = true;
+        credentialOptions.ExcludeWorkloadIdentityCredential = true;
+    }
+
+    return new ServiceBusClient(
+        options.FullyQualifiedNamespace,
+        new DefaultAzureCredential(credentialOptions),
+        clientOptions);
+});
+
+builder.Services.AddHostedService<UserVerifiedConsumer>();
 
 var app = builder.Build();
 

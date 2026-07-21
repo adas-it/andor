@@ -18,7 +18,7 @@ public class AccountValidator()
         AddNotification(entity.Description.NotNull(), notifications);
         AddNotification(entity.Currency.NotNull(), notifications);
 
-        if (entity.Members.Any(x => x.PermissionType == PermissionType.Owner))
+        if (!entity.Members.Any(x => x.PermissionType == PermissionType.Owner))
         {
             notifications.Add(
                 new Notification(nameof(entity.Members),

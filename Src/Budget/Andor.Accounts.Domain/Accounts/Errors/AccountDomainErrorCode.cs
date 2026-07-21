@@ -6,6 +6,7 @@ public sealed record AccountErrorCode
 {
     public static readonly DomainErrorCode AccountErrorOnDelete = DomainErrorCode.New(3_001);
     public static readonly DomainErrorCode AccountShouldHaveOneOwner = DomainErrorCode.New(3_002);
+    public static readonly DomainErrorCode CurrencyNotFound = DomainErrorCode.New(3_003);
 
     // AddTemplateCategory errors
     public static readonly DomainErrorCode CategoryCannotBeNull = DomainErrorCode.New(3_100);

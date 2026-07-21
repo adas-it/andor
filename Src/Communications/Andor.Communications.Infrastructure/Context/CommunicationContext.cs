@@ -26,6 +26,8 @@ public class CommunicationContext : PrincipalContext
     {
     }
 
+    protected override string OutboxSchema => "CommunicationsOutbox";
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

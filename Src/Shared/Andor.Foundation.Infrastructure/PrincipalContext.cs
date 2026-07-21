@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Andor.Foundation.Application;
 using Andor.Foundation.Domain;
+using Andor.Foundation.Domain.Events;
 using Andor.Foundation.Domain.SeedWork;
 using Andor.Foundation.Domain.ValuesObjects;
 using Andor.Foundation.Infrastructure.Outbox;
@@ -22,9 +23,15 @@ public static class DbContextOptionsFactory
     }
 }
 
-public class PrincipalContext(DbContextOptions options, IMessageSenderInterface? messageSenderInterface)
+public abstract class PrincipalContext(DbContextOptions options, IMessageSenderInterface? messageSenderInterface)
     : DbContext(options)
 {
+    /// <summary>
+    /// Schema that owns this module's Outbox table. Each module must supply its own, since
+    /// modules can share the same physical database.
+    /// </summary>
+    protected abstract string OutboxSchema { get; }
+
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -33,7 +40,7 @@ public class PrincipalContext(DbContextOptions options, IMessageSenderInterface?
         modelBuilder.Ignore<Description>();
         modelBuilder.Ignore<Value>();
 
-        modelBuilder.ApplyConfiguration(new OutboxMessageConfig());
+        modelBuilder.ApplyConfiguration(new OutboxMessageConfig(OutboxSchema));
 
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
@@ -123,6 +130,7 @@ public class PrincipalContext(DbContextOptions options, IMessageSenderInterface?
                     OccurredOn = DateTimeOffset.UtcNow,
                     Type = eventType.AssemblyQualifiedName!,
                     Content = JsonSerializer.Serialize(domainEvent, eventType),
+                    TargetQueue = (domainEvent as IQueueRoutedDomainEvent)?.QueueName,
                 };
             })
             .ToList();

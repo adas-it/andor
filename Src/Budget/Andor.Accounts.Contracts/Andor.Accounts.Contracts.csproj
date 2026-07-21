@@ -1,2 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Andor.Foundation.Contracts\Andor.Foundation.Contracts.csproj" />
+  </ItemGroup>
 </Project>
+

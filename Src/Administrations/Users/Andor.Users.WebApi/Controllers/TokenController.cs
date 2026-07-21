@@ -57,6 +57,8 @@ public class TokenController : ControllerBase
         identity.AddClaim(Claims.Subject, user.Id.ToString());
         identity.AddClaim(Claims.Name, user.UserName!);
         identity.AddClaim(Claims.Role, user.Group);
+        // Fixed to "TenantA" for every user until multi-tenant signup exists.
+        identity.AddClaim("tenant_id", "TenantA");
 
         // Coarse-grained group claim only: resource APIs resolve fine-grained permissions
         // for the group server-side, so a permission change never requires re-issuing tokens.

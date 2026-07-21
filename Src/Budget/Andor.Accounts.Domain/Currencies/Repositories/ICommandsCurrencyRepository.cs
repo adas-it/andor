@@ -5,4 +5,5 @@ namespace Andor.Accounts.Domain.Currencies.Repositories;
 
 public interface ICommandsCurrencyRepository : ICommandRepository<Currency, CurrencyId>
 {
+    Task<Currency?> GetByIsoAsync(string iso, CancellationToken cancellationToken);
 }

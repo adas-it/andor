@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Src\Onboarding\Andor.Onboarding.Domain\Andor.Onboarding.Domain.csproj" />
+    <ProjectReference Include="..\..\Common\Andor.TestsUtil\Andor.TestsUtil.csproj" />
+  </ItemGroup>
+</Project>

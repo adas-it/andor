@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using Andor.Foundation.Application;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Logging;
@@ -6,23 +6,37 @@ using Microsoft.Extensions.Logging;
 namespace Andor.Foundation.Infrastructure;
 
 /// <summary>
-/// Publishes messages to an Azure Service Bus topic using the native
+/// Publishes messages to an Azure Service Bus topic and/or queue using the native
 /// <see cref="Azure.Messaging.ServiceBus"/> SDK (no MassTransit).
 /// </summary>
 internal sealed class MessageSenderAzure : IMessageSenderInterface
 {
-    private readonly ServiceBusSender _sender;
+    private readonly ServiceBusSenders _senders;
     private readonly ILogger<MessageSenderAzure> _logger;
 
     public MessageSenderAzure(
-        ServiceBusSender sender,
+        ServiceBusSenders senders,
         ILogger<MessageSenderAzure> logger)
     {
-        _sender = sender;
+        _senders = senders;
         _logger = logger;
     }
 
-    public async Task PubSubSendAsync(object data, string messageId, CancellationToken cancellationToken)
+    public Task PubSubSendAsync(object data, string messageId, CancellationToken cancellationToken)
+        => SendAsync(_senders.Topic, data, messageId, cancellationToken);
+
+    public Task QueueSendAsync(object data, string messageId, CancellationToken cancellationToken)
+    {
+        if (_senders.Queue is null)
+        {
+            throw new InvalidOperationException(
+                "No queue was configured for this module (ServiceBus:QueueName is empty).");
+        }
+
+        return SendAsync(_senders.Queue, data, messageId, cancellationToken);
+    }
+
+    private async Task SendAsync(ServiceBusSender sender, object data, string messageId, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(data);
         ArgumentException.ThrowIfNullOrWhiteSpace(messageId);
@@ -48,21 +62,21 @@ internal sealed class MessageSenderAzure : IMessageSenderInterface
         {
             // ServiceBusClient/Sender already applies exponential-backoff retries
             // for transient failures based on the configured ServiceBusRetryOptions.
-            await _sender.SendMessageAsync(message, cancellationToken);
+            await sender.SendMessageAsync(message, cancellationToken);
 
             _logger.LogInformation(
-                "Published message {MessageType} with id {MessageId} to topic {Topic}.",
+                "Published message {MessageType} with id {MessageId} to {EntityPath}.",
                 messageType.FullName,
                 message.MessageId,
-                _sender.EntityPath);
+                sender.EntityPath);
         }
         catch (ServiceBusException ex)
         {
             _logger.LogError(
                 ex,
-                "Failed to publish message {MessageType} to topic {Topic}. Reason: {Reason}.",
+                "Failed to publish message {MessageType} to {EntityPath}. Reason: {Reason}.",
                 messageType.FullName,
-                _sender.EntityPath,
+                sender.EntityPath,
                 ex.Reason);
 
             throw;
@@ -70,3 +84,13 @@ internal sealed class MessageSenderAzure : IMessageSenderInterface
     }
 }
 
+/// <summary>
+/// Holds the module's Service Bus senders. <see cref="Queue"/> is null when the module didn't
+/// configure <see cref="Messaging.ServiceBusOptions.QueueName"/>. Registered as a single object
+/// so both senders can be resolved from DI without ambiguous <see cref="ServiceBusSender"/> registrations.
+/// </summary>
+internal sealed class ServiceBusSenders
+{
+    public required ServiceBusSender Topic { get; init; }
+    public ServiceBusSender? Queue { get; init; }
+}

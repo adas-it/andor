@@ -62,46 +62,31 @@ public class Account : AggregateRoot<AccountId>, ISoftDeletableEntity
     /// Gets the read-only collection of categories associated with this account.
     /// </summary>
     public IReadOnlyCollection<AccountCategory> Categories => [.. _categories];
-    private ICollection<AccountCategory> _categories
-    {
-        get; set;
-    }
+    private ICollection<AccountCategory> _categories;
 
     /// <summary>
     /// Gets the read-only collection of subcategories associated with this account.
     /// </summary>
     public IReadOnlyCollection<AccountSubCategory> SubCategories => [.. _subCategories];
-    private ICollection<AccountSubCategory> _subCategories
-    {
-        get; set;
-    }
+    private ICollection<AccountSubCategory> _subCategories;
 
     /// <summary>
     /// Gets the read-only collection of payment methods associated with this account.
     /// </summary>
     public IReadOnlyCollection<AccountPaymentMethod> PaymentMethods => [.. _paymentMethods];
-    private ICollection<AccountPaymentMethod> _paymentMethods
-    {
-        get; set;
-    }
+    private ICollection<AccountPaymentMethod> _paymentMethods;
 
     /// <summary>
     /// Gets the read-only collection of members (users) associated with this account.
     /// </summary>
     public IReadOnlyCollection<AccountUser> Members => [.. _members];
-    private ICollection<AccountUser> _members
-    {
-        get; set;
-    }
+    private ICollection<AccountUser> _members;
 
     /// <summary>
     /// Gets the read-only collection of pending invites for this account.
     /// </summary>
     public IReadOnlyCollection<Invite> Invites => [.. _invites];
-    private ICollection<Invite> _invites
-    {
-        get; set;
-    }
+    private ICollection<Invite> _invites;
 
     protected Account()
     {

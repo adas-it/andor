@@ -3,6 +3,7 @@ namespace Andor.Accounts.Domain.Accounts.Errors;
 internal static class AccountErrorMessages
 {
     public const string AccountShouldHaveOneOwner = "At least one member must have owner permission.";
+    public const string CurrencyNotFound = "Currency not found.";
 
     // AddTemplateCategory errors
     public const string CategoryCannotBeNull = "Category cannot be null.";

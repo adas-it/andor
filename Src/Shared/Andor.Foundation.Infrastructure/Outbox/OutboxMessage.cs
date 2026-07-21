@@ -28,4 +28,11 @@ public sealed class OutboxMessage
 
     /// <summary>Last error message captured on a failed publish attempt.</summary>
     public string? Error { get; set; }
+
+    /// <summary>
+    /// When set, the dispatcher sends this message to the named queue instead of the module's
+    /// topic (see <see cref="Andor.Foundation.Domain.Events.IQueueRoutedDomainEvent"/>). Null for
+    /// the default, topic-broadcast behavior.
+    /// </summary>
+    public string? TargetQueue { get; set; }
 }

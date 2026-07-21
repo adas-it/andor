@@ -1,6 +1,7 @@
 using Andor.Authentication.Jwt;
 using Andor.Authorizations.Application;
 using Andor.Communications.Binder;
+using Andor.Communications.Service.Consumers;
 using Andor.Documentation.Swagger;
 using Andor.Foundation.Binder;
 using Andor.ServiceDefaults;
@@ -27,6 +28,8 @@ builder.UseAkkaModules("AndorCommunicationsSystem");
 builder.UseCommunications(builder.Configuration);
 
 builder.Services.UseAuthorizations();
+
+builder.Services.AddHostedService<SignupCodeQueueConsumer>();
 
 var app = builder.Build();
 
