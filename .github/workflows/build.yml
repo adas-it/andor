@@ -30,6 +30,11 @@ jobs:
             projectTestName: Tests/Administrations/Users/Andor.Users.Domain.Tests/Andor.Users.Domain.Tests.csproj
             sonarProjectKey: adas-it_andor-users-identity
             coverageFile: coverage-andor-users-identity.xml
+          - name: Andor Communications
+            projectName: Src/Communications/Andor.Communications.Domain/Andor.Communications.Domain.csproj
+            projectTestName: Tests/Communications/Andor.Communications.Domain.Tests/Andor.Communications.Domain.Tests.csproj
+            sonarProjectKey: adas-it_andor-communications
+            coverageFile: coverage-andor-communications.xml
 
     steps:
       - uses: actions/checkout@v4
