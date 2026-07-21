@@ -40,6 +40,11 @@ jobs:
             projectTestName: Tests/Onboarding/Andor.Onboarding.Domain.Tests/Andor.Onboarding.Domain.Tests.csproj
             sonarProjectKey: adas-it_andor-onboarding
             coverageFile: coverage-andor-onboarding.xml
+          - name: Andor Configurations
+            projectName: Src/Administrations/Configurations/Andor.Configurations.Domain/Andor.Configurations.Domain.csproj
+            projectTestName: Tests/Administrations/Configurations/Andor.Configurations.Domain.Tests/Andor.Configurations.Domain.Tests.csproj
+            sonarProjectKey: adas-it_andor-configurations
+            coverageFile: coverage-andor-configurations.xml
 
     steps:
       - uses: actions/checkout@v4
