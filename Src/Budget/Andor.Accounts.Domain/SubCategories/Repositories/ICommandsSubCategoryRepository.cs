@@ -5,4 +5,5 @@ namespace Andor.Accounts.Domain.SubCategories.Repositories;
 
 public interface ICommandsSubCategoryRepository : ICommandRepository<SubCategory, SubCategoryId>
 {
+    Task<IReadOnlyList<SubCategory>> GetTemplatesAsync(CancellationToken cancellationToken);
 }

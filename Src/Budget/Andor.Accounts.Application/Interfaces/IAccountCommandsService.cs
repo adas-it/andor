@@ -9,5 +9,9 @@ public interface IAccountCommandsService
 {
     Task<ApplicationResult<AccountOutput?>> CreateAccountAsync(CreateAccountCommand command);
 
+    Task<ApplicationResult<AccountOutput?>> SeedAccountDefaultsAsync(SeedAccountDefaultsCommand command);
+
+    Task<ApplicationResult<AccountOutput?>> AddFinancialMovementAsync(AddFinancialMovementCommand command);
+
     Task<ApplicationResult<AccountOutput?>> GetByIdAsync(AccountId id, CancellationToken cancellationToken);
 }

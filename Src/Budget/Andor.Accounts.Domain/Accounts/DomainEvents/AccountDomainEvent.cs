@@ -1,4 +1,5 @@
-﻿using Andor.Foundation.Domain.Events;
+﻿using Andor.Accounts.Domain.FinancialMovements;
+using Andor.Foundation.Domain.Events;
 
 namespace Andor.Accounts.Domain.Accounts.DomainEvents;
 
@@ -145,13 +146,29 @@ public sealed record AccountInviteUserLinkedDomainEvent : DomainEvent
 public sealed record AccountFinancialMovementAddedDomainEvent : DomainEvent
 {
     public string Name { get; init; }
+    public Guid FinancialMovementId { get; init; }
+    public DateTime Date { get; init; }
+    public string? Description { get; init; }
+    public Guid SubCategoryId { get; init; }
+    public Guid PaymentMethodId { get; init; }
+    public decimal Value { get; init; }
+    public int Status { get; init; }
+    public int Type { get; init; }
 
-    public static AccountFinancialMovementAddedDomainEvent FromAggregator(Account entity, Guid userId)
+    public static AccountFinancialMovementAddedDomainEvent FromAggregator(Account entity, FinancialMovement movement, Guid userId)
         => new AccountFinancialMovementAddedDomainEvent() with
         {
             Id = entity.Id,
             Name = entity.Name!,
-            UserId = userId
+            UserId = userId,
+            FinancialMovementId = movement.Id,
+            Date = movement.Date,
+            Description = movement.Description,
+            SubCategoryId = movement.SubCategoryId,
+            PaymentMethodId = movement.PaymentMethodId,
+            Value = movement.Value,
+            Status = movement.Status.Key,
+            Type = movement.Type.Key,
         };
 }
 public sealed record AccountFinancialMovementRemovedDomainEvent : DomainEvent

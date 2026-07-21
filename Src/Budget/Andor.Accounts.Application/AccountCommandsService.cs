@@ -20,6 +20,12 @@ public class AccountCommandsService(ActorRegistry registry, ICommandsAccountRepo
     public Task<ApplicationResult<AccountOutput?>> CreateAccountAsync(CreateAccountCommand command)
         => Handler(command);
 
+    public Task<ApplicationResult<AccountOutput?>> SeedAccountDefaultsAsync(SeedAccountDefaultsCommand command)
+        => Handler(command);
+
+    public Task<ApplicationResult<AccountOutput?>> AddFinancialMovementAsync(AddFinancialMovementCommand command)
+        => Handler(command);
+
     public async Task<ApplicationResult<AccountOutput?>> GetByIdAsync(AccountId id, CancellationToken cancellationToken)
     {
         var response = ApplicationResult<AccountOutput?>.Success();

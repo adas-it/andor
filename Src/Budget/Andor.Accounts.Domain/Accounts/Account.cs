@@ -743,7 +743,7 @@ public class Account : AggregateRoot<AccountId>, ISoftDeletableEntity
 
         if (result.IsSuccess)
         {
-            RaiseDomainEvent(AccountFinancialMovementAddedDomainEvent.FromAggregator(this, userId));
+            RaiseDomainEvent(AccountFinancialMovementAddedDomainEvent.FromAggregator(this, movement!, userId));
         }
 
         return result;

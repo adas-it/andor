@@ -13,7 +13,6 @@ public static class HandleSignupResult
         {
             { SignupErrorCodes.SignupNotFound, SignupErrors.SignupNotFound() },
             { SignupErrorCodes.InvalidCode, SignupErrors.InvalidCode() },
-            { SignupErrorCodes.CodeExpired, SignupErrors.CodeExpired() },
             { SignupErrorCodes.AlreadyVerified, SignupErrors.AlreadyVerified() },
         };
 

@@ -4,6 +4,7 @@ using Andor.Accounts.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Andor.Accounts.Infrastructure.Migrations
 {
     [DbContext(typeof(AccountsContext))]
-    partial class AccountsContextModelSnapshot : ModelSnapshot
+    [Migration("20260721155925_SeedGenericAccountingTemplates")]
+    partial class SeedGenericAccountingTemplates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -126,65 +129,6 @@ namespace Andor.Accounts.Infrastructure.Migrations
                     b.ToTable("AccountUser", "Accounts");
                 });
 
-            modelBuilder.Entity("Andor.Accounts.Domain.CashFlows.CashFlow", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("AccountBalance")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Expenses")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("FinalBalancePreviousMonth")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("ForecastExpenses")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("ForecastUpcomingRevenues")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("Month")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("MonthRevenues")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("PeriodKey")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountId", "PeriodKey")
-                        .IsUnique();
-
-                    b.ToTable("CashFlow", "Accounts");
-                });
-
-            modelBuilder.Entity("Andor.Accounts.Domain.CashFlows.CashFlowAppliedMovement", b =>
-                {
-                    b.Property<Guid>("FinancialMovementId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("AppliedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("CashFlowId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("FinancialMovementId");
-
-                    b.ToTable("CashFlowAppliedMovement", "Accounts");
-                });
-
             modelBuilder.Entity("Andor.Accounts.Domain.Categories.Category", b =>
                 {
                     b.Property<Guid>("Id")
@@ -240,47 +184,6 @@ namespace Andor.Accounts.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Currency", "Accounts");
-                });
-
-            modelBuilder.Entity("Andor.Accounts.Domain.FinancialMovements.FinancialMovement", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("PaymentMethodId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("SubCategoryId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<decimal>("Value")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
-
-                    b.HasIndex("PaymentMethodId");
-
-                    b.HasIndex("SubCategoryId");
-
-                    b.ToTable("FinancialMovement", "Accounts");
                 });
 
             modelBuilder.Entity("Andor.Accounts.Domain.Invites.Invite", b =>
@@ -503,33 +406,6 @@ namespace Andor.Accounts.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Account");
-                });
-
-            modelBuilder.Entity("Andor.Accounts.Domain.FinancialMovements.FinancialMovement", b =>
-                {
-                    b.HasOne("Andor.Accounts.Domain.Accounts.Account", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Andor.Accounts.Domain.PaymentMethods.PaymentMethod", "PaymentMethod")
-                        .WithMany()
-                        .HasForeignKey("PaymentMethodId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Andor.Accounts.Domain.SubCategories.SubCategory", "SubCategory")
-                        .WithMany()
-                        .HasForeignKey("SubCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
-
-                    b.Navigation("PaymentMethod");
-
-                    b.Navigation("SubCategory");
                 });
 
             modelBuilder.Entity("Andor.Accounts.Domain.Invites.Invite", b =>

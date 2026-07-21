@@ -1,4 +1,3 @@
-using System.Reflection;
 using Andor.Foundation.Domain.ValuesObjects;
 using Andor.Onboarding.Domain.ValueObjects;
 using Andor.TestsUtil;
@@ -46,16 +45,5 @@ internal static class SignupRequestFixture
             .Setup(v => v.ValidateCreationAsync(It.IsAny<SignupRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(notifications);
         return validatorMock;
-    }
-
-    /// <summary>
-    /// SignupRequest has no public API to set an arbitrary expiry (NewAsync always uses "now + 15
-    /// minutes"), so expiration tests reach into the private-setter backing field via reflection.
-    /// </summary>
-    public static void ForceExpiresAt(SignupRequest request, DateTime expiresAt)
-    {
-        var property = typeof(SignupRequest).GetProperty(nameof(SignupRequest.ExpiresAt),
-            BindingFlags.Public | BindingFlags.Instance)!;
-        property.SetValue(request, expiresAt);
     }
 }

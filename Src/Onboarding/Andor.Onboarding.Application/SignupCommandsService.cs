@@ -21,7 +21,10 @@ public class SignupCommandsService(ActorRegistry registry, ICommandsSignupReques
     public async Task<ApplicationResult<object?>> StartSignupAsync(string name, string email,
         ApplicationUser currentUser, CancellationToken cancellationToken)
     {
-        var command = new StartSignupCommand(SignupRequestId.New(), name, email, currentUser, cancellationToken);
+        var existing = await repository.GetByEmailAsync(email, cancellationToken);
+        var id = existing != null && !existing.IsVerified ? existing.Id : SignupRequestId.New();
+
+        var command = new StartSignupCommand(id, name, email, currentUser, cancellationToken);
 
         return await Handler(command);
     }

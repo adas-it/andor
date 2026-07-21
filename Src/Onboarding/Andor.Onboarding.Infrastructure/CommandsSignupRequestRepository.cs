@@ -19,7 +19,10 @@ public class CommandsSignupRequestRepository(OnboardingContext context) : IComma
 
     public Task<SignupRequest?> GetByEmailAsync(string email, CancellationToken cancellationToken)
     {
-        var entity = DbSet.FirstOrDefault(x => x.Email == email);
+        var entity = DbSet
+            .Where(x => x.Email == email)
+            .OrderByDescending(x => x.CreatedAt)
+            .FirstOrDefault();
 
         return Task.FromResult<SignupRequest?>(entity);
     }

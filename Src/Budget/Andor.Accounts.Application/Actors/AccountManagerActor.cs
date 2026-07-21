@@ -13,6 +13,16 @@ public class AccountManagerActor : ReceiveActor
         {
             Handler(serviceProvider, cmd);
         });
+
+        Receive<SeedAccountDefaultsCommand>(cmd =>
+        {
+            Handler(serviceProvider, cmd);
+        });
+
+        Receive<AddFinancialMovementCommand>(cmd =>
+        {
+            Handler(serviceProvider, cmd);
+        });
     }
 
     private static void Handler(IServiceProvider serviceProvider, ICommands<AccountId> cmd)

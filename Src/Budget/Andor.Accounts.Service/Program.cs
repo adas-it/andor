@@ -34,6 +34,21 @@ builder.Services.Configure<SignupVerifiedSubscriptionOptions>(
 
 builder.Services.AddHostedService<UserVerifiedConsumer>();
 
+builder.Services.Configure<AccountCreatedSubscriptionOptions>(
+    builder.Configuration.GetSection(AccountCreatedSubscriptionOptions.SectionName));
+
+builder.Services.AddHostedService<AccountCreatedConsumer>();
+
+builder.Services.Configure<FinancialMovementCreatedSubscriptionOptions>(
+    builder.Configuration.GetSection(FinancialMovementCreatedSubscriptionOptions.SectionName));
+
+builder.Services.AddHostedService<FinancialMovementCreatedConsumer>();
+
+builder.Services.Configure<CashFlowProjectionSubscriptionOptions>(
+    builder.Configuration.GetSection(CashFlowProjectionSubscriptionOptions.SectionName));
+
+builder.Services.AddHostedService<CashFlowProjectionConsumer>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

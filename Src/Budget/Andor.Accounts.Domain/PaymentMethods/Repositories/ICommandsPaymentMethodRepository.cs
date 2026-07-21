@@ -5,4 +5,5 @@ namespace Andor.Accounts.Domain.PaymentMethods.Repositories;
 
 public interface ICommandsPaymentMethodRepository : ICommandRepository<PaymentMethod, PaymentMethodId>
 {
+    Task<IReadOnlyList<PaymentMethod>> GetTemplatesAsync(CancellationToken cancellationToken);
 }

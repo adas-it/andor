@@ -15,7 +15,6 @@ public class SignupRequest : AggregateRoot<SignupRequestId>
     public Name Name { get; private set; }
     public string Email { get; private set; }
     public string VerificationCode { get; private set; }
-    public DateTime ExpiresAt { get; private set; }
     public bool IsVerified { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
@@ -34,22 +33,20 @@ public class SignupRequest : AggregateRoot<SignupRequestId>
         Name name,
         string email,
         string verificationCode,
-        DateTime expiresAt,
         DateTime createdAt)
     {
         Id = id;
         Name = name;
         Email = email;
         VerificationCode = verificationCode;
-        ExpiresAt = expiresAt;
         CreatedAt = createdAt;
         IsVerified = false;
     }
 
     /// <summary>
-    /// Starts a new signup request: generates the 10-digit verification code (valid for
-    /// 15 minutes) and, on success, raises <see cref="SignupCodeGenerated"/> so the code
-    /// gets e-mailed to the user via the Communications module.
+    /// Starts a new signup request: generates the 10-digit verification code and, on
+    /// success, raises <see cref="SignupCodeGenerated"/> so the code gets e-mailed to the
+    /// user via the Communications module.
     /// </summary>
     public static async Task<(DomainResult, SignupRequest?)> NewAsync(
         SignupRequestId id,
@@ -65,7 +62,6 @@ public class SignupRequest : AggregateRoot<SignupRequestId>
             name,
             email,
             code,
-            DateTime.UtcNow.AddMinutes(15),
             DateTime.UtcNow);
 
         var result = await entity.ValidateAsync(validator, cancellationToken);
@@ -79,6 +75,33 @@ public class SignupRequest : AggregateRoot<SignupRequestId>
     }
 
     /// <summary>
+    /// Restarts a still-pending signup request: regenerates the verification code (and
+    /// refreshes the name, in case it changed) and, on success, raises
+    /// <see cref="SignupCodeGenerated"/> again so a fresh code gets e-mailed. This is the
+    /// only way to invalidate a previously issued code — codes don't expire on their own.
+    /// </summary>
+    public async Task<DomainResult> RestartAsync(Name name, IOnboardingValidator validator, CancellationToken cancellationToken)
+    {
+        if (IsVerified)
+        {
+            AddNotification(nameof(IsVerified), "This signup request was already verified.", SignupErrorCodes.AlreadyVerified);
+            return Validate();
+        }
+
+        Name = name;
+        VerificationCode = Random.Shared.NextInt64(0, 10_000_000_000).ToString("D10");
+
+        var result = await ValidateAsync(validator, cancellationToken);
+
+        if (result.IsSuccess)
+        {
+            RaiseDomainEvent(SignupCodeGenerated.FromSignupRequest(this));
+        }
+
+        return result;
+    }
+
+    /// <summary>
     /// Confirms the code and, on success, raises <see cref="SignupVerifiedDomainEvent"/>
     /// (carrying a freshly minted user id and the already-hashed password) so Identity and
     /// Accounts can each create their own records from the same event.
@@ -88,12 +111,6 @@ public class SignupRequest : AggregateRoot<SignupRequestId>
         if (IsVerified)
         {
             AddNotification(nameof(IsVerified), "This signup request was already verified.", SignupErrorCodes.AlreadyVerified);
-            return Validate();
-        }
-
-        if (ExpiresAt < DateTime.UtcNow)
-        {
-            AddNotification(nameof(ExpiresAt), "The verification code has expired.", SignupErrorCodes.CodeExpired);
             return Validate();
         }
 

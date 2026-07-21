@@ -22,7 +22,6 @@ public class SignupRequestConfig : IEntityTypeConfiguration<SignupRequest>
 
         _ = entity.Property(x => x.Email).HasMaxLength(320);
         _ = entity.Property(x => x.VerificationCode).HasMaxLength(10);
-        _ = entity.Property(x => x.ExpiresAt);
         _ = entity.Property(x => x.IsVerified);
         _ = entity.Property(x => x.CreatedAt);
 

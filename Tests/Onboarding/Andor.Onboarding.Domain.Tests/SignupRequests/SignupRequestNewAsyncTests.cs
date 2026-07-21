@@ -53,22 +53,6 @@ public class SignupRequestNewAsyncTests
     }
 
     [Fact]
-    public async Task NewAsync_ShouldSetExpiresAtFifteenMinutesFromNow()
-    {
-        // Arrange
-        var before = DateTime.UtcNow.AddMinutes(15);
-
-        // Act
-        var (result, signupRequest) = await SignupRequestFixture.CreateValidSignupRequestAsync(_validatorMock);
-        var after = DateTime.UtcNow.AddMinutes(15);
-
-        // Assert
-        Assert.True(result.IsSuccess);
-        Assert.NotNull(signupRequest);
-        Assert.InRange(signupRequest.ExpiresAt, before, after);
-    }
-
-    [Fact]
     public async Task NewAsync_ShouldRaiseSignupCodeGeneratedDomainEvent()
     {
         // Act

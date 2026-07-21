@@ -362,3 +362,4 @@ MigrationBackup/
 /Src/Administrations/Configurations/Andor.Configurations.Service/appsettings.Development.json
 /Src/Onboarding/Andor.Onboarding.Service/appsettings.Development.json
 /Src/Budget/Andor.Accounts.Service/appsettings.Development.json
+/Src/Communications/Andor.Communications.Service/appsettings.Development.json

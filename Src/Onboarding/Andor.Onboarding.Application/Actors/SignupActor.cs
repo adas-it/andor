@@ -84,6 +84,21 @@ public class SignupActor : ReceiveActor, IWithUnboundedStash
     private void Ready()
     {
         ReceiveAsync<VerifySignupCommand>(HandleVerifyAsync);
+        ReceiveAsync<StartSignupCommand>(HandleRestartAsync);
+    }
+
+    private async Task HandleRestartAsync(StartSignupCommand cmd)
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var validator = scope.ServiceProvider.GetRequiredService<IOnboardingValidator>();
+        var repo = scope.ServiceProvider.GetRequiredService<ICommandsSignupRequestRepository>();
+
+        var result = await _signupRequest!.RestartAsync(cmd.Name, validator, cmd.CancellationToken);
+
+        if (result.IsSuccess && _signupRequest.Events.Count > 0)
+            await repo.PersistAsync(_signupRequest, cmd.CancellationToken);
+
+        Sender.Tell((result, _signupRequest));
     }
 
     private async Task HandleVerifyAsync(VerifySignupCommand cmd)

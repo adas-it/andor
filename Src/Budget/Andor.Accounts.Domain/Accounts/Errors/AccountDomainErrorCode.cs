@@ -49,4 +49,6 @@ public sealed record AccountErrorCode
     public static readonly DomainErrorCode FinancialMovementPaymentMethodNotInAccount = DomainErrorCode.New(3_602);
     public static readonly DomainErrorCode FinancialMovementCategoryNotInAccount = DomainErrorCode.New(3_603);
     public static readonly DomainErrorCode FinancialMovementPaymentMethodTypeMismatch = DomainErrorCode.New(3_604);
+    public static readonly DomainErrorCode FinancialMovementSubCategoryNotFound = DomainErrorCode.New(3_605);
+    public static readonly DomainErrorCode FinancialMovementPaymentMethodNotFound = DomainErrorCode.New(3_606);
 }

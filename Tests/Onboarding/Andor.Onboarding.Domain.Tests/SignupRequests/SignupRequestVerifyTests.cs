@@ -93,20 +93,4 @@ public class SignupRequestVerifyTests
         Assert.Single(signupRequest.Events.OfType<SignupVerifiedDomainEvent>());
     }
 
-    [Fact]
-    public async Task Verify_WhenExpired_ShouldReturnFailure()
-    {
-        // Arrange
-        var (_, signupRequest) = await SignupRequestFixture.CreateValidSignupRequestAsync(_validatorMock);
-        var code = signupRequest!.VerificationCode;
-        SignupRequestFixture.ForceExpiresAt(signupRequest, DateTime.UtcNow.AddMinutes(-1));
-
-        // Act
-        var result = signupRequest.Verify(code, "hashed-password");
-
-        // Assert
-        Assert.True(result.IsFailure);
-        Assert.False(signupRequest.IsVerified);
-        Assert.Contains(result.Errors, e => e.Error.Equals(SignupErrorCodes.CodeExpired));
-    }
 }
