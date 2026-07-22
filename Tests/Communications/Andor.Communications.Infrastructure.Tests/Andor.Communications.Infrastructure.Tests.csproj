@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Src\Communications\Andor.Communications.Infrastructure\Andor.Communications.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Common\Andor.TestsUtil\Andor.TestsUtil.csproj" />
+  </ItemGroup>
+</Project>

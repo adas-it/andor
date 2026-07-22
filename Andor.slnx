@@ -94,6 +94,7 @@
   </Folder>
   <Folder Name="/Tests/Budget/">
     <Project Path="Tests/Budget/Andor.Accounts.Domain.Tests/Andor.Accounts.Domain.Tests.csproj" Id="54dfbead-03d8-4023-a4bc-7638db359c6a" />
+    <Project Path="Tests/Budget/Andor.Accounts.Infrastructure.Tests/Andor.Accounts.Infrastructure.Tests.csproj" />
   </Folder>
   <Folder Name="/Tests/Common/">
     <Project Path="Tests/Common/Andor.Foundation.Domain.Tests/Andor.Foundation.Domain.Tests.csproj" />
@@ -101,9 +102,11 @@
   </Folder>
   <Folder Name="/Tests/Communications/">
     <Project Path="Tests/Communications/Andor.Communications.Domain.Tests/Andor.Communications.Domain.Tests.csproj" />
+    <Project Path="Tests/Communications/Andor.Communications.Infrastructure.Tests/Andor.Communications.Infrastructure.Tests.csproj" />
   </Folder>
   <Folder Name="/Tests/Onboarding/">
     <Project Path="Tests/Onboarding/Andor.Onboarding.Domain.Tests/Andor.Onboarding.Domain.Tests.csproj" />
+    <Project Path="Tests/Onboarding/Andor.Onboarding.Infrastructure.Tests/Andor.Onboarding.Infrastructure.Tests.csproj" />
   </Folder>
   <Folder Name="/Tests/Users/">
     <Project Path="Tests/Users/Andor.Users.Tests/Andor.Users.Domain.Tests.csproj" Id="af9af97f-89e4-462d-a334-4d346326d48b" />

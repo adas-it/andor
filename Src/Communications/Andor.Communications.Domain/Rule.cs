@@ -38,7 +38,7 @@ public class Rule : AggregateRoot<RuleId>
     /// </summary>
     private Rule()
     {
-        Name = string.Empty;
+        Name = Name.Empty;
         Type = ValueObjects.Type.Undefined;
         Templates = [];
     }
