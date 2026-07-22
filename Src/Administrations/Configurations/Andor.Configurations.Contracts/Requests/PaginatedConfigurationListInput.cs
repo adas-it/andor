@@ -4,5 +4,5 @@ namespace Andor.Configurations.Contracts.Requests;
 
 public record PaginatedConfigurationListInput : PaginatedListInput
 {
-    public List<int> States { get; set; }
+    public List<int> States { get; set; } = [];
 }

@@ -36,6 +36,6 @@ public class AssetsController(IAreaCommandsService commandsService,
 
         var output = await commandsService.CreateAreaAsync(command);
 
-        return Result<object>(output);
+        return Result<AreaOutput?>(output);
     }
 }

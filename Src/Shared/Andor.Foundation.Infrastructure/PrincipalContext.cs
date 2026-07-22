@@ -39,6 +39,7 @@ public abstract class PrincipalContext(DbContextOptions options, IMessageSenderI
         modelBuilder.Ignore<Name>();
         modelBuilder.Ignore<Description>();
         modelBuilder.Ignore<Value>();
+        modelBuilder.Ignore<Andor.Foundation.Domain.Events.DomainEvent>();
 
         modelBuilder.ApplyConfiguration(new OutboxMessageConfig(OutboxSchema));
 

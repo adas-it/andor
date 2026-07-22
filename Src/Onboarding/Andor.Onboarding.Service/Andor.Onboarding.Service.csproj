@@ -8,4 +8,8 @@
     <ProjectReference Include="..\Andor.Onboarding.Binder\Andor.Onboarding.Binder.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Andor.Onboarding.ComponentTests" />
+  </ItemGroup>
+
 </Project>

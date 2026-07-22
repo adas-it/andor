@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Andor.ComponentTests.Common\Andor.ComponentTests.Common.csproj" />
+    <ProjectReference Include="..\..\..\..\Src\Administrations\Configurations\Andor.Configurations.Service\Andor.Configurations.Service.csproj" />
+  </ItemGroup>
+
+</Project>

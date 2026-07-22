@@ -17,4 +17,8 @@
       <ProjectReference Include="..\Andor.Configurations.Binder\Andor.Configurations.Binder.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <InternalsVisibleTo Include="Andor.Configurations.ComponentTests" />
+    </ItemGroup>
+
 </Project>

@@ -87,26 +87,32 @@
   </Folder>
   <Folder Name="/Tests/Assets/">
     <Project Path="Tests/Assets/Andor.Assets.Domain.Tests/Andor.Assets.Domain.Tests.csproj" Id="51fbf9a8-35e2-4664-ae92-522f62302aab" />
+    <Project Path="Tests/Assets/Andor.Assets.ComponentTests/Andor.Assets.ComponentTests.csproj" />
   </Folder>
   <Folder Name="/Tests/Administrations/" />
   <Folder Name="/Tests/Administrations/Configurations/">
     <Project Path="Tests/Administrations/Configurations/Andor.Configurations.Domain.Tests/Andor.Configurations.Domain.Tests.csproj" />
+    <Project Path="Tests/Administrations/Configurations/Andor.Configurations.ComponentTests/Andor.Configurations.ComponentTests.csproj" />
   </Folder>
   <Folder Name="/Tests/Budget/">
     <Project Path="Tests/Budget/Andor.Accounts.Domain.Tests/Andor.Accounts.Domain.Tests.csproj" Id="54dfbead-03d8-4023-a4bc-7638db359c6a" />
     <Project Path="Tests/Budget/Andor.Accounts.Infrastructure.Tests/Andor.Accounts.Infrastructure.Tests.csproj" />
+    <Project Path="Tests/Budget/Andor.Accounts.ComponentTests/Andor.Accounts.ComponentTests.csproj" />
   </Folder>
   <Folder Name="/Tests/Common/">
     <Project Path="Tests/Common/Andor.Foundation.Domain.Tests/Andor.Foundation.Domain.Tests.csproj" />
     <Project Path="Tests/Common/Andor.TestsUtil/Andor.TestsUtil.csproj" Id="e39e672d-0772-40fa-a2e6-0c0472df3e9b" />
+    <Project Path="Tests/Common/Andor.ComponentTests.Common/Andor.ComponentTests.Common.csproj" />
   </Folder>
   <Folder Name="/Tests/Communications/">
     <Project Path="Tests/Communications/Andor.Communications.Domain.Tests/Andor.Communications.Domain.Tests.csproj" />
     <Project Path="Tests/Communications/Andor.Communications.Infrastructure.Tests/Andor.Communications.Infrastructure.Tests.csproj" />
+    <Project Path="Tests/Communications/Andor.Communications.ComponentTests/Andor.Communications.ComponentTests.csproj" />
   </Folder>
   <Folder Name="/Tests/Onboarding/">
     <Project Path="Tests/Onboarding/Andor.Onboarding.Domain.Tests/Andor.Onboarding.Domain.Tests.csproj" />
     <Project Path="Tests/Onboarding/Andor.Onboarding.Infrastructure.Tests/Andor.Onboarding.Infrastructure.Tests.csproj" />
+    <Project Path="Tests/Onboarding/Andor.Onboarding.ComponentTests/Andor.Onboarding.ComponentTests.csproj" />
   </Folder>
   <Folder Name="/Tests/Users/">
     <Project Path="Tests/Users/Andor.Users.Tests/Andor.Users.Domain.Tests.csproj" Id="af9af97f-89e4-462d-a334-4d346326d48b" />

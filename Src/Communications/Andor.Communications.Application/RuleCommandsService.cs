@@ -20,7 +20,7 @@ public class RuleCommandsService(ActorRegistry registry) : IRuleCommandsService
         => Handler<Rule, RuleOutput?>(command, x => x.ToRuleOutput());
 
     public Task<ApplicationResult<object?>> SendNotificationAsync(SendNotificationCommand command)
-        => Handler<Rule, object?>(command, x => x);
+        => Handler<Rule, object?>(command, _ => null);
 
     private async Task<ApplicationResult<TResponse>> Handler<TResult, TResponse>(
         ICommands<RuleId> command, Func<TResult, TResponse> mapper)
