@@ -2,8 +2,12 @@
 
 public record Description : StringValueObject
 {
+    public static Description Empty => new Description();
+
     public const int MinLength = 3;
     public const int MaxLength = 250;
+
+    private Description() : base() { }
 
     public Description(string value) : base(value, MinLength, MaxLength, nameof(Description)) { }
 

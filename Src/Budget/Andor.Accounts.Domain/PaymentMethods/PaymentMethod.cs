@@ -21,8 +21,8 @@ public class PaymentMethod : Entity<PaymentMethodId>, ISoftDeletableEntity
 
     protected PaymentMethod()
     {
-        Name = string.Empty;
-        Description = string.Empty;
+        Name = Name.Empty;
+        Description = Description.Empty;
         Type = MovementType.Undefined;
     }
 
@@ -75,8 +75,8 @@ public class PaymentMethod : Entity<PaymentMethodId>, ISoftDeletableEntity
 
         if (Type == MovementType.Undefined)
         {
-            AddNotification(nameof(Type), 
-                PaymentMethodErrorMessages.MovementTypeCannotBeUndefined, 
+            AddNotification(nameof(Type),
+                PaymentMethodErrorMessages.MovementTypeCannotBeUndefined,
                 PaymentMethodErrorCode.MovementTypeCannotBeUndefined);
         }
 

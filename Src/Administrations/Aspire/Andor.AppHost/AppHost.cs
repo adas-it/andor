@@ -17,7 +17,12 @@ var communicationsApi = builder.AddProject<Projects.Andor_Communications_Service
 var onboardingApi = builder.AddProject<Projects.Andor_Onboarding_Service>("onboarding-api")
     .WithHttpHealthCheck("/health");
 
-builder.AddProject<Projects.Andor_Admin_ReverseProxy_Yarp>("reverse-proxy")
+builder.AddProject<Projects.Andor_Admin_ReverseProxy_Yarp>("reverse-proxy", launchProfileName: "https")
+    .WithEndpoint("https", endpoint =>
+    {
+        endpoint.Port = 7000;
+        endpoint.IsProxied = false;
+    })
     .WithReference(configurationsApi)
     .WithReference(usersApi)
     .WithReference(assetsApi)

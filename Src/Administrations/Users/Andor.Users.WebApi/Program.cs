@@ -63,6 +63,7 @@ builder.Services.AddOpenIddict()
     {
         _ = opt.AllowPasswordFlow();
         _ = opt.AllowAuthorizationCodeFlow().RequireProofKeyForCodeExchange();
+        _ = opt.AllowRefreshTokenFlow();
 
         _ = opt.SetAuthorizationEndpointUris("/connect/authorize");
         _ = opt.SetTokenEndpointUris("/connect/token");
@@ -163,43 +164,69 @@ using (var scope = app.Services.CreateScope())
     }
 
     var webAppConfig = app.Configuration.GetSection("OpenIddictClients:WebApp");
-    var webAppClientId = webAppConfig["ClientId"] ?? "web-app";
-    var webAppRedirectUris = webAppConfig.GetSection("RedirectUris").Get<string[]>() ?? [];
+    await EnsureSpaClientAsync(
+        manager,
+        clientId: webAppConfig["ClientId"] ?? "web-app",
+        displayName: webAppConfig["DisplayName"] ?? "Web Application",
+        redirectUris: webAppConfig.GetSection("RedirectUris").Get<string[]>() ?? [],
+        permissions:
+        [
+            OpenIddictConstants.Permissions.Endpoints.Authorization,
+            OpenIddictConstants.Permissions.Endpoints.Token,
+            OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
+            OpenIddictConstants.Permissions.ResponseTypes.Code,
+            OpenIddictConstants.Permissions.Scopes.Email,
+            OpenIddictConstants.Permissions.Scopes.Profile
+        ]);
 
-    var existingWebApp = await manager.FindByClientIdAsync(webAppClientId);
-    if (existingWebApp is null)
-    {
-        var descriptor = new OpenIddictApplicationDescriptor
-        {
-            ClientId = webAppClientId,
-            DisplayName = webAppConfig["DisplayName"] ?? "Web Application",
-            Permissions =
-            {
-                OpenIddictConstants.Permissions.Endpoints.Authorization,
-                OpenIddictConstants.Permissions.Endpoints.Token,
-                OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
-                OpenIddictConstants.Permissions.ResponseTypes.Code,
-                OpenIddictConstants.Permissions.Scopes.Email,
-                OpenIddictConstants.Permissions.Scopes.Profile
-            }
-        };
+    var kenobiConfig = app.Configuration.GetSection("OpenIddictClients:Kenobi");
+    await EnsureSpaClientAsync(
+        manager,
+        clientId: kenobiConfig["ClientId"] ?? "kenobi",
+        displayName: kenobiConfig["DisplayName"] ?? "Kenobi SPA",
+        redirectUris: kenobiConfig.GetSection("RedirectUris").Get<string[]>() ?? [],
+        permissions:
+        [
+            OpenIddictConstants.Permissions.GrantTypes.Password,
+            OpenIddictConstants.Permissions.Endpoints.Authorization,
+            OpenIddictConstants.Permissions.Endpoints.Token,
+            OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
+            OpenIddictConstants.Permissions.GrantTypes.RefreshToken,
+            OpenIddictConstants.Permissions.ResponseTypes.Code,
+            OpenIddictConstants.Permissions.Scopes.Email,
+            OpenIddictConstants.Permissions.Scopes.Profile,
+            OpenIddictConstants.Permissions.Prefixes.Scope + OpenIddictConstants.Scopes.OfflineAccess
+        ]);
+}
 
-        foreach (var uri in webAppRedirectUris)
-            descriptor.RedirectUris.Add(new Uri(uri));
+static async Task EnsureSpaClientAsync(
+    IOpenIddictApplicationManager manager,
+    string clientId,
+    string displayName,
+    IReadOnlyCollection<string> redirectUris,
+    IReadOnlyCollection<string> permissions)
+{
+    var existingClient = await manager.FindByClientIdAsync(clientId);
 
+    var descriptor = new OpenIddictApplicationDescriptor();
+    if (existingClient is not null)
+        await manager.PopulateAsync(descriptor, existingClient);
+
+    descriptor.ClientId = clientId;
+    descriptor.DisplayName = displayName;
+
+    descriptor.Permissions.Clear();
+    foreach (var permission in permissions)
+        descriptor.Permissions.Add(permission);
+
+    descriptor.RedirectUris.Clear();
+    foreach (var uri in redirectUris)
+        descriptor.RedirectUris.Add(new Uri(uri));
+
+    if (existingClient is null)
         _ = await manager.CreateAsync(descriptor);
-    }
     else
-    {
-        var descriptor = new OpenIddictApplicationDescriptor();
-        await manager.PopulateAsync(descriptor, existingWebApp);
-
-        descriptor.RedirectUris.Clear();
-        foreach (var uri in webAppRedirectUris)
-            descriptor.RedirectUris.Add(new Uri(uri));
-
-        await manager.UpdateAsync(existingWebApp, descriptor);
-    }
+        await manager.UpdateAsync(existingClient, descriptor);
 }
 
 if (app.Environment.IsDevelopment())

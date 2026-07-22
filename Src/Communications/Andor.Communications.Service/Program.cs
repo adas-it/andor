@@ -4,6 +4,7 @@ using Andor.Communications.Binder;
 using Andor.Communications.Service.Consumers;
 using Andor.Documentation.Swagger;
 using Andor.Foundation.Binder;
+using Andor.Foundation.ServerServices;
 using Andor.ServiceDefaults;
 using Asp.Versioning.ApiExplorer;
 
@@ -20,6 +21,8 @@ builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
 builder.Services.AddEndpointsApiExplorer();
 builder.AddSwagger();
+
+builder.AddFoundationCors();
 
 builder.Services.ConfigureJwt(builder.Configuration);
 
@@ -42,6 +45,8 @@ app.UseCustomSwagger(
 
 app.UseHttpsRedirection();
 
+app.UseFoundationCors();
+
 app.MapDefaultEndpoints();
 
 app.UseAuthentication();
@@ -49,5 +54,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+await app.ApplyCommunicationMigrationsAsync();
 
 app.Run();
