@@ -16,33 +16,47 @@ jobs:
       matrix:
         include:
           - name: Andor Accounts
-            projectName: Src/Budget/Andor.Accounts.Domain/Andor.Accounts.Domain.csproj
-            projectTestName: Tests/Budget/Andor.Accounts.Domain.Tests/Andor.Accounts.Domain.Tests.csproj
+            projectName: Src/Budget/Andor.Accounts.Service/Andor.Accounts.Service.csproj
+            projectTestNames: |
+              Tests/Budget/Andor.Accounts.Domain.Tests/Andor.Accounts.Domain.Tests.csproj
+              Tests/Budget/Andor.Accounts.Infrastructure.Tests/Andor.Accounts.Infrastructure.Tests.csproj
+              Tests/Budget/Andor.Accounts.ComponentTests/Andor.Accounts.ComponentTests.csproj
             sonarProjectKey: adas-it_andor-accounts
             coverageFile: coverage-andor-accounts.xml
           - name: Andor Investments
-            projectName: Src/Assets/Andor.Assets.Domain/Andor.Assets.Domain.csproj
-            projectTestName: Tests/Assets/Andor.Assets.Domain.Tests/Andor.Assets.Domain.Tests.csproj
+            projectName: Src/Assets/Andor.Assets.Service/Andor.Assets.Service.csproj
+            projectTestNames: |
+              Tests/Assets/Andor.Assets.Domain.Tests/Andor.Assets.Domain.Tests.csproj
+              Tests/Assets/Andor.Assets.ComponentTests/Andor.Assets.ComponentTests.csproj
             sonarProjectKey: adas-it_andor-investments
             coverageFile: coverage-andor-investments.xml
           - name: Andor User Identity
             projectName: Src/Administrations/Users/Andor.Users.WebApi/Andor.Users.WebApi.csproj
-            projectTestName: Tests/Administrations/Users/Andor.Users.Domain.Tests/Andor.Users.Domain.Tests.csproj
+            projectTestNames: |
+              Tests/Administrations/Users/Andor.Users.Domain.Tests/Andor.Users.Domain.Tests.csproj
             sonarProjectKey: adas-it_andor-users-identity
             coverageFile: coverage-andor-users-identity.xml
           - name: Andor Communications
-            projectName: Src/Communications/Andor.Communications.Domain/Andor.Communications.Domain.csproj
-            projectTestName: Tests/Communications/Andor.Communications.Domain.Tests/Andor.Communications.Domain.Tests.csproj
+            projectName: Src/Communications/Andor.Communications.Service/Andor.Communications.Service.csproj
+            projectTestNames: |
+              Tests/Communications/Andor.Communications.Domain.Tests/Andor.Communications.Domain.Tests.csproj
+              Tests/Communications/Andor.Communications.Infrastructure.Tests/Andor.Communications.Infrastructure.Tests.csproj
+              Tests/Communications/Andor.Communications.ComponentTests/Andor.Communications.ComponentTests.csproj
             sonarProjectKey: adas-it_andor-communications
             coverageFile: coverage-andor-communications.xml
           - name: Andor Onboarding
-            projectName: Src/Onboarding/Andor.Onboarding.Domain/Andor.Onboarding.Domain.csproj
-            projectTestName: Tests/Onboarding/Andor.Onboarding.Domain.Tests/Andor.Onboarding.Domain.Tests.csproj
+            projectName: Src/Onboarding/Andor.Onboarding.Service/Andor.Onboarding.Service.csproj
+            projectTestNames: |
+              Tests/Onboarding/Andor.Onboarding.Domain.Tests/Andor.Onboarding.Domain.Tests.csproj
+              Tests/Onboarding/Andor.Onboarding.Infrastructure.Tests/Andor.Onboarding.Infrastructure.Tests.csproj
+              Tests/Onboarding/Andor.Onboarding.ComponentTests/Andor.Onboarding.ComponentTests.csproj
             sonarProjectKey: adas-it_andor-onboarding
             coverageFile: coverage-andor-onboarding.xml
           - name: Andor Configurations
-            projectName: Src/Administrations/Configurations/Andor.Configurations.Domain/Andor.Configurations.Domain.csproj
-            projectTestName: Tests/Administrations/Configurations/Andor.Configurations.Domain.Tests/Andor.Configurations.Domain.Tests.csproj
+            projectName: Src/Administrations/Configurations/Andor.Configurations.Service/Andor.Configurations.Service.csproj
+            projectTestNames: |
+              Tests/Administrations/Configurations/Andor.Configurations.Domain.Tests/Andor.Configurations.Domain.Tests.csproj
+              Tests/Administrations/Configurations/Andor.Configurations.ComponentTests/Andor.Configurations.ComponentTests.csproj
             sonarProjectKey: adas-it_andor-configurations
             coverageFile: coverage-andor-configurations.xml
 
@@ -64,7 +78,10 @@ jobs:
       - name: Restore dependencies
         run: |
           dotnet restore ${{ matrix.projectName }}
-          dotnet restore ${{ matrix.projectTestName }}
+          while IFS= read -r proj; do
+            [ -z "$proj" ] && continue
+            dotnet restore "$proj"
+          done <<< "${{ matrix.projectTestNames }}"
 
       - name: Begin SonarCloud analysis
         env:
@@ -81,11 +98,23 @@ jobs:
       - name: Build
         run: |
           dotnet build ${{ matrix.projectName }} --no-restore --configuration Release
-          dotnet build ${{ matrix.projectTestName }} --no-restore --configuration Release
+          while IFS= read -r proj; do
+            [ -z "$proj" ] && continue
+            dotnet build "$proj" --no-restore --configuration Release
+          done <<< "${{ matrix.projectTestNames }}"
 
       - name: Test with coverage
-        run: dotnet-coverage collect 'dotnet test ${{ matrix.projectTestName }} --no-build --configuration Release --verbosity normal' -f xml -o '${{ matrix.coverageFile }}'
-    
+        run: |
+          TEST_CMD=""
+          while IFS= read -r proj; do
+            [ -z "$proj" ] && continue
+            if [ -n "$TEST_CMD" ]; then
+              TEST_CMD="$TEST_CMD &&"
+            fi
+            TEST_CMD="$TEST_CMD dotnet test \"$proj\" --no-build --configuration Release --verbosity normal"
+          done <<< "${{ matrix.projectTestNames }}"
+          dotnet-coverage collect "$TEST_CMD" -f xml -o "${{ matrix.coverageFile }}"
+
       - name: End SonarCloud analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
