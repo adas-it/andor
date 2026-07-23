@@ -10,11 +10,13 @@ internal static class ApplicationIoc
 {
     public static IServiceCollection WithAccountsApplication(this IServiceCollection services)
     {
-        services.AddSingleton<IAkkaModule, ApplicationAkkaModule>();
+        _ = services.AddSingleton<IAkkaModule, ApplicationAkkaModule>();
 
-        services.AddScoped<IAccountValidator, AccountValidator>();
+        _ = services.AddScoped<IAccountValidator, AccountValidator>();
 
-        services.AddScoped<IAccountCommandsService, AccountCommandsService>();
+        _ = services.AddScoped<IAccountCommandsService, AccountCommandsService>();
+
+        _ = services.AddScoped<IAccountQueriesService, AccountQueriesService>();
 
         return services;
     }

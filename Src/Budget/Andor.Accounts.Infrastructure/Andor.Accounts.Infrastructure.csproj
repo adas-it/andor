@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Andor.Accounts.Application\Andor.Accounts.Application.csproj" />
     <ProjectReference Include="..\Andor.Accounts.Domain\Andor.Accounts.Domain.csproj" />
     <ProjectReference Include="..\..\Shared\Andor.Foundation.Application\Andor.Foundation.Application.csproj" />
     <ProjectReference Include="..\..\Shared\Andor.Foundation.Infrastructure\Andor.Foundation.Infrastructure.csproj" />

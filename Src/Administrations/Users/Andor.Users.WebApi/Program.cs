@@ -144,7 +144,10 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    _ = await context.Database.EnsureCreatedAsync();
+    //_ = await context.Database.EnsureCreatedAsync();
+
+    await context.Database.MigrateAsync();
+
 
     var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
 
@@ -217,11 +220,11 @@ static async Task EnsureSpaClientAsync(
 
     descriptor.Permissions.Clear();
     foreach (var permission in permissions)
-        descriptor.Permissions.Add(permission);
+        _ = descriptor.Permissions.Add(permission);
 
     descriptor.RedirectUris.Clear();
     foreach (var uri in redirectUris)
-        descriptor.RedirectUris.Add(new Uri(uri));
+        _ = descriptor.RedirectUris.Add(new Uri(uri));
 
     if (existingClient is null)
         _ = await manager.CreateAsync(descriptor);
@@ -233,8 +236,8 @@ if (app.Environment.IsDevelopment())
 {
     var clientId = app.Configuration.GetSection("OpenIddictClients:WebApp")["ClientId"] ?? "web-app";
 
-    app.UseSwagger();
-    app.UseSwaggerUI(o =>
+    _ = app.UseSwagger();
+    _ = app.UseSwaggerUI(o =>
     {
         o.SwaggerEndpoint("/swagger/v1/swagger.json", "Andor Users API v1");
         o.OAuthClientId(clientId);

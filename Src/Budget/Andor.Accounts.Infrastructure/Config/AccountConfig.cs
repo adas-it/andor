@@ -54,7 +54,10 @@ public class AccountConfig : IEntityTypeConfiguration<Account>
         _ = entity.HasMany(x => x.Members)
             .WithOne(x => x.Account)
             .HasForeignKey(x => x.AccountId);
-        _ = entity.Navigation(x => x.Members).UsePropertyAccessMode(PropertyAccessMode.Field);
+
+        _ = entity.Navigation(x => x.Members)
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .AutoInclude();
 
         _ = entity.HasMany(x => x.Invites)
             .WithOne()

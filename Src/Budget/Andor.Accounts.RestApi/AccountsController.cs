@@ -2,10 +2,12 @@ using System.Net.Mime;
 using Andor.Accounts.Application.Commands;
 using Andor.Accounts.Application.Interfaces;
 using Andor.Accounts.Contracts;
+using Andor.Accounts.Contracts.Responses;
 using Andor.Accounts.Domain.Accounts.ValueObjects;
 using Andor.Accounts.Domain.Currencies.ValueObjects;
 using Andor.Authorizations.Domain;
 using Andor.Foundation.Api;
+using Andor.Foundation.Application.Queries;
 using Andor.Foundation.Contracts.Results;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
@@ -21,6 +23,7 @@ namespace Andor.Accounts.RestApi;
 [Produces(MediaTypeNames.Application.Json)]
 [Consumes(MediaTypeNames.Application.Json)]
 public class AccountsController(IAccountCommandsService commandsService,
+    IAccountQueriesService accountQueriesService,
     ICurrentUserService currentUserService) : BaseController
 {
     [HttpPost]
@@ -52,5 +55,26 @@ public class AccountsController(IAccountCommandsService commandsService,
         var output = await commandsService.GetByIdAsync(AccountId.Load(id), cancellationToken);
 
         return Result<AccountOutput?>(output);
+    }
+
+    [HttpGet]
+    [MapToApiVersion("1.0")]
+    [ProducesResponseType(typeof(DefaultResponse<ListAccountOutput>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAccounts(
+        CancellationToken cancellationToken,
+        [FromQuery] int? page = null,
+        [FromQuery(Name = "per_page")] int? perPage = null,
+        [FromQuery] string? search = null,
+        [FromQuery] string? sort = null,
+        [FromQuery] Andor.Foundation.Contracts.Requests.SearchOrder? dir = null
+    )
+    {
+        var searchInput = new SearchInput(page, perPage, search, sort, (SearchOrder?)dir);
+
+        searchInput.Normalize();
+
+        var output = await accountQueriesService.GetListAsync(searchInput, cancellationToken);
+
+        return Result(output);
     }
 }

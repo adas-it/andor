@@ -1,3 +1,4 @@
+using Andor.Accounts.Application.Interfaces;
 using Andor.Accounts.Binder.Outbox;
 using Andor.Accounts.Domain.Accounts.Repositories;
 using Andor.Accounts.Domain.CashFlows.Repositories;
@@ -19,29 +20,31 @@ internal static class InfrastructureIoc
     internal static IServiceCollection WithAccountsInfrastructure(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.WithAccountsDbContext(configuration);
+        _ = services.WithAccountsDbContext(configuration);
 
-        services.WithAzureServiceBusMessaging(configuration);
+        _ = services.WithAzureServiceBusMessaging(configuration);
 
-        services.AddScoped<ICommandsAccountRepository, CommandsAccountRepository>();
+        _ = services.AddScoped<ICommandsAccountRepository, CommandsAccountRepository>();
 
-        services.AddScoped<ICommandsCurrencyRepository, CommandsCurrencyRepository>();
+        _ = services.AddScoped<ICommandsCurrencyRepository, CommandsCurrencyRepository>();
 
-        services.AddScoped<ICommandsCategoryRepository, CommandsCategoryRepository>();
+        _ = services.AddScoped<ICommandsCategoryRepository, CommandsCategoryRepository>();
 
-        services.AddScoped<ICommandsSubCategoryRepository, CommandsSubCategoryRepository>();
+        _ = services.AddScoped<ICommandsSubCategoryRepository, CommandsSubCategoryRepository>();
 
-        services.AddScoped<ICommandsPaymentMethodRepository, CommandsPaymentMethodRepository>();
+        _ = services.AddScoped<ICommandsPaymentMethodRepository, CommandsPaymentMethodRepository>();
 
-        services.AddScoped<ICommandsFinancialMovementRepository, CommandsFinancialMovementRepository>();
+        _ = services.AddScoped<ICommandsFinancialMovementRepository, CommandsFinancialMovementRepository>();
 
-        services.AddScoped<ICommandsCashFlowRepository, CommandsCashFlowRepository>();
+        _ = services.AddScoped<ICommandsCashFlowRepository, CommandsCashFlowRepository>();
 
-        services.AddScoped<ICashFlowAppliedMovementRepository, CashFlowAppliedMovementRepository>();
+        _ = services.AddScoped<ICashFlowAppliedMovementRepository, CashFlowAppliedMovementRepository>();
 
-        services.AddScoped<IOutboxContextProvider, AccountsOutboxContextProvider>();
+        _ = services.AddScoped<IOutboxContextProvider, AccountsOutboxContextProvider>();
 
-        services.AddHostedService<OutboxDispatcher>();
+        _ = services.AddHostedService<OutboxDispatcher>();
+
+        _ = services.AddScoped<IAccountQueriesRepository, AccountQueriesRepository>();
 
         return services;
     }

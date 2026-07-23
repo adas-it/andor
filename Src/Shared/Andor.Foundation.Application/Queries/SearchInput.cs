@@ -8,6 +8,19 @@ public record SearchInput
     public string? OrderBy { get; set; }
     public SearchOrder Order { get; set; }
 
+    public SearchInput()
+    {
+    }
+
+    public SearchInput(int? page, int? perPage, string? search, string? orderBy, SearchOrder? order)
+    {
+        Page = page ?? 0;
+        PerPage = perPage ?? 10;
+        Search = search;
+        OrderBy = orderBy;
+        Order = order ?? SearchOrder.Asc;
+    }
+
     public void Normalize()
     {
         if (Page < 0)

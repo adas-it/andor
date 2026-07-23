@@ -11,27 +11,52 @@ namespace Andor.Users.WebApi.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<Guid>(
+            // SQL Server cannot change the IDENTITY property of a column via ALTER COLUMN.
+            // The column must be dropped and recreated as a uniqueidentifier.
+            migrationBuilder.DropPrimaryKey(
+                name: "PK_Users",
+                table: "Users");
+
+            migrationBuilder.DropColumn(
+                name: "Id",
+                table: "Users");
+
+            migrationBuilder.AddColumn<Guid>(
                 name: "Id",
                 table: "Users",
                 type: "uniqueidentifier",
                 nullable: false,
-                oldClrType: typeof(int),
-                oldType: "int")
-                .OldAnnotation("SqlServer:Identity", "1, 1");
+                defaultValue: Guid.Empty);
+
+            migrationBuilder.AddPrimaryKey(
+                name: "PK_Users",
+                table: "Users",
+                column: "Id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<int>(
+            migrationBuilder.DropPrimaryKey(
+                name: "PK_Users",
+                table: "Users");
+
+            migrationBuilder.DropColumn(
+                name: "Id",
+                table: "Users");
+
+            migrationBuilder.AddColumn<int>(
                 name: "Id",
                 table: "Users",
                 type: "int",
                 nullable: false,
-                oldClrType: typeof(Guid),
-                oldType: "uniqueidentifier")
+                defaultValue: 0)
                 .Annotation("SqlServer:Identity", "1, 1");
+
+            migrationBuilder.AddPrimaryKey(
+                name: "PK_Users",
+                table: "Users",
+                column: "Id");
         }
     }
 }

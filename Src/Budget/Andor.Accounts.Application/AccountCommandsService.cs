@@ -34,7 +34,7 @@ public class AccountCommandsService(ActorRegistry registry, ICommandsAccountRepo
 
         if (account != null)
         {
-            response.SetData(account.ToAccountOutput());
+            _ = response.SetData(account.ToAccountOutput());
         }
 
         return response;
@@ -61,7 +61,7 @@ public class AccountCommandsService(ActorRegistry registry, ICommandsAccountRepo
 
         if (account != null)
         {
-            response.SetData(mapper(account));
+            _ = response.SetData(mapper(account));
         }
 
         return response;
