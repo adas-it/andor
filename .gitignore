@@ -352,14 +352,10 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
-.postgres/
-/src/Andor.Api/secrets.json
-/src/Andor.Api/Properties/launchSettings.json
-/src/Tests/Andor.Component.Tests/pacts/MyTest.txt
-/src/Tests/Andor.Component.Tests/secrets.json
 /Src/Administrations/Users/Andor.Users.WebApi/appsettings.Development.json
 /Src/Assets/Andor.Assets.Service/appsettings.Development.json
 /Src/Administrations/Configurations/Andor.Configurations.Service/appsettings.Development.json
 /Src/Onboarding/Andor.Onboarding.Service/appsettings.Development.json
 /Src/Budget/Andor.Accounts.Service/appsettings.Development.json
 /Src/Communications/Andor.Communications.Service/appsettings.Development.json
+/Src/Administrations/ReverseProxy/Andor.Admin.ReverseProxy.Yarp/appsettings.Development.json
