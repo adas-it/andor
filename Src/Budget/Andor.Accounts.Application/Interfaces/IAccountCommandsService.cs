@@ -1,5 +1,5 @@
 using Andor.Accounts.Application.Commands;
-using Andor.Accounts.Contracts;
+using Andor.Accounts.Contracts.Responses;
 using Andor.Accounts.Domain.Accounts.ValueObjects;
 using Andor.Foundation.Contracts.Results;
 

@@ -3,7 +3,7 @@ using Akka.Hosting;
 using Andor.Accounts.Application.Actors;
 using Andor.Accounts.Application.Commands;
 using Andor.Accounts.Application.Interfaces;
-using Andor.Accounts.Contracts;
+using Andor.Accounts.Contracts.Responses;
 using Andor.Accounts.Domain.Accounts;
 using Andor.Accounts.Domain.Accounts.Repositories;
 using Andor.Accounts.Domain.Accounts.ValueObjects;

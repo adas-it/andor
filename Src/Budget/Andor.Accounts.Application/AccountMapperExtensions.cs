@@ -1,4 +1,4 @@
-using Andor.Accounts.Contracts;
+using Andor.Accounts.Contracts.Responses;
 using Andor.Accounts.Domain.Accounts;
 
 namespace Andor.Accounts.Application;
@@ -10,6 +10,14 @@ internal static class AccountMapperExtensions
         if (entity == null)
             return null;
 
-        return new AccountOutput(entity.Id.ToString(), entity.Name, entity.Currency.Id.ToString());
+        return new AccountOutput()
+        {
+            Id = entity.Id.ToString(),
+            Name = entity.Name,
+            Description = entity.Description,
+            Deleted = entity.IsDeleted,
+            Participants = entity.Members
+                .Select(m => new ParticipantOutput() { Id = m.UserId.ToString() }).ToList()
+        };
     }
 }

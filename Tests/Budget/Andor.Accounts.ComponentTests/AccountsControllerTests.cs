@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using Andor.Accounts.Contracts;
+using Andor.Accounts.Contracts.Responses;
 using Andor.Accounts.Domain.Currencies.Repositories;
 using Andor.ComponentTests.Common;
 using Andor.Foundation.Contracts.Results;
