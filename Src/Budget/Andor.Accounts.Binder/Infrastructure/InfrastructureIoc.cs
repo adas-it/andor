@@ -45,6 +45,7 @@ internal static class InfrastructureIoc
         _ = services.AddHostedService<OutboxDispatcher>();
 
         _ = services.AddScoped<IAccountQueriesRepository, AccountQueriesRepository>();
+        _ = services.AddScoped<IFinancialMovementQueriesRepository, FinancialMovementQueriesRepository>();
 
         return services;
     }

@@ -15,10 +15,10 @@ public interface IAccountQueriesService
     Task<ApplicationResult<CashFlowOutput>> GetCashFlowAsync(AccountId accountId, Month month, Year year,
         CancellationToken cancellationToken);
 
-    Task<ApplicationResult<FinancialSummariesOutput>> GetFinancialSummaryAsync(AccountId accountId, Month month, Year year,
+    Task<ApplicationResult<List<FinancialSummariesOutput>>> GetFinancialSummaryAsync(AccountId accountId, Month month, Year year,
         CancellationToken cancellationToken);
 
-    Task<ApplicationResult<CategorySummariesOutput>> GetCategorySummaryAsync(AccountId accountId, Month month, Year year,
+    Task<ApplicationResult<List<CategorySummariesOutput>>> GetCategorySummaryAsync(AccountId accountId, Month month, Year year,
         CancellationToken cancellationToken);
 
 }
