@@ -87,10 +87,19 @@ public sealed class AccountCreatedConsumer : BackgroundService
             AccountId.Load(message.Id),
             currentUser,
             args.CancellationToken);
+        try
+        {
+            await commandsService.SeedAccountDefaultsAsync(command);
 
-        await commandsService.SeedAccountDefaultsAsync(command);
-
-        await args.CompleteMessageAsync(args.Message, args.CancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error seeding account defaults for account {AccountId}.", message.Id);
+        }
+        finally
+        {
+            await args.CompleteMessageAsync(args.Message, args.CancellationToken);
+        }
     }
 
     private Task ProcessErrorAsync(ProcessErrorEventArgs args)

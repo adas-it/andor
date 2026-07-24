@@ -1,4 +1,5 @@
 using System.Net.Mime;
+using Andor.Accounts.Application.Commands;
 using Andor.Accounts.Application.Interfaces;
 using Andor.Accounts.Contracts.Responses;
 using Andor.Accounts.Domain.Accounts.ValueObjects;
@@ -24,6 +25,25 @@ public class AccountsController(IAccountCommandsService commandsService,
     IAccountQueriesService accountQueriesService,
     ICurrentUserService currentUserService) : BaseController
 {
+    [HttpPost("{accountId:guid}/seed")]
+    [MapToApiVersion("1.0")]
+    [ProducesResponseType(typeof(DefaultResponse<CashFlowOutput>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> SeedDefault(
+        CancellationToken cancellationToken,
+        [FromRoute] Guid accountId
+    )
+    {
+        var currentUser = currentUserService.GetCurrentUser();
+        
+        var command = new SeedAccountDefaultsCommand(
+            AccountId.Load(accountId),
+            currentUser,
+            cancellationToken);
+
+        var output = await commandsService.SeedAccountDefaultsAsync(command);
+        
+        return Result(output);
+    }
 
     [HttpGet]
     [MapToApiVersion("1.0")]

@@ -27,6 +27,6 @@ public class FinancialMovementQueriesRepository :
 
     public async Task<List<FinancialMovement>> GetAllFinancialMovementsByMonth(AccountId accountId, Month month, Year year, CancellationToken cancellationToken)
     {
-        return await DbSet.Where(x => x.AccountId == accountId && x.Date.Month == month && x.Date.Year == year).ToListAsync(cancellationToken);
+        return await DbSet.Where(x => x.AccountId == accountId && x.Date.Month == (int)month && x.Date.Year == (int)year).ToListAsync(cancellationToken);
     }
 }
