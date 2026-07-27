@@ -113,7 +113,7 @@ jobs:
             fi
             TEST_CMD="$TEST_CMD dotnet test \"$proj\" --no-build --configuration Release --verbosity normal"
           done <<< "${{ matrix.projectTestNames }}"
-          dotnet-coverage collect "$TEST_CMD" -f xml -o "${{ matrix.coverageFile }}"
+          dotnet-coverage collect -f xml -o "${{ matrix.coverageFile }}" -- bash -c "$TEST_CMD"
 
       - name: End SonarCloud analysis
         env:
