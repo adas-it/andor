@@ -8,7 +8,7 @@ public static class ApiExtensions
     public static IServiceCollection UseApi(this IServiceCollection services)
     {
         services.AddControllers()
-            .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(AccountsController).Assembly));
+            .PartManager.ApplicationParts.Add(new AssemblyPart(typeof(AccountController).Assembly));
 
         return services;
     }

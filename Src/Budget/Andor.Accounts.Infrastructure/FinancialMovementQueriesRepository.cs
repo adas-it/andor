@@ -25,8 +25,22 @@ public class FinancialMovementQueriesRepository :
         throw new NotImplementedException();
     }
 
+    public override async Task<FinancialMovement?> GetByIdAsync(FinancialMovementId id, CancellationToken cancellationToken)
+        => await DbSet
+            .AsNoTracking()
+            .Include(x => x.SubCategory).ThenInclude(x => x.Category)
+            .Include(x => x.PaymentMethod)
+            .Where(x => !x.IsDeleted)
+            .FirstOrDefaultAsync(x => x.Id.Equals(id), cancellationToken);
+
     public async Task<List<FinancialMovement>> GetAllFinancialMovementsByMonth(AccountId accountId, Month month, Year year, CancellationToken cancellationToken)
     {
-        return await DbSet.Where(x => x.AccountId == accountId && x.Date.Month == (int)month && x.Date.Year == (int)year).ToListAsync(cancellationToken);
+        return await DbSet
+            .AsNoTracking()
+            .Include(x => x.SubCategory).ThenInclude(x => x.Category)
+            .Include(x => x.PaymentMethod)
+            .Where(x => x.AccountId == accountId && x.Date.Month == (int)month && x.Date.Year == (int)year)
+            .Where(x => !x.IsDeleted)
+            .ToListAsync(cancellationToken);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Andor.Accounts.Domain.FinancialMovements;
+using Andor.Accounts.Domain.MovementStatuses;
 using Andor.Foundation.Domain.Events;
 
 namespace Andor.Accounts.Domain.Accounts.DomainEvents;
@@ -174,12 +175,49 @@ public sealed record AccountFinancialMovementAddedDomainEvent : DomainEvent
 public sealed record AccountFinancialMovementRemovedDomainEvent : DomainEvent
 {
     public string Name { get; init; }
+    public Guid FinancialMovementId { get; init; }
+    public DateTime Date { get; init; }
+    public decimal Value { get; init; }
+    public int Status { get; init; }
+    public int Type { get; init; }
 
-    public static AccountFinancialMovementRemovedDomainEvent FromAggregator(Account entity, Guid userId)
+    public static AccountFinancialMovementRemovedDomainEvent FromAggregator(Account entity, FinancialMovement movement, Guid userId)
         => new AccountFinancialMovementRemovedDomainEvent() with
         {
             Id = entity.Id,
             Name = entity.Name!,
-            UserId = userId
+            UserId = userId,
+            FinancialMovementId = movement.Id,
+            Date = movement.Date,
+            Value = movement.Value,
+            Status = movement.Status.Key,
+            Type = movement.Type.Key,
+        };
+}
+public sealed record AccountFinancialMovementEditedDomainEvent : DomainEvent
+{
+    public string Name { get; init; }
+    public Guid FinancialMovementId { get; init; }
+    public DateTime Date { get; init; }
+    public int Type { get; init; }
+    public decimal PreviousValue { get; init; }
+    public int PreviousStatus { get; init; }
+    public decimal Value { get; init; }
+    public int Status { get; init; }
+
+    public static AccountFinancialMovementEditedDomainEvent FromAggregator(
+        Account entity, FinancialMovement movement, decimal previousValue, MovementStatus previousStatus, Guid userId)
+        => new AccountFinancialMovementEditedDomainEvent() with
+        {
+            Id = entity.Id,
+            Name = entity.Name!,
+            UserId = userId,
+            FinancialMovementId = movement.Id,
+            Date = movement.Date,
+            Type = movement.Type.Key,
+            PreviousValue = previousValue,
+            PreviousStatus = previousStatus.Key,
+            Value = movement.Value,
+            Status = movement.Status.Key,
         };
 }

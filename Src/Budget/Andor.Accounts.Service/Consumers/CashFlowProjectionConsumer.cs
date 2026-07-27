@@ -1,9 +1,8 @@
+using Andor.Accounts.Application;
 using Andor.Accounts.Domain.Accounts.DomainEvents;
 using Andor.Accounts.Domain.Accounts.ValueObjects;
 using Andor.Accounts.Domain.CashFlows;
 using Andor.Accounts.Domain.CashFlows.Repositories;
-using Andor.Accounts.Domain.CashFlows.ValueObjects;
-using Andor.Accounts.Domain.FinancialMovements.ValueObjects;
 using Andor.Accounts.Domain.MovementStatuses;
 using Andor.Accounts.Domain.MovementTypes;
 using Andor.Foundation.Domain;
@@ -21,6 +20,16 @@ internal sealed record CashFlowMovementMessage(
     int Status,
     int Type);
 
+internal sealed record CashFlowMovementEditedMessage(
+    Guid Id,
+    Guid FinancialMovementId,
+    DateTime Date,
+    int Type,
+    decimal PreviousValue,
+    int PreviousStatus,
+    decimal Value,
+    int Status);
+
 public sealed class CashFlowProjectionSubscriptionOptions
 {
     public const string SectionName = "CashFlowProjectionSubscription";
@@ -33,6 +42,10 @@ public sealed class CashFlowProjectionSubscriptionOptions
 /// Consumes the module's "andor-accounts-events" topic and maintains the CashFlow monthly
 /// balance projection. Runs independently of FinancialMovementCreatedConsumer — both react
 /// to the same event, and this one needs nothing beyond the event's own payload.
+///
+/// Reacts to Added (apply), Removed (reverse), and Edited (reverse-then-apply, since edits are
+/// only fired in place when the movement's month and type didn't change) so the projection stays
+/// consistent through the whole financial-movement lifecycle, not just creation.
 ///
 /// Because this app is a personal ledger (not a bank), a movement can land in a past month,
 /// so applying it also cascades forward through every later month that already has a
@@ -83,58 +96,97 @@ public sealed class CashFlowProjectionConsumer : BackgroundService
 
     private async Task ProcessMessageAsync(ProcessMessageEventArgs args)
     {
-        if (args.Message.Subject != nameof(AccountFinancialMovementAddedDomainEvent))
+        var subject = args.Message.Subject;
+
+        if (subject != nameof(AccountFinancialMovementAddedDomainEvent) &&
+            subject != nameof(AccountFinancialMovementRemovedDomainEvent) &&
+            subject != nameof(AccountFinancialMovementEditedDomainEvent))
         {
             await args.CompleteMessageAsync(args.Message, args.CancellationToken);
             return;
         }
-
-        var message = args.Message.Body.ToObjectFromJson<CashFlowMovementMessage>();
-        var financialMovementId = FinancialMovementId.Load(message.FinancialMovementId);
 
         using var scope = _scopeFactory.CreateScope();
-        var appliedRepo = scope.ServiceProvider.GetRequiredService<ICashFlowAppliedMovementRepository>();
+        var cashFlowRepo = scope.ServiceProvider.GetRequiredService<ICommandsCashFlowRepository>();
+        var webSocketMessage = scope.ServiceProvider.GetRequiredService<IWebSocketMessage>();
 
-        if (await appliedRepo.HasBeenAppliedAsync(financialMovementId, args.CancellationToken))
+        if (subject == nameof(AccountFinancialMovementEditedDomainEvent))
         {
-            await args.CompleteMessageAsync(args.Message, args.CancellationToken);
-            return;
+            var edited = args.Message.Body.ToObjectFromJson<CashFlowMovementEditedMessage>();
+            var accountId = AccountId.Load(edited.Id);
+            var type = Enumeration<int>.GetByKey<MovementType>(edited.Type);
+
+            // Reverse the movement's contribution under its previous value/status, then apply it
+            // again under the new one. Both land in the same period/type bucket, since Edited is
+            // only ever fired for in-place edits (month and type unchanged).
+            await ApplyDeltaAsync(cashFlowRepo, webSocketMessage, accountId, edited.Date, type,
+                Enumeration<int>.GetByKey<MovementStatus>(edited.PreviousStatus), -edited.PreviousValue,
+                args.CancellationToken);
+
+            await ApplyDeltaAsync(cashFlowRepo, webSocketMessage, accountId, edited.Date, type,
+                Enumeration<int>.GetByKey<MovementStatus>(edited.Status), edited.Value,
+                args.CancellationToken);
+        }
+        else
+        {
+            var message = args.Message.Body.ToObjectFromJson<CashFlowMovementMessage>();
+            var accountId = AccountId.Load(message.Id);
+            var signedValue = subject == nameof(AccountFinancialMovementRemovedDomainEvent)
+                ? -message.Value
+                : message.Value;
+
+            await ApplyDeltaAsync(cashFlowRepo, webSocketMessage, accountId, message.Date,
+                Enumeration<int>.GetByKey<MovementType>(message.Type),
+                Enumeration<int>.GetByKey<MovementStatus>(message.Status), signedValue,
+                args.CancellationToken);
         }
 
-        var cashFlowRepo = scope.ServiceProvider.GetRequiredService<ICommandsCashFlowRepository>();
-        var accountId = AccountId.Load(message.Id);
-        var periodKey = (message.Date.Year * 100) + message.Date.Month;
+        await args.CompleteMessageAsync(args.Message, args.CancellationToken);
+    }
 
-        var current = await cashFlowRepo.GetByAccountAndPeriodAsync(accountId, periodKey, args.CancellationToken);
+    /// <summary>
+    /// Applies a signed value (positive to add, negative to reverse) to the CashFlow row for
+    /// <paramref name="date"/>'s period, creating the row if needed, then cascades the resulting
+    /// balance forward through every later month that already has a row for the account.
+    /// </summary>
+    private static async Task ApplyDeltaAsync(
+        ICommandsCashFlowRepository cashFlowRepo,
+        IWebSocketMessage webSocketMessage,
+        AccountId accountId,
+        DateTime date,
+        MovementType type,
+        MovementStatus status,
+        decimal signedValue,
+        CancellationToken cancellationToken)
+    {
+        var periodKey = (date.Year * 100) + date.Month;
+
+        var current = await cashFlowRepo.GetByAccountAndPeriodAsync(accountId, periodKey, cancellationToken);
 
         if (current == null)
         {
-            var previous = await cashFlowRepo.GetLatestBeforeAsync(accountId, periodKey, args.CancellationToken);
+            var previous = await cashFlowRepo.GetLatestBeforeAsync(accountId, periodKey, cancellationToken);
             var openingBalance = previous?.AccountBalance ?? 0m;
 
-            var (_, created) = CashFlow.New(accountId, Year.Load(message.Date.Year), Month.Load(message.Date.Month), openingBalance);
+            var (_, created) = CashFlow.New(accountId, Year.Load(date.Year), Month.Load(date.Month), openingBalance);
             current = created!;
         }
 
-        current.ApplyMovement(
-            Enumeration<int>.GetByKey<MovementType>(message.Type),
-            Enumeration<int>.GetByKey<MovementStatus>(message.Status),
-            message.Value);
+        current.ApplyMovement(type, status, signedValue);
 
-        await cashFlowRepo.PersistAsync(current, args.CancellationToken);
-        await appliedRepo.MarkAppliedAsync(financialMovementId, current.Id, args.CancellationToken);
+        await cashFlowRepo.PersistAsync(current, cancellationToken);
+
+        await webSocketMessage.SendAsync(current.Id, current);
 
         var runningBalance = current.AccountBalance;
-        var following = await cashFlowRepo.GetAfterAsync(accountId, periodKey, args.CancellationToken);
+        var following = await cashFlowRepo.GetAfterAsync(accountId, periodKey, cancellationToken);
 
         foreach (var row in following)
         {
             row.SetFinalBalancePreviousMonth(runningBalance);
-            await cashFlowRepo.PersistAsync(row, args.CancellationToken);
+            await cashFlowRepo.PersistAsync(row, cancellationToken);
             runningBalance = row.AccountBalance;
         }
-
-        await args.CompleteMessageAsync(args.Message, args.CancellationToken);
     }
 
     private Task ProcessErrorAsync(ProcessErrorEventArgs args)

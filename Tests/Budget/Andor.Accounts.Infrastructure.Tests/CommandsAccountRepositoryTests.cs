@@ -1,6 +1,8 @@
 using Andor.Accounts.Domain.Accounts;
 using Andor.Accounts.Domain.Accounts.ValueObjects;
 using Andor.Accounts.Domain.Currencies;
+using Andor.Accounts.Domain.FinancialMovements;
+using Andor.Accounts.Domain.MovementStatuses;
 using Andor.Accounts.Domain.MovementTypes;
 using Andor.Accounts.Domain.PermissionTypes;
 using Andor.Accounts.Infrastructure.Context;
@@ -110,6 +112,79 @@ public class CommandsAccountRepositoryTests
             .GetByIdAsync(account.Id, CancellationToken.None);
 
         persisted.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task UpsertFinancialMovement_WhenEditedUsingSubCategoryLoadedInADifferentContext_DoesNotThrowTrackingConflict()
+    {
+        // Mirrors AccountActor.HandleEditFinancialMovementAsync: the movement is loaded (tracking
+        // its own SubCategory/PaymentMethod/Account) in one context, but the SubCategory/PaymentMethod
+        // instances used to apply the edit come from the Account aggregate, which was loaded in a
+        // completely separate context (the actor's Loading scope) — different CLR instances for the
+        // same underlying rows, which used to make EF's identity map throw on Upsert/Persist.
+        var (_, account) = await CreateValidAccountAsync();
+        var ownerId = account!.Members.Single().UserId;
+
+        account.CreateCustomCategory(GeneralFixture.GetValidName(), GeneralFixture.GetValidDescription(), MovementType.MoneyDeposit, ownerId);
+        var category = account.Categories.Single().Category;
+
+        account.CreateCustomPaymentMethod(GeneralFixture.GetValidName(), GeneralFixture.GetValidDescription(), MovementType.MoneyDeposit, ownerId);
+        var paymentMethod = account.PaymentMethods.Single().PaymentMethod;
+
+        account.CreateCustomSubCategory(GeneralFixture.GetValidName(), GeneralFixture.GetValidDescription(), category, null, ownerId);
+
+        // Persist the account with its category/payment method/subcategory first, as a standalone
+        // step — mirrors SeedAccountDefaultsCommand completing before any financial movement exists.
+        await new CommandsAccountRepository(CreateContext()).PersistAsync(account, CancellationToken.None);
+
+        // Load fresh (simulates the actor's _account) and add a movement, exactly like
+        // AccountActor.HandleAddFinancialMovementAsync: reuse the SubCategory/PaymentMethod
+        // instances hanging off the loaded account, then persist through a *different*, fresh scope.
+        var addLoadRepository = new CommandsAccountRepository(CreateContext());
+        var accountForAdd = await addLoadRepository.GetByIdAsync(account.Id, CancellationToken.None);
+        var subCategoryForAdd = accountForAdd!.SubCategories.Single().SubCategory;
+        var paymentMethodForAdd = accountForAdd.PaymentMethods.Single().PaymentMethod;
+
+        var (_, movement) = FinancialMovement.New(DateTime.UtcNow, "initial", subCategoryForAdd, paymentMethodForAdd, accountForAdd, 10m);
+        _ = accountForAdd.AddFinancialMovement(movement!, ownerId);
+
+        var addPersistRepository = new CommandsAccountRepository(CreateContext());
+        await addPersistRepository.UpsertFinancialMovement(movement!, CancellationToken.None);
+        await addPersistRepository.PersistAsync(accountForAdd, CancellationToken.None);
+
+        var editRepository = new CommandsAccountRepository(CreateContext());
+        var loadedMovement = await editRepository.GetFinancialMovementByIdAsync(movement!.Id, CancellationToken.None);
+
+        var accountScopeRepository = new CommandsAccountRepository(CreateContext());
+        var loadedAccount = await accountScopeRepository.GetByIdAsync(account.Id, CancellationToken.None);
+        var accountSubCategory = loadedAccount!.SubCategories.Single();
+        var accountPaymentMethod = loadedAccount.PaymentMethods.Single();
+
+        accountSubCategory.SubCategory.Should().NotBeSameAs(loadedMovement!.SubCategory);
+
+        var editResult = loadedMovement!.Edit(
+            DateTime.UtcNow,
+            "edited",
+            accountSubCategory.SubCategory,
+            accountPaymentMethod.PaymentMethod,
+            20m,
+            MovementStatus.Accomplished);
+
+        editResult.IsSuccess.Should().BeTrue();
+
+        var act = async () =>
+        {
+            await editRepository.UpsertFinancialMovement(loadedMovement, CancellationToken.None);
+            await editRepository.PersistAsync(loadedAccount, CancellationToken.None);
+        };
+
+        await act.Should().NotThrowAsync();
+
+        var persisted = await new CommandsAccountRepository(CreateContext())
+            .GetFinancialMovementByIdAsync(movement.Id, CancellationToken.None);
+
+        persisted!.Value.Should().Be(20m);
+        persisted.Status.Should().Be(MovementStatus.Accomplished);
     }
 
     private static async Task<(DomainResult result, Account? account)> CreateValidAccountAsync()

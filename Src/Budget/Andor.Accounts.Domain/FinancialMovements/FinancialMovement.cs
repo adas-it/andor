@@ -185,6 +185,33 @@ public class FinancialMovement : Entity<FinancialMovementId>, ISoftDeletableEnti
             status);
 
     /// <summary>
+    /// Edits the financial movement's fields in place. Callers are responsible for deciding
+    /// whether an in-place edit is appropriate — if the resulting month or movement type would
+    /// change, the caller should instead delete this movement and create a new one so that the
+    /// CashFlow projection (bucketed by account/month/type) can move the value across buckets.
+    /// </summary>
+    /// <returns>A domain result indicating success or failure with validation errors.</returns>
+    public DomainResult Edit(
+        DateTime date,
+        string? description,
+        SubCategory subCategory,
+        PaymentMethod paymentMethod,
+        decimal value,
+        MovementStatus? status)
+    {
+        Date = date;
+        Description = description;
+        SubCategory = subCategory;
+        SubCategoryId = subCategory?.Id ?? SubCategoryId;
+        PaymentMethod = paymentMethod;
+        PaymentMethodId = paymentMethod?.Id ?? PaymentMethodId;
+        Value = value;
+        Status = status ?? MovementStatus.Expected;
+
+        return Validate();
+    }
+
+    /// <summary>
     /// Soft deletes the financial movement, marking it as deleted without removing it from the database.
     /// </summary>
     /// <returns>A domain result indicating success.</returns>

@@ -1,4 +1,4 @@
-using Andor.Accounts.Contracts.Responses;
+using Andor.Accounts.Contracts.Accounts.Responses;
 using Andor.Accounts.Domain.Accounts.Errors;
 using Andor.Domain.Common.ValuesObjects;
 using Andor.Foundation.Application;

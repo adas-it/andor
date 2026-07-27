@@ -13,6 +13,8 @@ public class AccountCategoryConfig : IEntityTypeConfiguration<AccountCategory>
         _ = entity.ToTable(nameof(AccountCategory), "Accounts");
         _ = entity.HasKey(x => new { x.AccountId, x.CategoryId });
 
+        _ = entity.Navigation(x => x.Category).AutoInclude();
+
         _ = entity.Property(k => k.AccountId)
             .HasConversion(id => id.Value, value => AccountId.Load(value));
 

@@ -17,7 +17,7 @@ public static class DbContextOptionsFactory
     {
         var optionsBuilder = new DbContextOptionsBuilder<TContext>();
 
-        optionsBuilder.UseInMemoryDatabase("inmemory");
+        _ = optionsBuilder.UseInMemoryDatabase("inmemory");
 
         return optionsBuilder.Options;
     }
@@ -36,12 +36,12 @@ public abstract class PrincipalContext(DbContextOptions options, IMessageSenderI
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Ignore<Name>();
-        modelBuilder.Ignore<Description>();
-        modelBuilder.Ignore<Value>();
-        modelBuilder.Ignore<Andor.Foundation.Domain.Events.DomainEvent>();
+        _ = modelBuilder.Ignore<Name>();
+        _ = modelBuilder.Ignore<Description>();
+        _ = modelBuilder.Ignore<Value>();
+        _ = modelBuilder.Ignore<Andor.Foundation.Domain.Events.DomainEvent>();
 
-        modelBuilder.ApplyConfiguration(new OutboxMessageConfig(OutboxSchema));
+        _ = modelBuilder.ApplyConfiguration(new OutboxMessageConfig(OutboxSchema));
 
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
@@ -55,7 +55,7 @@ public abstract class PrincipalContext(DbContextOptions options, IMessageSenderI
         {
             if (typeof(ISoftDeletableEntity).IsAssignableFrom(entityType.ClrType))
             {
-                modelBuilder.Entity(entityType.ClrType)
+                _ = modelBuilder.Entity(entityType.ClrType)
                     .Property<bool>(nameof(ISoftDeletableEntity.IsDeleted))
                     .HasDefaultValue(false);
 
@@ -80,11 +80,18 @@ public abstract class PrincipalContext(DbContextOptions options, IMessageSenderI
     {
         if (Set<T>().Where(x => x.Id.Equals(entity.Id)).Any())
         {
-            Set<T>().Update(entity);
+            _ = Set<T>().Update(entity);
         }
         else
         {
-            Set<T>().Add(entity);
+            try
+            {
+                _ = Set<T>().Add(entity);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
     }
 

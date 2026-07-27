@@ -1,5 +1,7 @@
-using Andor.Accounts.Application;
+using Andor.Accounts.Application.Commands;
+using Andor.Accounts.Application.Commands.Interfaces;
 using Andor.Accounts.Application.Interfaces;
+using Andor.Accounts.Application.Queries;
 using Andor.Accounts.Domain.Accounts;
 using Andor.Foundation.Binder;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +19,14 @@ internal static class ApplicationIoc
         _ = services.AddScoped<IAccountCommandsService, AccountCommandsService>();
 
         _ = services.AddScoped<IAccountQueriesService, AccountQueriesService>();
+
+        _ = services.AddScoped<IAccountSubCategoriesQueriesService, AccountSubCategoriesQueriesService>();
+
+        _ = services.AddScoped<IAccountCategoriesQueriesService, AccountCategoriesQueriesService>();
+
+        _ = services.AddScoped<IAccountPaymentMethodQueriesService, AccountPaymentMethodQueriesService>();
+
+        _ = services.AddScoped<IAccountFinancialMovementsQueriesService, AccountFinancialMovementsQueriesService>();
 
         return services;
     }

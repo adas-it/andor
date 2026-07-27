@@ -1,5 +1,5 @@
 using Akka.Actor;
-using Andor.Accounts.Application.Commands;
+using Andor.Accounts.Application.Commands.Contracts;
 using Andor.Accounts.Domain.Accounts.ValueObjects;
 using Andor.Foundation.Application.Commands;
 
@@ -20,6 +20,16 @@ public class AccountManagerActor : ReceiveActor
         });
 
         Receive<AddFinancialMovementCommand>(cmd =>
+        {
+            Handler(serviceProvider, cmd);
+        });
+
+        Receive<EditFinancialMovementCommand>(cmd =>
+        {
+            Handler(serviceProvider, cmd);
+        });
+
+        Receive<DeleteFinancialMovementCommand>(cmd =>
         {
             Handler(serviceProvider, cmd);
         });

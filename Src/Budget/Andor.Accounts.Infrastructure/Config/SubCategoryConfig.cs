@@ -40,6 +40,8 @@ public class SubCategoryConfig : IEntityTypeConfiguration<SubCategory>
             .WithMany()
             .HasForeignKey(x => x.CategoryId);
 
+        _ = entity.Navigation(x => x.Category).AutoInclude();
+
         _ = entity.Property(k => k.DefaultPaymentMethodId)
             .HasConversion(
                 id => id == null ? (Guid?)null : id.Value.Value,

@@ -1,5 +1,5 @@
 using Akka.Actor;
-using Andor.Accounts.Application.Commands;
+using Andor.Accounts.Application.Commands.Contracts;
 using Andor.Accounts.Domain.Accounts;
 using Andor.Accounts.Domain.Accounts.Errors;
 using Andor.Accounts.Domain.Accounts.Repositories;
@@ -63,6 +63,8 @@ public class AccountActor : ReceiveActor, IWithUnboundedStash
     {
         ReceiveAsync<SeedAccountDefaultsCommand>(HandleSeedDefaultsAsync);
         ReceiveAsync<AddFinancialMovementCommand>(HandleAddFinancialMovementAsync);
+        ReceiveAsync<EditFinancialMovementCommand>(HandleEditFinancialMovementAsync);
+        ReceiveAsync<DeleteFinancialMovementCommand>(HandleDeleteFinancialMovementAsync);
     }
 
     private async Task HandleCreateAsync(CreateAccountCommand cmd)
@@ -163,23 +165,22 @@ public class AccountActor : ReceiveActor, IWithUnboundedStash
 
     private async Task HandleAddFinancialMovementAsync(AddFinancialMovementCommand cmd)
     {
-        using var scope = _serviceProvider.CreateScope();
+        // Reuse the SubCategory/PaymentMethod instances already hanging off _account (loaded via
+        // AutoInclude on AccountSubCategory.SubCategory / AccountPaymentMethod.PaymentMethod)
+        // instead of fetching separate copies. AddFinancialMovement below requires them to belong
+        // to the account anyway, and fetching separate copies gives EF two different tracked
+        // instances for the same row later, which blows up on save ("cannot track twice").
+        var accountSubCategory = _account!.SubCategories.FirstOrDefault(x => x.SubCategoryId == cmd.SubCategoryId);
+        var accountPaymentMethod = _account.PaymentMethods.FirstOrDefault(x => x.PaymentMethodId == cmd.PaymentMethodId);
 
-        var repo = scope.ServiceProvider.GetRequiredService<ICommandsAccountRepository>();
-        var subCategoryRepo = scope.ServiceProvider.GetRequiredService<ICommandsSubCategoryRepository>();
-        var paymentMethodRepo = scope.ServiceProvider.GetRequiredService<ICommandsPaymentMethodRepository>();
-
-        var subCategory = await subCategoryRepo.GetByIdAsync(cmd.SubCategoryId, cmd.CancellationToken);
-        var paymentMethod = await paymentMethodRepo.GetByIdAsync(cmd.PaymentMethodId, cmd.CancellationToken);
-
-        if (subCategory == null || paymentMethod == null)
+        if (accountSubCategory == null || accountPaymentMethod == null)
         {
             var errors = new List<Notification>();
 
-            if (subCategory == null)
+            if (accountSubCategory == null)
                 errors.Add(new(nameof(cmd.SubCategoryId), "SubCategory not found.", AccountErrorCode.FinancialMovementSubCategoryNotFound));
 
-            if (paymentMethod == null)
+            if (accountPaymentMethod == null)
                 errors.Add(new(nameof(cmd.PaymentMethodId), "PaymentMethod not found.", AccountErrorCode.FinancialMovementPaymentMethodNotFound));
 
             Sender.Tell((DomainResult.Failure(errors: errors), _account));
@@ -189,9 +190,9 @@ public class AccountActor : ReceiveActor, IWithUnboundedStash
         var (movementResult, movement) = FinancialMovement.New(
             cmd.Date,
             cmd.Description,
-            subCategory,
-            paymentMethod,
-            _account!,
+            accountSubCategory.SubCategory,
+            accountPaymentMethod.PaymentMethod,
+            _account,
             cmd.Value,
             cmd.Status);
 
@@ -204,9 +205,166 @@ public class AccountActor : ReceiveActor, IWithUnboundedStash
         var result = _account!.AddFinancialMovement(movement, cmd.CurrentUser.UserId);
 
         if (result.IsSuccess && _account.Events.Count > 0)
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var repo = scope.ServiceProvider.GetRequiredService<ICommandsAccountRepository>();
+
+            await repo.UpsertFinancialMovement(movement, cmd.CancellationToken);
             await repo.PersistAsync(_account, cmd.CancellationToken);
+        }
 
         Sender.Tell((result, _account));
+    }
+
+    private async Task HandleEditFinancialMovementAsync(EditFinancialMovementCommand cmd)
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var repo = scope.ServiceProvider.GetRequiredService<ICommandsAccountRepository>();
+
+        var movement = await repo.GetFinancialMovementByIdAsync(cmd.FinancialMovementId, cmd.CancellationToken);
+
+        if (movement == null || movement.AccountId != _account!.Id)
+        {
+            var notFound = DomainResult.Failure(errors: new List<Notification>
+            {
+                new(nameof(cmd.FinancialMovementId), "Financial movement not found.", AccountErrorCode.FinancialMovementNotFound),
+            });
+
+            Sender.Tell((notFound, (FinancialMovement?)null));
+            return;
+        }
+
+        // Same lookup as HandleAddFinancialMovementAsync: reuse the SubCategory/PaymentMethod
+        // instances already hanging off _account instead of fetching separate tracked copies.
+        var accountSubCategory = _account.SubCategories.FirstOrDefault(x => x.SubCategoryId == cmd.SubCategoryId);
+        var accountPaymentMethod = _account.PaymentMethods.FirstOrDefault(x => x.PaymentMethodId == cmd.PaymentMethodId);
+
+        if (accountSubCategory == null || accountPaymentMethod == null)
+        {
+            var errors = new List<Notification>();
+
+            if (accountSubCategory == null)
+                errors.Add(new(nameof(cmd.SubCategoryId), "SubCategory not found.", AccountErrorCode.FinancialMovementSubCategoryNotFound));
+
+            if (accountPaymentMethod == null)
+                errors.Add(new(nameof(cmd.PaymentMethodId), "PaymentMethod not found.", AccountErrorCode.FinancialMovementPaymentMethodNotFound));
+
+            Sender.Tell((DomainResult.Failure(errors: errors), (FinancialMovement?)null));
+            return;
+        }
+
+        var monthChanged = movement.Date.Year != cmd.Date.Year || movement.Date.Month != cmd.Date.Month;
+        var typeChanged = movement.Type != accountSubCategory.SubCategory.Type;
+
+        DomainResult result;
+        FinancialMovement? output;
+
+        if (monthChanged || typeChanged)
+        {
+            // The CashFlow projection buckets by account/month/type, so a movement that crosses
+            // either boundary can't be adjusted in place: pull it out of its current bucket
+            // (soft-delete + Removed event) and drop a brand new movement into the new one
+            // (Added event), instead of trying to move value between two different rows.
+            result = _account.RemoveFinancialMovement(movement, cmd.CurrentUser.UserId);
+
+            if (result.IsFailure)
+            {
+                Sender.Tell((result, (FinancialMovement?)null));
+                return;
+            }
+
+            _ = movement.SoftDelete();
+
+            var (createResult, newMovement) = FinancialMovement.New(
+                cmd.Date,
+                cmd.Description,
+                accountSubCategory.SubCategory,
+                accountPaymentMethod.PaymentMethod,
+                _account,
+                cmd.Value,
+                cmd.Status);
+
+            if (newMovement == null)
+            {
+                Sender.Tell((createResult, (FinancialMovement?)null));
+                return;
+            }
+
+            result = _account.AddFinancialMovement(newMovement, cmd.CurrentUser.UserId);
+
+            if (result.IsSuccess)
+            {
+                await repo.UpsertFinancialMovement(movement, cmd.CancellationToken);
+                await repo.UpsertFinancialMovement(newMovement, cmd.CancellationToken);
+                await repo.PersistAsync(_account, cmd.CancellationToken);
+            }
+
+            output = result.IsSuccess ? newMovement : null;
+        }
+        else
+        {
+            var previousValue = movement.Value;
+            var previousStatus = movement.Status;
+
+            result = movement.Edit(
+                cmd.Date,
+                cmd.Description,
+                accountSubCategory.SubCategory,
+                accountPaymentMethod.PaymentMethod,
+                cmd.Value,
+                cmd.Status);
+
+            if (result.IsSuccess)
+            {
+                result = _account.EditFinancialMovement(movement, previousValue, previousStatus, cmd.CurrentUser.UserId);
+            }
+
+            if (result.IsSuccess)
+            {
+                try
+                {
+                    await repo.UpsertFinancialMovement(movement, cmd.CancellationToken);
+                    await repo.PersistAsync(_account, cmd.CancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            }
+
+            output = result.IsSuccess ? movement : null;
+        }
+
+        Sender.Tell((result, output));
+    }
+
+    private async Task HandleDeleteFinancialMovementAsync(DeleteFinancialMovementCommand cmd)
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var repo = scope.ServiceProvider.GetRequiredService<ICommandsAccountRepository>();
+
+        var movement = await repo.GetFinancialMovementByIdAsync(cmd.FinancialMovementId, cmd.CancellationToken);
+
+        if (movement == null || movement.AccountId != _account!.Id)
+        {
+            var notFound = DomainResult.Failure(errors: new List<Notification>
+            {
+                new(nameof(cmd.FinancialMovementId), "Financial movement not found.", AccountErrorCode.FinancialMovementNotFound),
+            });
+
+            Sender.Tell((notFound, (FinancialMovement?)null));
+            return;
+        }
+
+        var result = _account.RemoveFinancialMovement(movement, cmd.CurrentUser.UserId);
+
+        if (result.IsSuccess)
+        {
+            await repo.UpsertFinancialMovement(movement, cmd.CancellationToken);
+            await repo.PersistAsync(_account, cmd.CancellationToken);
+        }
+
+        Sender.Tell((result, result.IsSuccess ? movement : null));
     }
 
     private record PreLoadAccount(AccountId Id);

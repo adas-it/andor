@@ -2,6 +2,7 @@ using Andor.Accounts.Domain.Accounts.ValueObjects;
 using Andor.Accounts.Domain.CashFlows;
 using Andor.Accounts.Domain.CashFlows.Repositories;
 using Andor.Accounts.Domain.CashFlows.ValueObjects;
+using Andor.Accounts.Domain.FinancialMovements;
 using Andor.Accounts.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -49,6 +50,24 @@ public class CommandsCashFlowRepository(AccountsContext context) : ICommandsCash
     {
         context.Upsert<CashFlow, CashFlowId>(entity);
 
-        await context.SaveChangesAsync(cancellationToken);
+        _ = await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<DateTime?> GetLatestPeriodDateAsync(AccountId accountId, CancellationToken cancellationToken)
+    {
+        var latestCashFlow = await context.Set<FinancialMovement>()
+            .Where(x => x.AccountId == accountId)
+            .OrderByDescending(x => x.Date)
+            .FirstOrDefaultAsync(cancellationToken);
+        return latestCashFlow?.Date;
+    }
+
+    public async Task<DateTime?> GetFirstMovementDateAsync(AccountId accountId, CancellationToken cancellationToken)
+    {
+        var firstCashFlow = await context.Set<FinancialMovement>()
+            .Where(x => x.AccountId == accountId)
+            .OrderBy(x => x.Date)
+            .FirstOrDefaultAsync(cancellationToken);
+        return firstCashFlow?.Date;
     }
 }

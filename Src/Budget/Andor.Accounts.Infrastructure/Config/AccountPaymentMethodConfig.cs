@@ -13,6 +13,8 @@ public class AccountPaymentMethodConfig : IEntityTypeConfiguration<AccountPaymen
         _ = entity.ToTable(nameof(AccountPaymentMethod), "Accounts");
         _ = entity.HasKey(x => new { x.AccountId, x.PaymentMethodId });
 
+        _ = entity.Navigation(x => x.PaymentMethod).AutoInclude();
+
         _ = entity.Property(k => k.AccountId)
             .HasConversion(id => id.Value, value => AccountId.Load(value));
 

@@ -35,21 +35,28 @@ public class AccountConfig : IEntityTypeConfiguration<Account>
             .WithMany()
             .HasForeignKey("CurrencyId")
             .IsRequired();
+        _ = entity.Navigation(x => x.Currency).AutoInclude();
 
         _ = entity.HasMany(x => x.Categories)
             .WithOne(x => x.Account!)
             .HasForeignKey(x => x.AccountId);
-        _ = entity.Navigation(x => x.Categories).UsePropertyAccessMode(PropertyAccessMode.Field);
+        _ = entity.Navigation(x => x.Categories)
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .AutoInclude();
 
         _ = entity.HasMany(x => x.SubCategories)
             .WithOne(x => x.Account)
             .HasForeignKey(x => x.AccountId);
-        _ = entity.Navigation(x => x.SubCategories).UsePropertyAccessMode(PropertyAccessMode.Field);
+        _ = entity.Navigation(x => x.SubCategories)
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .AutoInclude();
 
         _ = entity.HasMany(x => x.PaymentMethods)
             .WithOne(x => x.Account)
             .HasForeignKey(x => x.AccountId);
-        _ = entity.Navigation(x => x.PaymentMethods).UsePropertyAccessMode(PropertyAccessMode.Field);
+        _ = entity.Navigation(x => x.PaymentMethods)
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .AutoInclude();
 
         _ = entity.HasMany(x => x.Members)
             .WithOne(x => x.Account)
@@ -62,7 +69,9 @@ public class AccountConfig : IEntityTypeConfiguration<Account>
         _ = entity.HasMany(x => x.Invites)
             .WithOne()
             .HasForeignKey(x => x.AccountId);
-        _ = entity.Navigation(x => x.Invites).UsePropertyAccessMode(PropertyAccessMode.Field);
+        _ = entity.Navigation(x => x.Invites)
+            .UsePropertyAccessMode(PropertyAccessMode.Field)
+            .AutoInclude();
 
         _ = entity.Ignore(x => x.Events);
     }

@@ -6,15 +6,21 @@ using Andor.Accounts.Infrastructure.Context;
 using Andor.Authorizations.Domain;
 using Andor.Foundation.Application.Queries;
 using Foundation.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace Andor.Accounts.Infrastructure;
 
-public class AccountQueriesRepository :
-        QueryHelper<Account, AccountId>, IAccountQueriesRepository
+public class AccountQueriesRepository : QueryHelper<Account, AccountId>, IAccountQueriesRepository
 {
+    private readonly AccountsContext context;
+    private readonly ICurrentUserService _currentUserService;
+
     public AccountQueriesRepository(AccountsContext context,
-    ICurrentUserService _currentUserService) : base(context)
+        ICurrentUserService currentUserService) : base(context)
     {
+        this.context = context;
+        this._currentUserService = currentUserService;
+
         loggedUserFilter = x => x.Members.Any(z => z.UserId == _currentUserService.GetCurrentUser().UserId);
     }
 
@@ -26,14 +32,18 @@ public class AccountQueriesRepository :
             where = x => ((string)x.Name).Contains(input.Search, StringComparison.CurrentCultureIgnoreCase);
 
         var items = GetManyPaginated(where,
-            input.OrderBy,
-            input.Order,
-            input.Page,
-            input.PerPage,
-            out var total)
+                input.OrderBy,
+                input.Order,
+                input.Page,
+                input.PerPage,
+                out var total)
             .ToList();
 
         return Task.FromResult(new SearchOutput<Account>(input.Page, input.PerPage, total, items!));
     }
 
+    public Task<bool> IsMemberOfAccountAsync(AccountId account, Guid member, CancellationToken cancellationToken)
+        => context.Set<AccountUser>().AnyAsync(
+            x => x.AccountId == account &&
+                 x.UserId == member, cancellationToken);
 }

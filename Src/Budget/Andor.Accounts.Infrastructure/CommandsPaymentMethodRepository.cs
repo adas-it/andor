@@ -12,7 +12,8 @@ public class CommandsPaymentMethodRepository(AccountsContext context) : ICommand
 
     public Task<PaymentMethod?> GetByIdAsync(PaymentMethodId id, CancellationToken cancellationToken)
     {
-        var entity = DbSet.FirstOrDefault(x => x.Id == id);
+        var entity = DbSet
+            .FirstOrDefault(x => x.Id == id);
 
         return Task.FromResult(entity);
     }
@@ -28,6 +29,6 @@ public class CommandsPaymentMethodRepository(AccountsContext context) : ICommand
     {
         context.Upsert<PaymentMethod, PaymentMethodId>(entity);
 
-        await context.SaveChangesAsync(cancellationToken);
+        _ = await context.SaveChangesAsync(cancellationToken);
     }
 }

@@ -18,4 +18,7 @@ public interface ICommandsCashFlowRepository : ICommandRepository<CashFlow, Cash
     /// Returns every existing row strictly after the given period, ordered ascending by period.
     /// </summary>
     Task<IReadOnlyList<CashFlow>> GetAfterAsync(AccountId accountId, int periodKey, CancellationToken cancellationToken);
+
+    Task<DateTime?> GetLatestPeriodDateAsync(AccountId accountId, CancellationToken cancellationToken);
+    Task<DateTime?> GetFirstMovementDateAsync(AccountId accountId, CancellationToken cancellationToken);
 }

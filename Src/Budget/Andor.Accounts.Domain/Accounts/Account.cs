@@ -7,6 +7,7 @@ using Andor.Accounts.Domain.FinancialMovements;
 using Andor.Accounts.Domain.FinancialMovements.Errors;
 using Andor.Accounts.Domain.Invites;
 using Andor.Accounts.Domain.Invites.ValueObjects;
+using Andor.Accounts.Domain.MovementStatuses;
 using Andor.Accounts.Domain.MovementTypes;
 using Andor.Accounts.Domain.PaymentMethods;
 using Andor.Accounts.Domain.PermissionTypes;
@@ -54,6 +55,11 @@ public class Account : AggregateRoot<AccountId>, ISoftDeletableEntity
     /// Gets a value indicating whether the account is softly deleted.
     /// </summary>
     public bool IsDeleted
+    {
+        get; private set;
+    }
+
+    public DateTime LastUpdate
     {
         get; private set;
     }
@@ -744,6 +750,7 @@ public class Account : AggregateRoot<AccountId>, ISoftDeletableEntity
         if (result.IsSuccess)
         {
             RaiseDomainEvent(AccountFinancialMovementAddedDomainEvent.FromAggregator(this, movement!, userId));
+            LastUpdate = DateTime.UtcNow;
         }
 
         return result;
@@ -764,11 +771,67 @@ public class Account : AggregateRoot<AccountId>, ISoftDeletableEntity
             AddNotification(nameof(FinancialMovement), AccountErrorMessages.FinancialMovementCannotBeNull, AccountErrorCode.FinancialMovementCannotBeNull);
         }
 
+        _ = movement.SoftDelete();
+
         var result = Validate();
 
         if (result.IsSuccess)
         {
-            RaiseDomainEvent(AccountFinancialMovementRemovedDomainEvent.FromAggregator(this, userId));
+            RaiseDomainEvent(AccountFinancialMovementRemovedDomainEvent.FromAggregator(this, movement!, userId));
+            LastUpdate = DateTime.UtcNow;
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Edits a financial movement's fields in place, keeping its identity. Only valid when the
+    /// edit keeps the movement in the same month and the same movement type — callers must route
+    /// month/type changes through <see cref="RemoveFinancialMovement"/> + <see cref="AddFinancialMovement"/>
+    /// instead, so the CashFlow projection can move the value across monthly/type buckets.
+    /// </summary>
+    /// <param name="movement">The financial movement, already updated with its new values.</param>
+    /// <param name="previousValue">The movement's value before the edit, used to update the CashFlow projection.</param>
+    /// <param name="previousStatus">The movement's status before the edit, used to update the CashFlow projection.</param>
+    /// <param name="userId">The ID of the user performing the action. Must be an Editor or Owner.</param>
+    /// <returns>A domain result indicating success or failure with validation errors.</returns>
+    public DomainResult EditFinancialMovement(
+        FinancialMovement movement,
+        decimal previousValue,
+        MovementStatus previousStatus,
+        Guid userId)
+    {
+        ValidateEditorOrOwnerPermission(userId);
+
+        if (movement == null)
+        {
+            AddNotification(nameof(FinancialMovement),
+                FinancialMovementErrorMessages.FinancialMovementCannotBeNull,
+                FinancialMovementErrorCode.FinancialMovementCannotBeNull);
+        }
+
+        if (movement != null)
+        {
+            ValidateSubCategoryBelongsToAccount(movement.SubCategoryId, nameof(FinancialMovement));
+            ValidatePaymentMethodBelongsToAccount(
+                movement.PaymentMethodId,
+                nameof(FinancialMovement),
+                FinancialMovementErrorCode.PaymentMethodNotInAccount,
+                FinancialMovementErrorMessages.PaymentMethodNotInAccount);
+        }
+
+        if (movement != null && movement.SubCategory != null)
+        {
+            ValidateCategoryBelongsToAccount(movement.SubCategory.CategoryId, nameof(FinancialMovement));
+        }
+
+        var result = Validate();
+
+        if (result.IsSuccess)
+        {
+            RaiseDomainEvent(AccountFinancialMovementEditedDomainEvent.FromAggregator(
+                this, movement!, previousValue, previousStatus, userId));
+            LastUpdate = DateTime.UtcNow;
         }
 
         return result;

@@ -30,6 +30,7 @@
     <PackageVersion Include="OpenIddict.EntityFrameworkCore" Version="7.5.0" />
     <PackageVersion Include="OpenIddict.Validation.AspNetCore" Version="7.5.0" />
     <PackageVersion Include="OpenIddict.Validation.SystemNetHttp" Version="7.5.0" />
+    <PackageVersion Include="System.Net.WebSockets" Version="4.3.0" />
     <PackageVersion Include="Yarp.ReverseProxy" Version="2.3.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.9" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />

@@ -35,6 +35,6 @@ public class CommandsSubCategoryRepository(AccountsContext context) : ICommandsS
     {
         context.Upsert<SubCategory, SubCategoryId>(entity);
 
-        await context.SaveChangesAsync(cancellationToken);
+        _ = await context.SaveChangesAsync(cancellationToken);
     }
 }

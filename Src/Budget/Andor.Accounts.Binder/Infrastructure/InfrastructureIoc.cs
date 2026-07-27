@@ -34,11 +34,7 @@ internal static class InfrastructureIoc
 
         _ = services.AddScoped<ICommandsPaymentMethodRepository, CommandsPaymentMethodRepository>();
 
-        _ = services.AddScoped<ICommandsFinancialMovementRepository, CommandsFinancialMovementRepository>();
-
         _ = services.AddScoped<ICommandsCashFlowRepository, CommandsCashFlowRepository>();
-
-        _ = services.AddScoped<ICashFlowAppliedMovementRepository, CashFlowAppliedMovementRepository>();
 
         _ = services.AddScoped<IOutboxContextProvider, AccountsOutboxContextProvider>();
 

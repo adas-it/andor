@@ -26,7 +26,8 @@ public class CashFlowConfig : IEntityTypeConfiguration<CashFlow>
         _ = entity.Property(k => k.Month)
             .HasConversion(m => m.Value, value => Month.Load(value));
 
-        _ = entity.Property(k => k.PeriodKey);
+        _ = entity.Property(k => k.PeriodKey)
+            .HasConversion(id => id.Value, value => PeriodKey.Load(value));
 
         _ = entity.HasIndex(k => new { k.AccountId, k.PeriodKey }).IsUnique();
 

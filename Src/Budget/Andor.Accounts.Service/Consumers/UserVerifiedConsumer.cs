@@ -1,5 +1,6 @@
 using Andor.Accounts.Application.Commands;
-using Andor.Accounts.Application.Interfaces;
+using Andor.Accounts.Application.Commands.Contracts;
+using Andor.Accounts.Application.Commands.Interfaces;
 using Andor.Accounts.Domain.Accounts.ValueObjects;
 using Andor.Accounts.Domain.Currencies.Repositories;
 using Andor.Authorizations.Domain;

@@ -1,5 +1,7 @@
+using Andor.Accounts.Application;
 using Andor.Accounts.Binder;
 using Andor.Accounts.Service.Consumers;
+using Andor.Accounts.Service.WebSockets;
 using Andor.Authentication.Jwt;
 using Andor.Authorizations.Application;
 using Andor.Documentation.Swagger;
@@ -16,6 +18,8 @@ builder.AddServiceDefaults();
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddSingleton<IWebSocketMessage, WebSocketMessages>();
 
 // Add services to the container.
 builder.Services.AddProblemDetails();
@@ -42,17 +46,44 @@ builder.Services.Configure<AccountCreatedSubscriptionOptions>(
 
 builder.Services.AddHostedService<AccountCreatedConsumer>();
 
-builder.Services.Configure<FinancialMovementCreatedSubscriptionOptions>(
-    builder.Configuration.GetSection(FinancialMovementCreatedSubscriptionOptions.SectionName));
-
-builder.Services.AddHostedService<FinancialMovementCreatedConsumer>();
-
 builder.Services.Configure<CashFlowProjectionSubscriptionOptions>(
     builder.Configuration.GetSection(CashFlowProjectionSubscriptionOptions.SectionName));
 
 builder.Services.AddHostedService<CashFlowProjectionConsumer>();
 
 var app = builder.Build();
+
+app.UseWebSockets();
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/ws")
+    {
+        if (context.WebSockets.IsWebSocketRequest)
+        {
+            var clientId = context.Request.Query["id"].ToString();
+            var sessionId = context.Request.Query["sessionId"].ToString();
+
+            if (string.IsNullOrEmpty(clientId) is false)
+            {
+                var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                WebSocketMessages.WebSocketConnections.Add(new WebSocketMessages.WebSocketConnection(Guid.Parse(clientId),
+                    Guid.Parse(sessionId),
+                    webSocket));
+
+                await Class.EchoWebSocket(Guid.Parse(clientId), Guid.Parse(sessionId), webSocket, WebSocketMessages.WebSocketConnections);
+            }
+        }
+        else
+        {
+            context.Response.StatusCode = 400;
+        }
+    }
+    else
+    {
+        await next();
+    }
+});
 
 // Configure the HTTP request pipeline.
 app.UseExceptionHandler();

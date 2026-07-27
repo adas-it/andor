@@ -18,10 +18,7 @@ public class CashFlow : Entity<CashFlowId>
     public Year Year { get; private set; }
     public Month Month { get; private set; }
 
-    /// <summary>
-    /// Persisted as Year*100+Month purely to make ordering/uniqueness queries simple.
-    /// </summary>
-    public int PeriodKey { get; private set; }
+    public PeriodKey PeriodKey { get; private set; }
 
     public decimal FinalBalancePreviousMonth { get; private set; }
     public decimal MonthRevenues { get; private set; }
@@ -48,7 +45,7 @@ public class CashFlow : Entity<CashFlowId>
         AccountId = accountId;
         Year = year;
         Month = month;
-        PeriodKey = (year.Value * 100) + month.Value;
+        PeriodKey = PeriodKey.From(year, month);
         FinalBalancePreviousMonth = finalBalancePreviousMonth;
         AccountBalance = finalBalancePreviousMonth;
     }
@@ -115,10 +112,5 @@ public class CashFlow : Entity<CashFlowId>
     private void RecomputeAccountBalance()
     {
         AccountBalance = RevenuesBalance - Expenses;
-    }
-
-    protected override DomainResult Validate()
-    {
-        return base.Validate();
     }
 }

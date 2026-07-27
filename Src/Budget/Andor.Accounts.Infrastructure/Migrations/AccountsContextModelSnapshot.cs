@@ -39,6 +39,9 @@ namespace Andor.Accounts.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(70)
@@ -167,22 +170,6 @@ namespace Andor.Accounts.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("CashFlow", "Accounts");
-                });
-
-            modelBuilder.Entity("Andor.Accounts.Domain.CashFlows.CashFlowAppliedMovement", b =>
-                {
-                    b.Property<Guid>("FinancialMovementId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("AppliedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("CashFlowId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("FinancialMovementId");
-
-                    b.ToTable("CashFlowAppliedMovement", "Accounts");
                 });
 
             modelBuilder.Entity("Andor.Accounts.Domain.Categories.Category", b =>

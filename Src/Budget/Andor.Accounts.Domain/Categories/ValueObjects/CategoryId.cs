@@ -35,4 +35,6 @@ public readonly record struct CategoryId : IId<CategoryId>
     public static implicit operator CategoryId(Guid value) => new(value);
 
     public static implicit operator Guid(CategoryId id) => id.Value;
+
+    public bool HasValue => Value != Guid.Empty;
 }

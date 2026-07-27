@@ -10,4 +10,7 @@
     <ProjectReference Include="..\Andor.Assets.Contracts\Andor.Assets.Contracts.csproj" />
     <ProjectReference Include="..\Andor.Assets.Domain\Andor.Assets.Domain.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Queries\" />
+  </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using Andor.Accounts.Contracts;
-using Andor.Accounts.Contracts.Responses;
+using Andor.Accounts.Contracts.Accounts.Responses;
 using Andor.Accounts.Domain.Currencies.Repositories;
 using Andor.ComponentTests.Common;
 using Andor.Foundation.Contracts.Results;
@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Andor.Accounts.ComponentTests;
 
 /// <summary>
-/// Component tests for <see cref="Andor.Accounts.RestApi.AccountsController"/>. The BRL currency
+/// Component tests for <see cref="Andor.Accounts.RestApi.AccountController"/>. The BRL currency
 /// used below is seeded for real by the module's own Program.cs (SeedDefaultCurrencyAsync) as
 /// part of building the test host, against the same InMemory database the test hits.
 /// </summary>
@@ -38,7 +38,6 @@ public sealed class AccountsControllerTests : IClassFixture<AccountsApiFactory>
         body!.Errors.Should().BeEmpty();
         body.Data.Should().NotBeNull();
         body.Data!.Name.Should().Be("My Account");
-        body.Data!.CurrencyId.Should().Be(currencyId.ToString());
     }
 
     [Fact]

@@ -13,6 +13,8 @@ public class AccountSubCategoryConfig : IEntityTypeConfiguration<AccountSubCateg
         _ = entity.ToTable(nameof(AccountSubCategory), "Accounts");
         _ = entity.HasKey(x => new { x.AccountId, x.SubCategoryId });
 
+        _ = entity.Navigation(x => x.SubCategory).AutoInclude();
+
         _ = entity.Property(k => k.AccountId)
             .HasConversion(id => id.Value, value => AccountId.Load(value));
 
