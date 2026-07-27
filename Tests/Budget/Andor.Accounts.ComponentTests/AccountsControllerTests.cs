@@ -30,14 +30,14 @@ public sealed class AccountsControllerTests : IClassFixture<AccountsApiFactory>
         using var client = _factory.CreateAuthenticatedClient();
 
         var input = new AccountInput("My Account", currencyId.ToString());
-        var response = await client.PostAsJsonAsync("v1/Accounts", input, ComponentTestJson.Options);
+        var response = await client.PostAsJsonAsync("v1/Account", input, ComponentTestJson.Options);
 
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        _ = response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var body = await response.Content.ReadFromJsonAsync<DefaultResponse<AccountOutput>>(ComponentTestJson.Options);
-        body!.Errors.Should().BeEmpty();
-        body.Data.Should().NotBeNull();
-        body.Data!.Name.Should().Be("My Account");
+        _ = body!.Errors.Should().BeEmpty();
+        _ = body.Data.Should().NotBeNull();
+        _ = body.Data!.Name.Should().Be("My Account");
     }
 
     [Fact]
@@ -46,9 +46,9 @@ public sealed class AccountsControllerTests : IClassFixture<AccountsApiFactory>
         using var client = _factory.CreateAuthenticatedClient();
 
         var input = new AccountInput("My Account", Guid.NewGuid().ToString());
-        var response = await client.PostAsJsonAsync("v1/Accounts", input, ComponentTestJson.Options);
+        var response = await client.PostAsJsonAsync("v1/Account", input, ComponentTestJson.Options);
 
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        _ = response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
     [Fact]
@@ -58,9 +58,9 @@ public sealed class AccountsControllerTests : IClassFixture<AccountsApiFactory>
         client.SetAnonymous();
 
         var input = new AccountInput("My Account", Guid.NewGuid().ToString());
-        var response = await client.PostAsJsonAsync("v1/Accounts", input, ComponentTestJson.Options);
+        var response = await client.PostAsJsonAsync("v1/Account", input, ComponentTestJson.Options);
 
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        _ = response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     [Fact]
@@ -69,16 +69,16 @@ public sealed class AccountsControllerTests : IClassFixture<AccountsApiFactory>
         var currencyId = await GetSeededBrlCurrencyIdAsync();
         using var client = _factory.CreateAuthenticatedClient();
 
-        var createResponse = await client.PostAsJsonAsync("v1/Accounts",
+        var createResponse = await client.PostAsJsonAsync("v1/Account",
             new AccountInput("Lookup Account", currencyId.ToString()), ComponentTestJson.Options);
         var created = await createResponse.Content.ReadFromJsonAsync<DefaultResponse<AccountOutput>>(ComponentTestJson.Options);
 
-        var response = await client.GetAsync($"v1/Accounts/{created!.Data!.Id}");
+        var response = await client.GetAsync($"v1/Account/{created!.Data!.Id}");
 
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        _ = response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var body = await response.Content.ReadFromJsonAsync<DefaultResponse<AccountOutput>>(ComponentTestJson.Options);
-        body!.Data!.Id.Should().Be(created.Data!.Id);
+        _ = body!.Data!.Id.Should().Be(created.Data!.Id);
     }
 
     [Fact]
@@ -86,9 +86,9 @@ public sealed class AccountsControllerTests : IClassFixture<AccountsApiFactory>
     {
         using var client = _factory.CreateAuthenticatedClient();
 
-        var response = await client.GetAsync($"v1/Accounts/{Guid.NewGuid()}");
+        var response = await client.GetAsync($"v1/Account/{Guid.NewGuid()}");
 
-        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        _ = response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
 
     private async Task<Guid> GetSeededBrlCurrencyIdAsync()

@@ -7,6 +7,11 @@ public record PaginatedListOutput<T>
     public int Total { get; init; }
     public List<T> Items { get; init; } = [];
 
+    public PaginatedListOutput()
+    {
+
+    }
+
     protected PaginatedListOutput(
         int page,
         int perPage,

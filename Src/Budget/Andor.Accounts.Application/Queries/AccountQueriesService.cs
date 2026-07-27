@@ -28,20 +28,20 @@ public class AccountQueriesService(IAccountQueriesRepository accountQueriesRepos
 
         var result = await _accountQueriesRepository.GetByIdAsync(id, cancellationToken);
 
+        if (result is null || !result.Members.Any(x => x.UserId == UserId))
+        {
+            return ApplicationResult<AccountOutput>.Failure();
+        }
+
         var latestPeriodDate = await _commandsCashFlowRepository.GetLatestPeriodDateAsync(id, cancellationToken);
         var firstMovementDate = await _commandsCashFlowRepository.GetFirstMovementDateAsync(id, cancellationToken);
 
-        var resultAccount = result?.ToAccountOutput();
+        var resultAccount = result.ToAccountOutput();
 
         resultAccount.FirstMovement = firstMovementDate;
         resultAccount.LastMovement = firstMovementDate;
 
-        if (result is not null && result.Members.Any(x => x.UserId == UserId))
-        {
-            return ApplicationResult<AccountOutput>.Success(Data: resultAccount);
-        }
-
-        return ApplicationResult<AccountOutput>.Failure();
+        return ApplicationResult<AccountOutput>.Success(Data: resultAccount);
     }
 
     public async Task<ApplicationResult<ListAccountOutput>> GetListAsync(SearchInput input, CancellationToken cancellationToken)

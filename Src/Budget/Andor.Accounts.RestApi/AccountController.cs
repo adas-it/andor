@@ -4,6 +4,7 @@ using Andor.Accounts.Application.Commands.Interfaces;
 using Andor.Accounts.Application.Interfaces;
 using Andor.Accounts.Contracts.Accounts.Responses;
 using Andor.Accounts.Domain.Accounts.ValueObjects;
+using Andor.Accounts.Domain.Currencies.ValueObjects;
 using Andor.Authorizations.Domain;
 using Andor.Foundation.Api;
 using Andor.Foundation.Application.Queries;
@@ -26,6 +27,30 @@ public class AccountController(IAccountCommandsService commandsService,
     IAccountQueriesService accountQueriesService,
     ICurrentUserService currentUserService) : BaseController
 {
+    [HttpPost]
+    [MapToApiVersion("1.0")]
+    [ProducesResponseType(typeof(DefaultResponse<AccountOutput>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DefaultResponse<object>), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CreateAsync(
+        [FromBody] Andor.Accounts.Contracts.AccountInput input,
+        CancellationToken cancellationToken
+    )
+    {
+        var currentUser = currentUserService.GetCurrentUser();
+
+        var command = new CreateAccountCommand(
+            AccountId.New(),
+            new Name(input.Name),
+            new Description(input.Name),
+            CurrencyId.Load(input.CurrencyId),
+            currentUser,
+            cancellationToken);
+
+        var output = await commandsService.CreateAccountAsync(command);
+
+        return Result(output);
+    }
+
     [HttpPost("{accountId:guid}/seed")]
     [MapToApiVersion("1.0")]
     [ProducesResponseType(typeof(DefaultResponse<CashFlowOutput>), StatusCodes.Status200OK)]
