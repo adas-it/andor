@@ -32,7 +32,7 @@ builder.UseCommunications(builder.Configuration);
 
 builder.Services.UseAuthorizations();
 
-builder.Services.AddHostedService<SignupCodeQueueConsumer>();
+builder.Services.AddHostedService<RequestCommunicationConsumer>();
 
 var app = builder.Build();
 

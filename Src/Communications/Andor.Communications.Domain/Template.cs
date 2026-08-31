@@ -10,10 +10,12 @@ public class Template : Entity<TemplateId>
     public string Value { get; private set; }
     public string ContentLanguage { get; private set; }
     public string Title { get; private set; }
+    public string Subject { get; private set; }
     public Partner Partner { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public RuleId RuleId { get; private set; }
     public Rule? Rule { get; private set; }
+    public bool IsDefault { get; private set; }
 
     protected Template()
     {
@@ -21,6 +23,7 @@ public class Template : Entity<TemplateId>
         Value = string.Empty;
         ContentLanguage = string.Empty;
         Title = string.Empty;
+        Subject = string.Empty;
         Partner = Partner.Undefined;
     }
 
@@ -29,35 +32,43 @@ public class Template : Entity<TemplateId>
         string value,
         string contentLanguage,
         string title,
+        string subject,
         Partner partner,
         DateTime createdAt,
-        Rule rule)
+        Rule rule,
+        bool isDefault)
     {
         Id = id;
         Value = value;
         ContentLanguage = contentLanguage;
         Title = title;
+        Subject = subject;
         Partner = partner;
         CreatedAt = createdAt;
         Rule = rule;
         RuleId = rule.Id;
+        IsDefault = isDefault;
     }
 
     public static (DomainResult, Template?) New(
         string value,
         string contentLanguage,
         string title,
+        string subject,
         Partner partner,
-        Rule rule)
+        Rule rule,
+        bool isDefault)
     {
         var entity = new Template(
             TemplateId.New(),
             value,
             contentLanguage,
             title,
+            subject,
             partner,
             DateTime.UtcNow,
-            rule);
+            rule,
+            isDefault);
 
         var result = entity.Validate();
 

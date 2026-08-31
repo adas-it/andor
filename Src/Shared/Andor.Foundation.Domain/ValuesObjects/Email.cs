@@ -7,19 +7,19 @@ public partial record Email
 {
     private const string EmailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
 
+    public const int MaxLength = 255;
+
     [GeneratedRegex(EmailPattern, RegexOptions.IgnoreCase, matchTimeoutMilliseconds: 1000)]
     private static partial Regex EmailRegex();
 
-    public static Email Empty { get; } = new Email(string.Empty);
+    public static Email Empty { get; } = new Email();
 
-    private Email(string value)
+    private Email()
     {
-        Value = value;
+        Value = string.Empty;
     }
 
-    public string Value { get; }
-
-    public static Email Create(string value)
+    public Email(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
@@ -31,10 +31,12 @@ public partial record Email
             throw new ArgumentException("Invalid email format.", nameof(value));
         }
 
-        return new Email(value);
+        Value = value;
     }
 
+    public string Value { get; }
+
     public static implicit operator string(Email email) => email.Value;
-    public static implicit operator Email(string value) => Create(value);
+    public static implicit operator Email(string value) => new(value);
 }
 

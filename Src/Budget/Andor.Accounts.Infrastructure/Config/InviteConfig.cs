@@ -4,6 +4,7 @@ using Andor.Accounts.Domain.Invites.ValueObjects;
 using Andor.Accounts.Domain.PermissionTypes;
 using Andor.Accounts.Domain.Users.ValueObjects;
 using Andor.Foundation.Domain.ValuesObjects;
+using Andor.Foundation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -28,9 +29,8 @@ public class InviteConfig : IEntityTypeConfiguration<Invite>
                 value => value == null ? (UserId?)null : UserId.Load(value.Value));
 
         _ = entity.Property(k => k.Email)
-            .HasConversion(
-                id => id == null ? null : id.Value,
-                value => value == null ? null : Email.Create(value));
+            .HasConversion(Converters.GetEmailConverter())
+            .HasMaxLength(Email.MaxLength);
 
         _ = entity.Property(k => k.Permission)
             .HasConversion(id => id.Key, value => PermissionType.GetByKey<PermissionType>(value));

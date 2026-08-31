@@ -13,4 +13,7 @@ public static class Converters
 
     public static ValueConverter<Value, string> GetValueConverter()
         => new(id => id!.Value, value => string.IsNullOrEmpty(value) ? Value.Empty : new Value(value));
+
+    public static ValueConverter<Email, string> GetEmailConverter()
+        => new(id => id!.Value, value => string.IsNullOrEmpty(value) ? Email.Empty : new Email(value));
 }

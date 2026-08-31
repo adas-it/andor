@@ -1,14 +1,14 @@
 using Andor.Foundation.Domain.ValuesObjects;
-using Moq;
 using Andor.Users.Domain.Users;
 using Andor.Users.Domain.Users.Errors;
 using Andor.Users.Domain.Users.ValueObjects;
+using Moq;
 
 namespace Andor.Users.Domain.Tests.Users;
 
 internal static class UserFixture
 {
-    public static readonly Email ValidEmail = Email.Create("john.doe@example.com");
+    public static readonly Email ValidEmail = new Email("john.doe@example.com");
     public static readonly string ValidFirstName = "John";
     public static readonly string ValidLastName = "Doe";
     public static readonly Guid ValidCurrencyId = Guid.NewGuid();

@@ -51,6 +51,7 @@ public class TemplateConfig : IEntityTypeConfiguration<Template>
         _ = entity.Property(x => x.Value);
         _ = entity.Property(x => x.ContentLanguage).HasMaxLength(10);
         _ = entity.Property(x => x.Title).HasMaxLength(50);
+        _ = entity.Property(x => x.Subject).HasMaxLength(50);
 
         _ = entity.Property(k => k.Partner)
             .HasConversion(id => id!.Key, value => Partner.GetByKey<Partner>(value));

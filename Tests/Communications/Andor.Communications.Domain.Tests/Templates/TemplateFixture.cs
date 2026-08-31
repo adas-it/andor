@@ -26,7 +26,9 @@ internal static class TemplateFixture
             value ?? "Some template content",
             contentLanguage ?? "en-US",
             title ?? "Valid Title",
+            title ?? "Valid Title",
             partner ?? Partner.InHouse,
-            rule);
+            rule,
+            false);
     }
 }

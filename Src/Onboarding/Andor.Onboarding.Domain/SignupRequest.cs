@@ -21,7 +21,7 @@ public class SignupRequest : AggregateRoot<SignupRequestId>
     /// <summary>
     /// Default parameter less constructor for ORM usage.
     /// </summary>
-    private SignupRequest()
+    protected SignupRequest()
     {
         Name = Name.Empty;
         Email = Email.Empty;

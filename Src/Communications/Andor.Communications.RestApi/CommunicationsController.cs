@@ -56,13 +56,14 @@ public class CommunicationsController(IRuleCommandsService commandsService,
     public async Task<IActionResult> SendNotificationAsync([FromBody] SendNotificationInput input,
         CancellationToken cancellationToken)
     {
-        var command = new SendNotificationCommand(RuleId.Load(input.RuleId),
-            input.RecipientEmail,
-            input.Subject,
-            input.TemplateTitle,
-            input.Values,
-            currentUserService.GetCurrentUser(),
-            cancellationToken);
+        var command = new SendNotificationCommand(
+            Id: RuleId.Load(input.RuleId),
+            RecipientEmail: input.RecipientEmail,
+            TemplateTitle: input.TemplateTitle,
+            ContentLanguage: input.ContentLanguage,
+            Values: input.Values,
+            CurrentUser: currentUserService.GetCurrentUser(),
+            CancellationToken: cancellationToken);
 
         var output = await commandsService.SendNotificationAsync(command);
 

@@ -84,7 +84,7 @@ public class RuleActor : ReceiveActor, IWithUnboundedStash
         {
             foreach (var t in cmd.Templates)
             {
-                var (templateResult, template) = Template.New(t.Value, t.ContentLanguage, t.Title, t.Partner, rule);
+                var (templateResult, template) = Template.New(t.Value, t.ContentLanguage, t.Title, t.Title, t.Partner, rule, false);
 
                 if (templateResult.IsFailure)
                 {
@@ -138,14 +138,14 @@ public class RuleActor : ReceiveActor, IWithUnboundedStash
 
         var partnerManager = scope.ServiceProvider.GetRequiredService<IPartnerManager>();
 
-        var template = _rule.Templates.FirstOrDefault(x => x.Title == cmd.TemplateTitle);
+        var template = _rule.Templates.FirstOrDefault(x => x.Title == cmd.TemplateTitle && x.ContentLanguage == cmd.ContentLanguage);
 
         if (template is null)
         {
             DomainResult notFound = DomainResult.Failure(
                 errors: new[] {
                     new Notification(nameof(cmd.TemplateTitle),
-                        $"Template with title '{cmd.TemplateTitle}' not found in rule '{_id}'",
+                        $"Template with title '{cmd.TemplateTitle}' and content language '{cmd.ContentLanguage}' not found in rule '{_id}'",
                         CommunicationsErrorCodes.RuleNotFound)
                 });
 
@@ -156,7 +156,7 @@ public class RuleActor : ReceiveActor, IWithUnboundedStash
 
         var partner = partnerManager.GetPartnerHandler(template.Partner);
 
-        await partner.SendEmail(cmd.RecipientEmail, cmd.Subject, template, cmd.Values, cmd.CancellationToken);
+        await partner.SendEmail(cmd.RecipientEmail, template, cmd.Values, cmd.CancellationToken);
 
         Sender.Tell((DomainResult.Success(), _rule));
 

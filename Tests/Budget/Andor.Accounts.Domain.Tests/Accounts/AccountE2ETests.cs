@@ -1,7 +1,6 @@
 using Andor.Accounts.Domain.Accounts;
 using Andor.Accounts.Domain.Accounts.DomainEvents;
 using Andor.Accounts.Domain.Accounts.ValueObjects;
-using Andor.Accounts.Domain.Invites.ValueObjects;
 using Andor.Accounts.Domain.MovementTypes;
 using Andor.Accounts.Domain.PermissionTypes;
 using Andor.Accounts.Domain.Tests.Categories;
@@ -161,7 +160,7 @@ public class AccountE2ETests
         var ownerUserId = account!.Members.First().UserId;
 
         // Step 2: Invite Member by Email
-        var inviteEmail = Email.Create("newuser@example.com");
+        var inviteEmail = new Email("newuser@example.com");
         var inviteResult = account.InviteMemberByEmail(inviteEmail, PermissionType.Editor, ownerUserId);
         Assert.True(inviteResult.IsSuccess);
         _ = Assert.Single(account.Invites);

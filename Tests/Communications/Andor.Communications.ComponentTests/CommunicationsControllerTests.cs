@@ -1,8 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
-using Andor.ComponentTests.Common;
 using Andor.Communications.Contracts.Requests;
 using Andor.Communications.Contracts.Responses;
+using Andor.ComponentTests.Common;
 using Andor.Foundation.Contracts.Results;
 
 namespace Andor.Communications.ComponentTests;
@@ -62,14 +62,13 @@ public sealed class CommunicationsControllerTests : IClassFixture<Communications
         using var client = _factory.CreateAuthenticatedClient();
 
         var ruleInput = new CreateRuleInput("password-reset", TypeInformation,
-            [new RuleTemplateInput("Your code is {{code}}", "pt-BR", "reset-title", PartnerInHouse)], false);
+            [new RuleTemplateInput("Your code is {{code}}", "pt-BR", "Reset your password", PartnerInHouse)], false);
 
         var ruleResponse = await client.PostAsJsonAsync("v1/Communications/rules", ruleInput, ComponentTestJson.Options);
         var rule = await ruleResponse.Content.ReadFromJsonAsync<DefaultResponse<RuleOutput>>(ComponentTestJson.Options);
 
         var recipient = $"user-{Guid.NewGuid():N}@example.com";
-        var notificationInput = new SendNotificationInput(rule!.Data!.Id, recipient, "Reset your password",
-            "reset-title", new Dictionary<string, string> { ["{{code}}"] = "123456" });
+        var notificationInput = new SendNotificationInput(rule!.Data!.Id, recipient, "reset-title", "pt-BR", new Dictionary<string, string> { ["{{code}}"] = "123456" });
 
         var response = await client.PostAsJsonAsync("v1/Communications/notifications", notificationInput, ComponentTestJson.Options);
 

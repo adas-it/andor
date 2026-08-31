@@ -1,9 +1,9 @@
 using Andor.Foundation.Domain.ValuesObjects;
 using Andor.Users.Application.Commands;
 using Andor.Users.Application.Interfaces;
+using Andor.Users.Domain.Users.ValueObjects;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Options;
-using Andor.Users.Domain.Users.ValueObjects;
 
 namespace Andor.Users.Service.Consumers;
 
@@ -67,7 +67,7 @@ public sealed class UserVerifiedConsumer : BackgroundService
 
         var command = new CreateUserCommand(
             UserId.Load(message.UserId),
-            Email.Create(message.Email),
+            new Email(message.Email),
             firstName,
             lastName,
             Guid.Empty,

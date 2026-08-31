@@ -6,7 +6,6 @@ namespace Andor.Application.Communications.Services.PartnerHandler;
 public class InHousePartner(ISMTP _smtp) : IPartner
 {
     public async Task SendEmail(string recipientEmail,
-        string subject,
         Template template,
         Dictionary<string, string> values,
         CancellationToken cancellationToken)
@@ -16,6 +15,13 @@ public class InHousePartner(ISMTP _smtp) : IPartner
         if (values is not null && values.Any())
         {
             values.ToList().ForEach(x => body = body.Replace(x.Key, x.Value));
+        }
+
+        var subject = template.Subject;
+
+        if (values is not null && values.Any())
+        {
+            values.ToList().ForEach(x => subject = subject.Replace(x.Key, x.Value));
         }
 
         await _smtp.Handler(recipientEmail, body, subject, cancellationToken);

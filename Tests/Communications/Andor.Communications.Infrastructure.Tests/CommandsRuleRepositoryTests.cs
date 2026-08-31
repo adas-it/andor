@@ -52,7 +52,7 @@ public class CommandsRuleRepositoryTests
     public async Task GetByIdAsync_LoadsTemplatesThroughInclude()
     {
         var rule = await CreateValidRuleAsync();
-        var (_, template) = Template.New("Body", "en-US", "Welcome", Partner.InHouse, rule);
+        var (_, template) = Template.New("Body", "en-US", "Welcome", "Welcome", Partner.InHouse, rule, false);
         rule.Templates.Add(template!);
 
         await new CommandsRuleRepository(CreateContext()).PersistAsync(rule, CancellationToken.None);
@@ -73,7 +73,7 @@ public class CommandsRuleRepositoryTests
         var secondScopeContext = CreateContext();
         var secondScopeRepository = new CommandsRuleRepository(secondScopeContext);
         var loadedRule = await secondScopeRepository.GetByIdAsync(rule.Id, CancellationToken.None);
-        var (_, template) = Template.New("Body", "en-US", "Welcome", Partner.InHouse, loadedRule!);
+        var (_, template) = Template.New("Body", "en-US", "Welcome", "Welcome", Partner.InHouse, loadedRule!, false);
         loadedRule!.Templates.Add(template!);
         await secondScopeRepository.PersistAsync(loadedRule, CancellationToken.None);
 

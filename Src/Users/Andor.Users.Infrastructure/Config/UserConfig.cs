@@ -1,8 +1,8 @@
 using Andor.Foundation.Domain.ValuesObjects;
 using Andor.Foundation.Infrastructure;
+using Andor.Users.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Andor.Users.Domain.Users;
 
 namespace Andor.Users.Infrastructure.Config;
 
@@ -25,8 +25,8 @@ public class UserConfig : IEntityTypeConfiguration<User>
             .HasMaxLength(Name.MaxLength);
 
         _ = entity.Property(k => k.Email)
-            .HasConversion(email => email.Value, value => Email.Create(value))
-            .HasMaxLength(320);
+            .HasConversion(Converters.GetEmailConverter())
+            .HasMaxLength(Email.MaxLength);
 
         _ = entity.Property(k => k.PreferredCurrencyId);
 

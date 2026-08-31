@@ -1,10 +1,10 @@
-using Andor.Users.Domain.Tests.Users;
-using Moq;
 using Andor.Foundation.Domain.ValuesObjects;
+using Andor.Users.Domain.Tests.Users;
 using Andor.Users.Domain.Users;
 using Andor.Users.Domain.Users.DomainEvents;
 using Andor.Users.Domain.Users.Errors;
 using Andor.Users.Domain.Users.ValueObjects;
+using Moq;
 
 namespace Andor.Users.Domain.Tests;
 
@@ -28,7 +28,7 @@ public class UsersUnitTests
     {
         // Arrange
         var userId = UserId.New();
-        var email = Email.Create("jane.doe@example.com");
+        var email = new Email("jane.doe@example.com");
         var firstName = "Jane";
         var lastName = "Doe";
         var currencyId = Guid.NewGuid();
@@ -70,7 +70,7 @@ public class UsersUnitTests
     public async Task NewAsync_DomainEvent_ShouldContainCorrectData()
     {
         // Arrange
-        var email = Email.Create("events@example.com");
+        var email = new Email("events@example.com");
         var firstName = "Event";
         var lastName = "User";
         var currencyId = Guid.NewGuid();
