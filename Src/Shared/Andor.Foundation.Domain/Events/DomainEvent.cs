@@ -6,4 +6,5 @@ public record DomainEvent
     public DateTime EventDate { get; init; } = DateTime.UtcNow;
     public Guid UserId { get; init; }
     public Guid Id { get; init; }
+    public string EventName { get; init; }
 }

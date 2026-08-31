@@ -4,6 +4,7 @@ using Andor.Documentation.Swagger;
 using Andor.Foundation.Binder;
 using Andor.Foundation.ServerServices;
 using Andor.Onboarding.Binder;
+using Andor.Onboarding.Service.Consumers;
 using Andor.ServiceDefaults;
 using Asp.Versioning.ApiExplorer;
 
@@ -30,6 +31,11 @@ builder.UseAkkaModules("AndorOnboardingSystem");
 builder.UseOnboarding(builder.Configuration);
 
 builder.Services.UseAuthorizations();
+
+builder.Services.Configure<UserVerifiedSubscriptionOptions>(
+    builder.Configuration.GetSection(UserVerifiedSubscriptionOptions.SectionName));
+
+builder.Services.AddHostedService<SignupCodeGeneratedConsumer>();
 
 var app = builder.Build();
 

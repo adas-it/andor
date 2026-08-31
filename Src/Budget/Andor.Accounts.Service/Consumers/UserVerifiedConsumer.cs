@@ -1,9 +1,9 @@
-using Andor.Accounts.Application.Commands;
 using Andor.Accounts.Application.Commands.Contracts;
 using Andor.Accounts.Application.Commands.Interfaces;
 using Andor.Accounts.Domain.Accounts.ValueObjects;
 using Andor.Accounts.Domain.Currencies.Repositories;
 using Andor.Authorizations.Domain;
+using Andor.Foundation.Domain.Events;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Options;
 
@@ -68,6 +68,17 @@ public sealed class UserVerifiedConsumer : BackgroundService
 
     private async Task ProcessMessageAsync(ProcessMessageEventArgs args)
     {
+        var domainEvent = args.Message.Body.ToObjectFromJson<DomainEvent>();
+
+        if (domainEvent.EventName != "abroba")
+        {
+            _logger.LogDebug("Received unexpected event type: {EventType}.", domainEvent.EventName);
+
+            await args.CompleteMessageAsync(args.Message, args.CancellationToken);
+            return;
+        }
+        ;
+
         var message = args.Message.Body.ToObjectFromJson<UserVerifiedMessage>();
 
         using var scope = _scopeFactory.CreateScope();
@@ -94,7 +105,7 @@ public sealed class UserVerifiedConsumer : BackgroundService
             currentUser,
             args.CancellationToken);
 
-        await commandsService.CreateAccountAsync(command);
+        _ = await commandsService.CreateAccountAsync(command);
 
         await args.CompleteMessageAsync(args.Message, args.CancellationToken);
     }

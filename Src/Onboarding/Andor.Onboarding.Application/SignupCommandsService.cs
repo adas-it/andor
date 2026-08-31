@@ -38,11 +38,11 @@ public class SignupCommandsService(ActorRegistry registry, ICommandsSignupReques
 
         if (signupRequest == null)
         {
-            response.AddError(SignupErrors.SignupNotFound());
+            _ = response.AddError(SignupErrors.SignupNotFound());
             return response;
         }
 
-        // The generic user-type parameter is never dereferenced by PasswordHasher<T>'s internal
+        // The generic user-type parameter is never de-referenced by PasswordHasher<T>'s internal
         // logic, so it's safe to hash here without depending on Identity's ApplicationUser type.
         // Only the resulting hash — never the raw password — flows through the command/event.
         var passwordHash = new PasswordHasher<object>().HashPassword(null!, password);

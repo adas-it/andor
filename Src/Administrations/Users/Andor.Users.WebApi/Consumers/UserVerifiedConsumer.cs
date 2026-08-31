@@ -1,3 +1,4 @@
+using Andor.Foundation.Domain.Events;
 using Azure.Messaging.ServiceBus;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -50,6 +51,17 @@ public sealed class UserVerifiedConsumer : BackgroundService
 
     private async Task ProcessMessageAsync(ProcessMessageEventArgs args)
     {
+        var domainEvent = args.Message.Body.ToObjectFromJson<DomainEvent>();
+
+        if (domainEvent.EventName != "abroba")
+        {
+            _logger.LogDebug("Received unexpected event type: {EventType}.", domainEvent.EventName);
+
+            await args.CompleteMessageAsync(args.Message, args.CancellationToken);
+            return;
+        }
+        ;
+
         var message = args.Message.Body.ToObjectFromJson<UserVerifiedMessage>();
 
         using var scope = _scopeFactory.CreateScope();
@@ -59,7 +71,7 @@ public sealed class UserVerifiedConsumer : BackgroundService
 
         if (!exists)
         {
-            db.Users.Add(new ApplicationUser
+            _ = db.Users.Add(new ApplicationUser
             {
                 Id = message.UserId,
                 UserName = message.Email,
@@ -67,7 +79,7 @@ public sealed class UserVerifiedConsumer : BackgroundService
                 Group = "User",
             });
 
-            await db.SaveChangesAsync(args.CancellationToken);
+            _ = await db.SaveChangesAsync(args.CancellationToken);
         }
 
         await args.CompleteMessageAsync(args.Message, args.CancellationToken);

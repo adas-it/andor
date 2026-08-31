@@ -19,4 +19,8 @@
     <Folder Include="Views\Connect\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\Andor.Foundation.Domain\Andor.Foundation.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

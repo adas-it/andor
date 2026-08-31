@@ -10,6 +10,7 @@ public sealed record SignupVerifiedDomainEvent : DomainEvent
 
     public static SignupVerifiedDomainEvent FromSignupRequest(SignupRequest request, Guid userId, string passwordHash) => new()
     {
+        EventName = nameof(SignupVerifiedDomainEvent),
         Id = request.Id.Value,
         UserId = userId,
         Name = request.Name,
