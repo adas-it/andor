@@ -13,7 +13,7 @@ public class OnboardingValidator
         List<Notification> notifications = [];
 
         AddNotification(entity.Name.Value.NotNullOrEmptyOrWhiteSpace(), notifications);
-        AddNotification(entity.Email.NotNullOrEmptyOrWhiteSpace(), notifications);
+        AddNotification(entity.Email.Value.NotNullOrEmptyOrWhiteSpace(), notifications);
 
         await DefaultValidationsAsync(entity, notifications, cancellationToken);
 

@@ -8,6 +8,7 @@ public static class DefaultsErrorsMessages
     public static readonly string Date0CannotBeBeforeDate1 = "{0} has to be greater than {1}.";
     public static readonly string InvalidUrl = "The field {0} has to have a valid Url.";
     public static readonly string InvalidGuid = "The value provided is not a valid GUID.";
+    public static readonly string InvalidEmail = "The value provided is not a valid Email.";
 
     /// <summary>
     /// ErrorsMessages.BetweenLength.GetMessage(nameof(Name),3,100)}

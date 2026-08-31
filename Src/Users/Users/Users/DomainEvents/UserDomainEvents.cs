@@ -1,6 +1,6 @@
 ﻿using Andor.Foundation.Domain.Events;
 
-namespace Users.Users.DomainEvents;
+namespace Andor.Users.Domain.Users.DomainEvents;
 
 public record UserCreatedDomainEvent : DomainEvent
 {
@@ -17,7 +17,7 @@ public record UserCreatedDomainEvent : DomainEvent
             Id = entity.Id,
             FirstName = entity.FirstName,
             LastName = entity.LastName,
-            Email = entity.Email.Address,
+            Email = entity.Email.Value,
             PreferredCurrencyId = (Guid)entity.PreferredCurrencyId,
             PreferredLanguageId = (Guid)entity.PreferredLanguageId
         };

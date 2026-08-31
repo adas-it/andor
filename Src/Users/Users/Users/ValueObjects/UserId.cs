@@ -1,7 +1,7 @@
 ﻿using Andor.Foundation.Domain.Validation;
 using Andor.Foundation.Domain.ValuesObjects;
 
-namespace Users.Users.ValueObjects;
+namespace Andor.Users.Domain.Users.ValueObjects;
 
 public readonly record struct UserId(Guid Value) : IId<UserId>
 {

@@ -1,6 +1,6 @@
 using Andor.Domain.Common.ValuesObjects;
 
-namespace Users.Users.Errors;
+namespace Andor.Users.Domain.Users.Errors;
 
 public static class UserErrorMessages
 {

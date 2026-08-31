@@ -48,8 +48,8 @@ public class SignupRequestNewAsyncTests
         // Assert
         Assert.True(result.IsSuccess);
         Assert.NotNull(signupRequest);
-        Assert.Equal(10, signupRequest.VerificationCode.Length);
-        Assert.True(long.TryParse(signupRequest.VerificationCode, out _));
+        Assert.Equal(10, signupRequest.VerificationCode.Value.Length);
+        Assert.True(long.TryParse(signupRequest.VerificationCode.Value, out _));
     }
 
     [Fact]

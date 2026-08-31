@@ -3,6 +3,7 @@ using Andor.Accounts.Domain.Invites;
 using Andor.Accounts.Domain.Invites.ValueObjects;
 using Andor.Accounts.Domain.PermissionTypes;
 using Andor.Accounts.Domain.Users.ValueObjects;
+using Andor.Foundation.Domain.ValuesObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

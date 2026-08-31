@@ -1,6 +1,7 @@
+﻿
 using System.Text.RegularExpressions;
 
-namespace Andor.Accounts.Domain.Invites.ValueObjects;
+namespace Andor.Foundation.Domain.ValuesObjects;
 
 public partial record Email
 {
@@ -8,6 +9,8 @@ public partial record Email
 
     [GeneratedRegex(EmailPattern, RegexOptions.IgnoreCase, matchTimeoutMilliseconds: 1000)]
     private static partial Regex EmailRegex();
+
+    public static Email Empty { get; } = new Email(string.Empty);
 
     private Email(string value)
     {
@@ -34,3 +37,4 @@ public partial record Email
     public static implicit operator string(Email email) => email.Value;
     public static implicit operator Email(string value) => Create(value);
 }
+

@@ -1,9 +1,9 @@
 using Andor.Foundation.Domain.ValuesObjects;
-using Users.Users.Errors;
-using Users.Users.Repositories;
-using Users.Users.ValueObjects;
+using Andor.Users.Domain.Users.Errors;
+using Andor.Users.Domain.Users.Repositories;
+using Andor.Users.Domain.Users.ValueObjects;
 
-namespace Users.Users;
+namespace Andor.Users.Domain.Users;
 
 public class UserValidator(ICommandsUserRepository userRepository)
     : DefaultValidator<User, UserId>, IUserValidator

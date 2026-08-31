@@ -79,7 +79,13 @@
   </Folder>
   <Folder Name="/Src/Tasks/" />
   <Folder Name="/Src/Users/">
-    <Project Path="Src/Users/Users/Users.csproj" Id="3641a899-9a4d-419b-a4db-807c3f61f128" />
+    <Project Path="Src/Users/Andor.Users.Application/Andor.Users.Application.csproj" />
+    <Project Path="Src/Users/Andor.Users.Binder/Andor.Users.Binder.csproj" />
+    <Project Path="Src/Users/Andor.Users.Contracts/Andor.Users.Contracts.csproj" />
+    <Project Path="Src/Users/Andor.Users.Infrastructure/Andor.Users.Infrastructure.csproj" />
+    <Project Path="Src/Users/Andor.Users.RestApi/Andor.Users.RestApi.csproj" />
+    <Project Path="Src/Users/Andor.Users.Service/Andor.Users.Service.csproj" />
+    <Project Path="Src/Users/Users/Andor.Users.Domain.csproj" Id="3641a899-9a4d-419b-a4db-807c3f61f128" />
   </Folder>
   <Folder Name="/Tests/">
     <File Path="Tests/Directory.Build.props" />

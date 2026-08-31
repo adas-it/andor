@@ -1,7 +1,7 @@
 using Andor.Foundation.Domain.Validation;
-using Users.Users.ValueObjects;
+using Andor.Users.Domain.Users.ValueObjects;
 
-namespace Users.Users;
+namespace Andor.Users.Domain.Users;
 
 public interface IUserValidator : IDefaultValidator<User, UserId>
 {

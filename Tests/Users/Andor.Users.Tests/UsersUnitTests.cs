@@ -1,10 +1,10 @@
-﻿using Andor.Users.Domain.Tests.Users;
+using Andor.Users.Domain.Tests.Users;
 using Moq;
-using System.Net.Mail;
-using Users.Users;
-using Users.Users.DomainEvents;
-using Users.Users.Errors;
-using Users.Users.ValueObjects;
+using Andor.Foundation.Domain.ValuesObjects;
+using Andor.Users.Domain.Users;
+using Andor.Users.Domain.Users.DomainEvents;
+using Andor.Users.Domain.Users.Errors;
+using Andor.Users.Domain.Users.ValueObjects;
 
 namespace Andor.Users.Domain.Tests;
 
@@ -28,7 +28,7 @@ public class UsersUnitTests
     {
         // Arrange
         var userId = UserId.New();
-        var email = new MailAddress("jane.doe@example.com");
+        var email = Email.Create("jane.doe@example.com");
         var firstName = "Jane";
         var lastName = "Doe";
         var currencyId = Guid.NewGuid();
@@ -70,7 +70,7 @@ public class UsersUnitTests
     public async Task NewAsync_DomainEvent_ShouldContainCorrectData()
     {
         // Arrange
-        var email = new MailAddress("events@example.com");
+        var email = Email.Create("events@example.com");
         var firstName = "Event";
         var lastName = "User";
         var currencyId = Guid.NewGuid();
@@ -87,7 +87,7 @@ public class UsersUnitTests
         // Assert
         Assert.NotNull(user);
         var domainEvent = Assert.Single(user.Events.OfType<UserCreatedDomainEvent>());
-        Assert.Equal(email.Address, domainEvent.Email);
+        Assert.Equal(email.Value, domainEvent.Email);
         Assert.Equal(firstName, domainEvent.FirstName);
         Assert.Equal(lastName, domainEvent.LastName);
         Assert.Equal(currencyId, domainEvent.PreferredCurrencyId);

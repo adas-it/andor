@@ -1,16 +1,14 @@
-﻿using System.Net.Mail;
-using Andor.Foundation.Domain.SeedWork;
+﻿using Andor.Foundation.Domain.SeedWork;
 using Andor.Foundation.Domain.ValuesObjects;
-using Users.Users.DomainEvents;
-using Users.Users.ValueObjects;
+using Andor.Users.Domain.Users.ValueObjects;
 
-namespace Users.Users;
+namespace Andor.Users.Domain.Users;
 
-public sealed class User : AggregateRoot<UserId>
+public class User : AggregateRoot<UserId>
 {
     public Name FirstName { get; private set; }
     public Name LastName { get; private set; }
-    public MailAddress Email { get; private set; }
+    public Email Email { get; private set; }
     public Guid PreferredCurrencyId { get; private set; }
     public Guid PreferredLanguageId { get; private set; }
 
@@ -18,12 +16,14 @@ public sealed class User : AggregateRoot<UserId>
     {
         FirstName = Name.Empty;
         LastName = Name.Empty;
-        Email = default!;
+        Email = Email.Empty;
+        PreferredCurrencyId = Guid.Empty;
+        PreferredLanguageId = Guid.Empty;
     }
 
     private User(
         UserId id,
-        MailAddress email,
+        Email email,
         Name firstName,
         Name lastName,
         Guid preferredCurrencyId,
@@ -39,7 +39,7 @@ public sealed class User : AggregateRoot<UserId>
 
     public static async Task<(DomainResult, User?)> NewAsync(
         UserId userId,
-        MailAddress email,
+        Email email,
         string firstName,
         string lastName,
         Guid preferredCurrencyId,
@@ -69,7 +69,7 @@ public sealed class User : AggregateRoot<UserId>
             return (result, null);
         }
 
-        entity.RaiseDomainEvent(UserCreatedDomainEvent.FromAggregateRoot(entity));
+        //entity.RaiseDomainEvent(UserCreatedDomainEvent.FromAggregateRoot(entity));
 
         return (result, entity);
     }
