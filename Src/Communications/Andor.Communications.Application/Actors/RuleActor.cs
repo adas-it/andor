@@ -38,15 +38,18 @@ public class RuleActor : ReceiveActor, IWithUnboundedStash
     {
         ReceiveAsync<PreLoadRule>(async _ =>
         {
-            using var scope = _serviceProvider.CreateScope();
-            var repo = scope.ServiceProvider.GetRequiredService<ICommandsRuleRepository>();
+            try
+            {
+                using var scope = _serviceProvider.CreateScope();
+                var repo = scope.ServiceProvider.GetRequiredService<ICommandsRuleRepository>();
 
-            var result = await repo.GetByIdAsync(_id, CancellationToken.None);
-
-            if (result == null)
-                return;
-
-            _rule = result;
+                _rule = await repo.GetByIdAsync(_id, CancellationToken.None);
+            }
+            catch
+            {
+                // The rule may not be loadable here (e.g. no user/tenant context in this
+                // AsyncLocal flow). It will be lazily loaded when a command arrives.
+            }
 
             Become(Ready);
             Stash!.UnstashAll();
@@ -119,6 +122,17 @@ public class RuleActor : ReceiveActor, IWithUnboundedStash
 
     private async Task HandleSendNotificationAsync(SendNotificationCommand cmd)
     {
+        using var scope = _serviceProvider.CreateScope();
+
+        var userContext = scope.ServiceProvider.GetRequiredService<IUserContextAccessor>();
+        userContext.CurrentUser = cmd.CurrentUser;
+
+        if (_rule is null)
+        {
+            var repo = scope.ServiceProvider.GetRequiredService<ICommandsRuleRepository>();
+            _rule = await repo.GetByIdAsync(_id, cmd.CancellationToken);
+        }
+
         if (_rule is null)
         {
             DomainResult notFound = DomainResult.Failure(
@@ -128,13 +142,9 @@ public class RuleActor : ReceiveActor, IWithUnboundedStash
                 });
 
             Sender.Tell((notFound, (Rule?)null));
+            userContext.CurrentUser = null;
             return;
         }
-
-        using var scope = _serviceProvider.CreateScope();
-
-        var userContext = scope.ServiceProvider.GetRequiredService<IUserContextAccessor>();
-        userContext.CurrentUser = cmd.CurrentUser;
 
         var partnerManager = scope.ServiceProvider.GetRequiredService<IPartnerManager>();
 

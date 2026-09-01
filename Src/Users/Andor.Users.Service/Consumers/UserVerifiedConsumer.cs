@@ -1,3 +1,4 @@
+using Andor.Foundation.Domain.Events;
 using Andor.Foundation.Domain.ValuesObjects;
 using Andor.Users.Application.Commands;
 using Andor.Users.Application.Interfaces;
@@ -58,6 +59,17 @@ public sealed class UserVerifiedConsumer : BackgroundService
 
     private async Task ProcessMessageAsync(ProcessMessageEventArgs args)
     {
+        var domainEvent = args.Message.Body.ToObjectFromJson<DomainEvent>();
+
+        if (domainEvent.EventName != "SignupVerifiedDomainEvent")
+        {
+            _logger.LogDebug("Received unexpected event type: {EventType}.", domainEvent.EventName);
+
+            await args.CompleteMessageAsync(args.Message, args.CancellationToken);
+            return;
+        }
+        ;
+
         var message = args.Message.Body.ToObjectFromJson<UserVerifiedMessage>();
 
         using var scope = _scopeFactory.CreateScope();

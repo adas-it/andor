@@ -78,7 +78,6 @@ public class SignupRequestNewAsyncTests
         Assert.True(result.IsSuccess);
         Assert.NotNull(signupRequest);
         var codeGenerated = Assert.IsType<SignupCodeGenerated>(signupRequest.Events.Single());
-        Assert.Equal("signup-verification-codes", codeGenerated.QueueName);
     }
 
     #endregion

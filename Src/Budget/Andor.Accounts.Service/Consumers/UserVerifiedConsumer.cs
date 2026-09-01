@@ -70,7 +70,7 @@ public sealed class UserVerifiedConsumer : BackgroundService
     {
         var domainEvent = args.Message.Body.ToObjectFromJson<DomainEvent>();
 
-        if (domainEvent.EventName != "abroba")
+        if (domainEvent.EventName != "SignupVerifiedDomainEvent")
         {
             _logger.LogDebug("Received unexpected event type: {EventType}.", domainEvent.EventName);
 

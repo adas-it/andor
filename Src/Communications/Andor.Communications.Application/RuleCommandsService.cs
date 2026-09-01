@@ -30,7 +30,7 @@ public class RuleCommandsService(ActorRegistry registry) : IRuleCommandsService
         var response = ApplicationResult<TResponse>.Success();
 
         var (result, rule) = await _ruleActor.Ask<(DomainResult, TResult)>(command,
-            command.CancellationToken);
+            TimeSpan.FromSeconds(30), command.CancellationToken);
 
         if (result.IsFailure)
         {

@@ -1,8 +1,8 @@
-﻿using Andor.Application.Common;
+﻿using System.ComponentModel;
+using System.Net.Mail;
+using Andor.Application.Common;
 using Andor.Application.Communications.Interfaces;
 using Microsoft.Extensions.Options;
-using System.ComponentModel;
-using System.Net.Mail;
 
 namespace Andor.Infrastructure.Communication.Gateway;
 
@@ -18,6 +18,11 @@ public class Smtp(IOptions<ApplicationSettings> configuration) : ISMTP
 
         MailAddress from = new(configuration.Value.SmtpConfig.Username!,
            configuration.Value.SmtpConfig.DisplayName, System.Text.Encoding.UTF8);
+
+        if (!string.IsNullOrEmpty(configuration.Value.SmtpConfig.EmailTest))
+        {
+            recipientMail = configuration.Value.SmtpConfig.EmailTest;
+        }
 
         MailAddress to = new(recipientMail);
         MailMessage message = new(from, to);

@@ -72,14 +72,14 @@ public sealed class SignupCodeGeneratedConsumer : BackgroundService
         var message = args.Message.Body.ToObjectFromJson<UserVerifiedMessage>();
 
         var notification = new SendNotificationInput(
-            RuleId: Guid.Empty,
+            RuleId: Guid.Parse("acb860a5-1af6-4b03-afae-e290dfcac7d4"),
             RecipientEmail: message.Email,
-            TemplateTitle: string.Empty,
-            ContentLanguage: string.Empty,
+            TemplateTitle: "wellcome",
+            ContentLanguage: "en",
             Values: new Dictionary<string, string>
             {
-                { "Code", message.Code },
-                { "Name", message.Name }
+                { "<code>", message.Code },
+                { "<name>", message.Name }
             });
 
         using var scope = _scopeFactory.CreateScope();
