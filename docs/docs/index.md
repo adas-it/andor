@@ -9,3 +9,4 @@ Bem-vindo à documentação dos seus domínios para controle pessoal.
 - [Personal Assets](personal-assets.md)
 - [Goals](goals.md)
 - [Onboarding](onboarding.md)
+- [Communications](communications.md)

@@ -3,6 +3,7 @@ using Akka.Hosting;
 using Andor.Authorizations.Domain;
 using Andor.Foundation.Contracts.Results;
 using Andor.Foundation.Domain.ValuesObjects;
+using Andor.Foundation.PasswordHasher;
 using Andor.Onboarding.Application.Actors;
 using Andor.Onboarding.Application.Commands;
 using Andor.Onboarding.Application.Interfaces;
@@ -10,11 +11,10 @@ using Andor.Onboarding.Contracts.Responses;
 using Andor.Onboarding.Domain;
 using Andor.Onboarding.Domain.Repositories;
 using Andor.Onboarding.Domain.ValueObjects;
-using Microsoft.AspNetCore.Identity;
 
 namespace Andor.Onboarding.Application;
 
-public class SignupCommandsService(ActorRegistry registry, ICommandsSignupRequestRepository repository) : ISignupCommandsService
+public class SignupCommandsService(ActorRegistry registry, ICommandsSignupRequestRepository repository, IPasswordHasher passwordHasher) : ISignupCommandsService
 {
     private readonly IActorRef _signupActor = registry.Get<SignupManagerActor>();
 
@@ -42,10 +42,7 @@ public class SignupCommandsService(ActorRegistry registry, ICommandsSignupReques
             return response;
         }
 
-        // The generic user-type parameter is never de-referenced by PasswordHasher<T>'s internal
-        // logic, so it's safe to hash here without depending on Identity's ApplicationUser type.
-        // Only the resulting hash — never the raw password — flows through the command/event.
-        var passwordHash = new PasswordHasher<object>().HashPassword(null!, password);
+        var passwordHash = passwordHasher.HashPassword(password);
 
         var command = new VerifySignupCommand(signupRequest.Id, code, passwordHash, currentUser, cancellationToken);
 

@@ -1,48 +1,64 @@
 # Onboarding Domain
 
 <details>
-  <summary>Diagrama de Sequência - Fluxo de Cadastro (Signup)</summary>
+  <summary>Sequence Diagram - Signup Flow</summary>
 
-![Onboarding Signup Flow](https://kroki.io/plantuml/svg/eNq9VE1vEzEQve-vGPWUSC0pHDjkUDUqCCoEqRrKqZfBHjaWdu3F9qaKED8GceDEiZ-wf6zjj91kIYicuO163sy8ec-eS-fR-rauChTeWLhzbffNKgPooHVki4bDSqgGtYeTpf5o0EqlyyujvTVVRfYkQLFRY-RKlbptrkxdo5ZuRXajBEWoS9-H4G9RY0l2EZhEbJ0ODmEj6F5PGiadTm7pc0vOX8tpohQA48xAp9VKoFdGu4gSfOTGqDtm6GAG15K0V34bcSr_jKELIUyrvcsN009RBOHg7CKoMoeb5eo9zDZPZ2YQbxZFv9dfNNZ0ClSjqr4WjA5JWZ85rAIoD-u2WhQ5EkBZmBEoi13kWCQQNJgDaYG10mtkvYRVCBisdgSaBDkXDZ_mC7DLGqn65B09RBYszC1F_vGXK3IvBNH9kqo0IAmeg-x-lsobN9TcH-uF4XE112grvxupV2vRNFU2KEOiLBwOos7h2fk5LN8UA9mL5CDPuGGDDPRSSHpFmol5kkVEwFCCzoLeIW-f9Yas-sSdux_dd3OEhRG_ZQ-je6dcTrKVDTr3YKz8080PEf8XOwfUGt0aJPJBcusm13vN52SnB6_AfuUj7sA_fE7VJuNxQvv_Ymb_zH7zM5JSJFO7lyG0l9Q_vCOS-vph_F2v-CbafvNN4gKY9c8_zJ3qJ836XjFJ8BpElklavjUw6ffBtLgkLcNWfQT6be05)
+![Onboarding Signup Flow](https://kroki.io/plantuml/svg/eNq9VE1vEzEQve-vGPWUSC0pHDjkUDUqCCoEqRrKqZfBHjaWdu3F9qaKED8GceDEiZ-wf6zjj91kIYicuO163sy8ec-eS-fR-rauChTeWLhzbffNKgPooHVki4bDSqgGtYeTpf5o0EqlyyujvTVVRfYkQLFRY-RKlbptrkxdo5ZuRXajBEWoS9-H4G9RY0l2EZhEbJ0ODmEj6F5PGiadTm7pc0vOX8tpohQA48xAp9VKoFdGu4gSfOTGqDtm6GAG15K0V34bcSr_jKELIUyrvcsN009RBOHg7CKoMoeb5eo9zDZPZ2YQbxZFv9dfNNZ0ClSjqr4WjA5JWZ85rAIoD-u2WhQ5EkBZmBEoi13kWCQQNJgDaYG10mtkvYRVCBisdgSaBDkXDZ_mC7DLGqn65B09RBYszC1F_vGXK3IvBNH9kqo0IAmeg-x-lsobN9TcH-uF4XE12grvxupV2vRNFU2KEOiLBwOos7h2fk5LN8UA9mL5CDPuGGDDPRSSHpFmol5kkVEwFCCzoLeIW-f9Yas-sSdux_dd3OEhRG_ZQ-je6dcTrKVDTr3YKz8080PEf8XOwfUGt0aJPJBcusm13vN52SnB6_AfuUj7sA_fE7VJuNxQvv_Ymb_zH7zM5JSJFO7lyG0l9Q_vCOS-vph_F2v-CbafvNN4gKY9c8_zJ3qJ836XjFJ8BpElklavjUw6ffBtLgkLcNWfQT6be09)
 
 </details>
 
-## Descrição
+## Description
 
-O domínio Onboarding é responsável pelo fluxo público de cadastro (*signup*) de novos usuários a partir da landing page, antes de qualquer autenticação. É o único módulo do sistema com endpoint anônimo (`[AllowAnonymous]`) — precisa funcionar sem token JWT.
+The Onboarding domain owns the public *signup* flow for new users coming from the landing page,
+before any authentication. It is the only module in the system with an anonymous endpoint
+(`[AllowAnonymous]`) — it has to work without a JWT.
 
-O fluxo acontece em duas etapas: **iniciar** o cadastro (nome + e-mail, gera e envia um código de verificação) e **confirmar** o cadastro (e-mail + código + senha), que dispara a criação do usuário e da conta em outros domínios via eventos.
+The flow has two steps: **start** the signup (name + e-mail, generates and sends a verification
+code) and **verify** the signup (e-mail + code + password), which triggers the creation of the
+user and the account in other domains via events.
 
 ## Endpoints
 
-| Método | Rota | Descrição |
+| Method | Route | Description |
 |---|---|---|
-| `POST` | `/v{version}/onboarding/start` | Inicia (ou reinicia) um pedido de cadastro. Gera um código de verificação de 6 dígitos e publica o evento `SignupCodeGenerated`, consumido pelo domínio Communications para enviar o código por e-mail. |
-| `POST` | `/v{version}/onboarding/verify` | Confirma o cadastro com o código recebido e define a senha. Em caso de sucesso, publica `SignupVerifiedDomainEvent`, consumido pelos domínios Users/Identity e Accounts para cada um criar seus próprios registros. |
+| `POST` | `/v{version}/onboarding/start` | Starts (or restarts) a signup request. Generates a 6-digit verification code and publishes the `SignupCodeGenerated` event, consumed by the Communications domain to send the code by e-mail. |
+| `POST` | `/v{version}/onboarding/verify` | Confirms the signup with the received code and sets the password. On success, publishes `SignupVerifiedDomainEvent`, consumed by the Users/Identity and Accounts domains so each one creates its own records. |
 
-## Regras de negócio
+## Business rules
 
-- **Reenvio de código**: se já existe um pedido de cadastro pendente (ainda não verificado) para o e-mail informado, `start` reaproveita o mesmo `SignupRequestId` e gera um novo código — o código anterior fica automaticamente inválido, já que não há expiração por tempo.
-- Um pedido já verificado não pode ser reiniciado nem verificado de novo (erro `AlreadyVerified`).
-- A senha nunca trafega nem é persistida em texto puro: o hash (`PasswordHasher`) é calculado no serviço de aplicação antes de o comando chegar à camada de domínio ou a qualquer evento.
-- Cada pedido de cadastro é processado por um ator dedicado (Akka.NET), identificado pelo `SignupRequestId` e gerenciado pelo `SignupManagerActor`, garantindo processamento sequencial por cadastro.
+- **Code resend**: if there is already a pending (not yet verified) signup request for the given
+  e-mail, `start` reuses the same `SignupRequestId` and generates a new code — the previous code
+  becomes invalid automatically, since there is no time-based expiration.
+- A request that has already been verified cannot be restarted or verified again (error
+  `AlreadyVerified`).
+- The password is never transmitted or persisted in plain text: the hash (`PasswordHasher`) is
+  computed in the application service before the command reaches the domain layer or any event.
+- Each signup request is processed by a dedicated actor (Akka.NET), identified by the
+  `SignupRequestId` and managed by `SignupManagerActor`, guaranteeing sequential processing per
+  signup.
 
-## Erros de domínio
+## Domain errors
 
-| Código | Nome | Quando ocorre |
+| Code | Name | When it happens |
 |---|---|---|
-| 8000 | `SignupNotFound` | Tentativa de verificar um e-mail sem pedido de cadastro em andamento. |
-| 8001 | `InvalidCode` | Código de verificação informado não confere com o gerado. |
-| 8003 | `AlreadyVerified` | Pedido de cadastro já havia sido confirmado anteriormente. |
-| 8004 | `SkippedValidations` | Código informativo, sem representar uma falha de negócio. |
+| 8000 | `SignupNotFound` | Attempt to verify an e-mail with no signup request in progress. |
+| 8001 | `InvalidCode` | The provided verification code does not match the generated one. |
+| 8003 | `AlreadyVerified` | The signup request had already been confirmed. |
+| 8004 | `SkippedValidations` | Informational code; does not represent a business failure. |
 
-## Eventos de domínio
+## Domain events
 
-- **`SignupCodeGenerated`** — emitido ao gerar (ou regenerar) o código de verificação; consumido pelo domínio Communications para o envio do e-mail.
-- **`SignupVerifiedDomainEvent`** — emitido quando o código é confirmado; carrega um novo `UserId` e o hash da senha, consumido pelos domínios Users/Identity e Accounts para cada um criar seus próprios registros a partir do mesmo evento.
+- **`SignupCodeGenerated`** — raised when the verification code is generated (or regenerated);
+  consumed by the Communications domain to send the e-mail.
+- **`SignupVerifiedDomainEvent`** — raised when the code is confirmed; carries a new `UserId` and
+  the password hash, consumed by the Users/Identity and Accounts domains so each one creates its
+  own records from the same event.
 
-## Próximos passos
+## Next steps
 
-- Documentar os contratos de request/response de cada endpoint (`StartSignupInput`, `VerifySignupInput`).
-- Definir e documentar uma política de expiração para o código (hoje ele não expira sozinho, só é invalidado por um novo `start`).
-- Linkar esta página aos domínios consumidores dos eventos (Communications, Users/Identity, Accounts) quando eles também forem documentados.
+- Document the request/response contracts for each endpoint (`StartSignupInput`,
+  `VerifySignupInput`).
+- Define and document an expiration policy for the code (today it does not expire on its own, it
+  is only invalidated by a new `start`).
+- Link this page to the domains that consume the events (Communications, Users/Identity, Accounts)
+  once they are documented too.

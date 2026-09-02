@@ -1,4 +1,5 @@
 using Andor.Foundation.Application;
+using Andor.Foundation.PasswordHasher;
 using Andor.Onboarding.Binder.Application;
 using Andor.Onboarding.Binder.Infrastructure;
 using Andor.Onboarding.RestApi;
@@ -17,6 +18,9 @@ public static class OnboardingExtensions
         _ = builder.Services.UseApi()
             .WithOnboardingApplication()
             .WithOnboardingInfrastructure(configuration);
+
+        _ = builder.Services.WithPasswordHasher();
+
 
         return builder;
     }
