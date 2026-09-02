@@ -7,6 +7,7 @@ nav:
   - Investing: investing.md
   - Personal Assets: personal-assets.md
   - Goals: goals.md
+  - Onboarding: onboarding.md
 markdown_extensions:
   - admonition
   - codehilite

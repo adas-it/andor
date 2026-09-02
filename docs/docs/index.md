@@ -8,3 +8,4 @@ Bem-vindo à documentação dos seus domínios para controle pessoal.
 - [Investing](investing.md)
 - [Personal Assets](personal-assets.md)
 - [Goals](goals.md)
+- [Onboarding](onboarding.md)
