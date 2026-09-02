@@ -359,3 +359,6 @@ MigrationBackup/
 /Src/Budget/Andor.Accounts.Service/appsettings.Development.json
 /Src/Communications/Andor.Communications.Service/appsettings.Development.json
 /Src/Administrations/ReverseProxy/Andor.Admin.ReverseProxy.Yarp/appsettings.Development.json
+
+# MkDocs local build output (docs/ is now the MkDocs project; the site is built in CI)
+docs/site/
