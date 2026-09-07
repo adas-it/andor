@@ -1,30 +1,62 @@
-#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+# syntax=docker/dockerfile:1
+#
+# Single reusable image definition for every deployable Andor service.
+# Pick the service with build args:
+#
+#   docker build \
+#     --build-arg PROJECT=Src/Budget/Andor.Accounts.Service/Andor.Accounts.Service.csproj \
+#     --build-arg APP_DLL=Andor.Accounts.Service.dll \
+#     -t andor/accounts-api .
+#
+# Service            PROJECT                                                                          APP_DLL
+# -----------------  ------------------------------------------------------------------------------    ---------------------------------
+# configurations     Src/Administrations/Configurations/Andor.Configurations.Service/Andor.Configurations.Service.csproj   Andor.Configurations.Service.dll
+# users-api          Src/Administrations/Users/Andor.Users.WebApi/Andor.Users.WebApi.csproj                                Andor.Users.WebApi.dll
+# assets-service     Src/Assets/Andor.Assets.Service/Andor.Assets.Service.csproj                                          Andor.Assets.Service.dll
+# accounts-api       Src/Budget/Andor.Accounts.Service/Andor.Accounts.Service.csproj                                      Andor.Accounts.Service.dll
+# communications-api Src/Communications/Andor.Communications.Service/Andor.Communications.Service.csproj                   Andor.Communications.Service.dll
+# onboarding-api     Src/Onboarding/Andor.Onboarding.Service/Andor.Onboarding.Service.csproj                              Andor.Onboarding.Service.dll
+# reverse-proxy      Src/Administrations/ReverseProxy/Andor.Admin.ReverseProxy.Yarp/Andor.Admin.ReverseProxy.Yarp.csproj  Andor.Admin.ReverseProxy.Yarp.dll
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER app
-WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+ARG DOTNET_VERSION=10.0
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# ---------------------------------------------------------------------------
+# Build / publish
+# ---------------------------------------------------------------------------
+FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_VERSION} AS build
+ARG PROJECT
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/Andor.Api/Andor.Api.csproj", "src/Andor.Api/"]
-COPY ["src/Andor.Kernel/Andor.Ioc.csproj", "src/Andor.Kernel/"]
-COPY ["src/Andor.Infrastructure/Andor.Infrastructure.csproj", "src/Andor.Infrastructure/"]
-COPY ["src/Andor.Domain/Andor.Domain.csproj", "src/Andor.Domain/"]
-COPY ["src/Andor.Application/Andor.Application.csproj", "src/Andor.Application/"]
-COPY ["src/Andor.Application.Dto/Andor.Application.Dto.csproj", "src/Andor.Application.Dto/"]
-RUN dotnet restore "./src/Andor.Api/Andor.Api.csproj"
-COPY . .
-WORKDIR "/src/src/Andor.Api"
-RUN dotnet build "./Andor.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Andor.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+# Central Package Management + Directory.Build.props must be present before restore.
+COPY Directory.Build.props Directory.Packages.props Andor.slnx ./
+COPY Src/ Src/
 
-FROM base AS final
+RUN --mount=type=cache,id=andor-nuget,target=/root/.nuget/packages \
+    dotnet restore "${PROJECT}"
+
+RUN --mount=type=cache,id=andor-nuget,target=/root/.nuget/packages \
+    dotnet publish "${PROJECT}" \
+        -c "${BUILD_CONFIGURATION}" \
+        --no-restore \
+        -o /app/publish \
+        /p:UseAppHost=false
+
+# ---------------------------------------------------------------------------
+# Runtime
+# ---------------------------------------------------------------------------
+FROM mcr.microsoft.com/dotnet/aspnet:${DOTNET_VERSION} AS final
+ARG APP_DLL
 WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Andor.Api.dll"]
+
+# Kestrel listens on 8080 (plain HTTP); TLS is terminated by the platform ingress.
+ENV ASPNETCORE_HTTP_PORTS=8080 \
+    APP_DLL=${APP_DLL}
+
+COPY --from=build /app/publish .
+
+USER $APP_UID
+EXPOSE 8080
+
+# APP_DLL is resolved from the environment at container start.
+ENTRYPOINT ["sh", "-c", "exec dotnet \"$APP_DLL\" \"$@\"", "--"]

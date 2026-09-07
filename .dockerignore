@@ -23,3 +23,11 @@
 **/values.dev.yaml
 LICENSE
 README.md
+
+# Not needed to build a service image
+**/.idea
+Tests/
+docs/
+k8s/
+.github/
+.devcontainer/
