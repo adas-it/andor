@@ -184,3 +184,7 @@ There is no single "test everything" job by design — each domain module is val
 The design docs (domain descriptions, UML diagrams, sequence flows, business rules) are published from the `docs/` folder to GitHub Pages:
 
 **https://adas-it.github.io/andor/**
+
+## License
+
+Released under the [MIT License](LICENSE).
