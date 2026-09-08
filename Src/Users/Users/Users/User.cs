@@ -1,5 +1,6 @@
 ﻿using Andor.Foundation.Domain.SeedWork;
 using Andor.Foundation.Domain.ValuesObjects;
+using Andor.Users.Domain.Users.DomainEvents;
 using Andor.Users.Domain.Users.ValueObjects;
 
 namespace Andor.Users.Domain.Users;
@@ -69,7 +70,7 @@ public class User : AggregateRoot<UserId>
             return (result, null);
         }
 
-        //entity.RaiseDomainEvent(UserCreatedDomainEvent.FromAggregateRoot(entity));
+        entity.RaiseDomainEvent(UserCreatedDomainEvent.FromAggregateRoot(entity));
 
         return (result, entity);
     }

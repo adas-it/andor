@@ -68,7 +68,7 @@ public sealed class CommunicationsControllerTests : IClassFixture<Communications
         var rule = await ruleResponse.Content.ReadFromJsonAsync<DefaultResponse<RuleOutput>>(ComponentTestJson.Options);
 
         var recipient = $"user-{Guid.NewGuid():N}@example.com";
-        var notificationInput = new SendNotificationInput(rule!.Data!.Id, recipient, "reset-title", "pt-BR", new Dictionary<string, string> { ["{{code}}"] = "123456" });
+        var notificationInput = new SendNotificationInput(rule!.Data!.Id, recipient, "Reset your password", "pt-BR", new Dictionary<string, string> { ["{{code}}"] = "123456" });
 
         var response = await client.PostAsJsonAsync("v1/Communications/notifications", notificationInput, ComponentTestJson.Options);
 

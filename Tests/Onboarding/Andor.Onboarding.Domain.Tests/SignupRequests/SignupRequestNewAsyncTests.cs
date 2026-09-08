@@ -40,7 +40,7 @@ public class SignupRequestNewAsyncTests
     }
 
     [Fact]
-    public async Task NewAsync_ShouldGenerateTenDigitVerificationCode()
+    public async Task NewAsync_ShouldGenerateSixDigitVerificationCode()
     {
         // Act
         var (result, signupRequest) = await SignupRequestFixture.CreateValidSignupRequestAsync(_validatorMock);
@@ -48,7 +48,7 @@ public class SignupRequestNewAsyncTests
         // Assert
         Assert.True(result.IsSuccess);
         Assert.NotNull(signupRequest);
-        Assert.Equal(10, signupRequest.VerificationCode.Value.Length);
+        Assert.Equal(6, signupRequest.VerificationCode.Value.Length);
         Assert.True(long.TryParse(signupRequest.VerificationCode.Value, out _));
     }
 
