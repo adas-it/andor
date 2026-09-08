@@ -7,7 +7,7 @@ deployable .NET services.
 
 This site has two parts:
 
-- **[Domains](budget.md)** — the working reference for each bounded context: domain model,
+- **[Domains](domains.md)** — the working reference for each bounded context: domain model,
   REST **contracts** (`*Input` / `*Output`), **endpoints**, business rules and **domain error
   codes**. This is where day-to-day API and integration detail lives.
 - **[Architecture (arc42)](architecture/index.md)** — the system-level view: goals, constraints,
