@@ -52,9 +52,9 @@ flowchart TB
 | **Configurations slice** (`configurations-service`) | Cross-cutting runtime configuration. | |
 | **Foundation / Shared** | Base types, Result pattern, EF/Outbox/Service Bus helpers, `BaseController`, JWT, Swagger, password hashing, authorization. | No slice-specific code; every slice references it. |
 
-Per-domain models and rules: [Budget](../budget.md) · [Investing](../investing.md) ·
-[Personal Assets](../personal-assets.md) · [Goals](../goals.md) · [Onboarding](../onboarding.md) ·
-[Communications](../communications.md).
+Per-domain models and rules: [Budget](../domains/budget.md) · [Investing](../domains/investing.md) ·
+[Personal Assets](../domains/personal-assets.md) · [Goals](../domains/goals.md) · [Onboarding](../domains/onboarding.md) ·
+[Communications](../domains/communications.md).
 
 ## 5.2 Level 2 — inside a vertical slice
 

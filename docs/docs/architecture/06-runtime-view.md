@@ -133,7 +133,7 @@ sequenceDiagram
 A REST endpoint (`POST /v1/Communications/notifications`) reaches the same
 `RuleManagerActor → RuleActor` path and is meant for operational one-offs; production traffic goes
 through the queue so delivery stays decoupled and retryable. See the
-[Communications domain page](../communications.md) for `Rule`/`Template` details.
+[Communications domain page](../domains/communications.md) for `Rule`/`Template` details.
 
 ## 6.5 Error & recovery behaviour
 

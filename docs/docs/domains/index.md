@@ -1,15 +1,15 @@
 # Domains
 
 This section is the **working reference for each bounded context** in Andor. Where the
-[Architecture (arc42)](architecture/index.md) section takes the system-level view, these pages
+[Architecture (arc42)](../architecture/index.md) section takes the system-level view, these pages
 stay inside one slice: its **domain model**, REST **contracts** (`*Input` / `*Output`),
 **endpoint tables**, business rules, **`DomainErrorCode` catalogue** and the **domain / integration
 events** it publishes or consumes.
 
 Every business capability is built as the same seven-project **vertical slice**
 (`*.Domain`, `*.Application`, `*.Contracts`, `*.Infrastructure`, `*.Binder`, `*.RestApi`,
-`*.Service`) — see [chapter 5, Building Block View](architecture/05-building-block-view.md) for
-the shape and [ADR-0001](architecture/adr/0001-modular-monolith.md) for why.
+`*.Service`) — see [chapter 5, Building Block View](../architecture/05-building-block-view.md) for
+the shape and [ADR-0001](../architecture/adr/0001-modular-monolith.md) for why.
 
 ## Domain reference
 
@@ -35,7 +35,7 @@ the shape and [ADR-0001](architecture/adr/0001-modular-monolith.md) for why.
   describe how each would plug into the same event-driven model.
 
 Cross-slice flows are traced step by step in
-[chapter 6, Runtime View](architecture/06-runtime-view.md).
+[chapter 6, Runtime View](../architecture/06-runtime-view.md).
 
 ## Page shape
 
@@ -48,4 +48,4 @@ current skeleton and flags what is still missing; [Personal Assets](personal-ass
 !!! note "Status"
     Andor is a personal / portfolio project. Each page documents its slice **as built**;
     unfinished areas are called out explicitly on the page and in
-    [chapter 11, Risks & Technical Debt](architecture/11-risks-and-technical-debt.md).
+    [chapter 11, Risks & Technical Debt](../architecture/11-risks-and-technical-debt.md).

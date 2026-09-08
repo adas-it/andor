@@ -7,29 +7,15 @@ deployable .NET services.
 
 This site has two parts:
 
-- **[Domains](domains.md)** — the working reference for each bounded context: domain model,
+- **[Domains](domains/index.md)** — the working reference for each bounded context: domain model,
   REST **contracts** (`*Input` / `*Output`), **endpoints**, business rules and **domain error
   codes**. This is where day-to-day API and integration detail lives.
 - **[Architecture (arc42)](architecture/index.md)** — the system-level view: goals, constraints,
   structure, runtime flows, deployment and cross-cutting concepts, plus a log of
   **Architecture Decision Records (ADRs)**.
 
-## Domain reference
-
-| Domain | Covers |
-|---|---|
-| [Budget](budget.md) | Current accounts, financial movements, categories, budgets, invites, cash-flow projection. |
-| [Investing](investing.md) | Investment assets and positions, FIFO cost calculation for tax. |
-| [Personal Assets](personal-assets.md) | Physical goods (car, house, bicycle) and their running costs. |
-| [Goals](goals.md) | Personal goals/projects linked to financial movements. |
-| [Onboarding](onboarding.md) | Public signup flow — endpoints, business rules, domain errors, events. |
-| [Communications](communications.md) | Rule/Template model, invocation (queue + REST), configuration, error codes. |
-
-Each domain page is the home for its **contracts**, **endpoint tables** and **`DomainErrorCode`
-catalogue**. [Budget](budget.md), [Onboarding](onboarding.md) and [Communications](communications.md)
-follow this shape in full. [Investing](investing.md) documents an early-stage module (skeleton
-only); [Personal Assets](personal-assets.md) and [Goals](goals.md) are design placeholders for
-vertical slices that are not built yet.
+The [**Domains**](domains/index.md) page lists every bounded context, its status and how the
+slices fit together.
 
 ## Where to start (architecture)
 

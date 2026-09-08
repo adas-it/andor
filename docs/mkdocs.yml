@@ -13,13 +13,13 @@ theme:
 nav:
   - Home: index.md
   - Domains:
-      - domains.md
-      - Budget: budget.md
-      - Investing: investing.md
-      - Personal Assets: personal-assets.md
-      - Goals: goals.md
-      - Onboarding: onboarding.md
-      - Communications: communications.md
+      - domains/index.md
+      - Budget: domains/budget.md
+      - Investing: domains/investing.md
+      - Personal Assets: domains/personal-assets.md
+      - Goals: domains/goals.md
+      - Onboarding: domains/onboarding.md
+      - Communications: domains/communications.md
   - Architecture (arc42):
       - architecture/index.md
       - 1. Introduction & Goals: architecture/01-introduction-and-goals.md
