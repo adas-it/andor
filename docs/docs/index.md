@@ -26,8 +26,10 @@ This site has two parts:
 | [Communications](communications.md) | Rule/Template model, invocation (queue + REST), configuration, error codes. |
 
 Each domain page is the home for its **contracts**, **endpoint tables** and **`DomainErrorCode`
-catalogue**. [Onboarding](onboarding.md) and [Communications](communications.md) already follow
-this shape; the others are being filled in.
+catalogue**. [Budget](budget.md), [Onboarding](onboarding.md) and [Communications](communications.md)
+follow this shape in full. [Investing](investing.md) documents an early-stage module (skeleton
+only); [Personal Assets](personal-assets.md) and [Goals](goals.md) are design placeholders for
+vertical slices that are not built yet.
 
 ## Where to start (architecture)
 
