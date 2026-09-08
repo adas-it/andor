@@ -1,8 +1,12 @@
 name: Build & push service images to ACR
 
 on:
+  # Runs after the ".NET" CI workflow finishes on main, and only if it passed.
+  workflow_run:
+    workflows: [".NET"]        # must match `name:` in build.yml exactly
+    types: [completed]
+  # Release tags are cut from an already-green main commit, so build them directly.
   push:
-    branches: ["main"]
     tags: ["v*"]
   workflow_dispatch: {}
 
@@ -10,7 +14,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: images-${{ github.ref }}
+  group: images-${{ github.event.workflow_run.head_sha || github.ref }}
   cancel-in-progress: true
 
 env:
@@ -19,6 +23,10 @@ env:
 jobs:
   build-push:
     runs-on: ubuntu-latest
+    # Gate: skip unless the CI run succeeded (manual/tag runs are not gated).
+    if: >
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
     strategy:
       fail-fast: false
       matrix:
@@ -46,7 +54,18 @@ jobs:
             dll: Andor.Admin.ReverseProxy.Yarp.dll
 
     steps:
+      - name: Resolve source commit
+        id: src
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            echo "sha=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "sha=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.src.outputs.sha }}
 
       - name: Log in to ACR
         uses: docker/login-action@v3
@@ -64,10 +83,9 @@ jobs:
         with:
           images: ${{ env.ACR_LOGIN_SERVER }}/${{ matrix.image }}
           tags: |
-            type=sha,format=long
-            type=ref,event=branch
+            type=raw,value=sha-${{ steps.src.outputs.sha }}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || github.event.workflow_run.head_branch == 'main' }}
             type=semver,pattern={{version}}
-            type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build & push ${{ matrix.image }}
         uses: docker/build-push-action@v6
