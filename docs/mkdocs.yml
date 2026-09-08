@@ -1,20 +1,59 @@
-site_name: Personal Domains Documentation
+site_name: Andor — Architecture Documentation
+site_description: arc42 architecture documentation for the Andor modular-monolith personal-finance platform.
+
 theme:
   name: material
+  features:
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - content.code.copy
+    - toc.follow
+
 nav:
   - Home: index.md
-  - Budget: budget.md
-  - Investing: investing.md
-  - Personal Assets: personal-assets.md
-  - Goals: goals.md
-  - Onboarding: onboarding.md
-  - Communications: communications.md
+  - Domains:
+      - Budget: budget.md
+      - Investing: investing.md
+      - Personal Assets: personal-assets.md
+      - Goals: goals.md
+      - Onboarding: onboarding.md
+      - Communications: communications.md
+  - Architecture (arc42):
+      - architecture/index.md
+      - 1. Introduction & Goals: architecture/01-introduction-and-goals.md
+      - 2. Constraints: architecture/02-constraints.md
+      - 3. Context & Scope: architecture/03-context-and-scope.md
+      - 4. Solution Strategy: architecture/04-solution-strategy.md
+      - 5. Building Block View: architecture/05-building-block-view.md
+      - 6. Runtime View: architecture/06-runtime-view.md
+      - 7. Deployment View: architecture/07-deployment-view.md
+      - 8. Cross-cutting Concepts: architecture/08-crosscutting-concepts.md
+      - 9. Architecture Decisions: architecture/09-architecture-decisions.md
+      - 10. Quality Requirements: architecture/10-quality-requirements.md
+      - 11. Risks & Technical Debt: architecture/11-risks-and-technical-debt.md
+      - 12. Glossary: architecture/12-glossary.md
+  - Architecture Decision Records:
+      - architecture/adr/index.md
+      - ADR-0001 Modular monolith: architecture/adr/0001-modular-monolith.md
+      - ADR-0002 Actors for the write model: architecture/adr/0002-actor-model-for-writes.md
+      - ADR-0003 Transactional outbox: architecture/adr/0003-transactional-outbox.md
+      - ADR-0004 Result pattern over exceptions: architecture/adr/0004-result-pattern-over-exceptions.md
+      - ADR-0005 Schema-per-module persistence: architecture/adr/0005-schema-per-module-persistence.md
+      - ADR template: architecture/adr/template.md
+
 markdown_extensions:
   - admonition
   - codehilite
   - toc:
       permalink: true
   - pymdownx.details
-  - pymdownx.superfences
-  - pymdownx.tabbed
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
   - attr_list
+  - tables
