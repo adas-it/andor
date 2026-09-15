@@ -9,68 +9,75 @@ on:
     branches: [ "main" ]
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      build_matrix: ${{ steps.compute.outputs.build_matrix }}
+      images_matrix: ${{ steps.compute.outputs.images_matrix }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine changed files
+        id: diff
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch origin "${{ github.event.pull_request.base.ref }}" --quiet
+            CHANGED=$(git diff --name-only "origin/${{ github.event.pull_request.base.ref }}...HEAD")
+            FORCE_ALL=false
+          else
+            BEFORE="${{ github.event.before }}"
+            if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$BEFORE" 2>/dev/null; then
+              CHANGED=""
+              FORCE_ALL=true
+            else
+              CHANGED=$(git diff --name-only "$BEFORE" "${{ github.sha }}")
+              FORCE_ALL=false
+            fi
+          fi
+          echo "force_all=$FORCE_ALL" >> "$GITHUB_OUTPUT"
+          {
+            echo "files<<CHANGED_EOF"
+            echo "$CHANGED"
+            echo "CHANGED_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Compute build & image matrices
+        id: compute
+        run: |
+          set -euo pipefail
+          CHANGED_JSON=$(printf '%s' "${{ steps.diff.outputs.files }}" | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          RESULT=$(jq -c \
+            --argjson changed "$CHANGED_JSON" \
+            --argjson forceAll ${{ steps.diff.outputs.force_all }} \
+            '
+            def matches(paths):
+              ([ $changed[] as $f | paths[] as $p | ($f | startswith($p)) ] | any);
+            ( $forceAll or matches(.shared) ) as $all |
+            {
+              build_matrix: [ .modules[] | select($all or matches(.paths)) | .build ],
+              images_matrix: ( [ .modules[] | select($all or matches(.paths)) | .image ]
+                                + [ .extraImages[] | select($all or matches(.paths)) | .image ] )
+            }
+            ' .github/ci-matrix.json)
+          echo "build_matrix=$(echo "$RESULT" | jq -c '.build_matrix')" >> "$GITHUB_OUTPUT"
+          echo "images_matrix=$(echo "$RESULT" | jq -c '.images_matrix')" >> "$GITHUB_OUTPUT"
+          echo "Changed files:"
+          printf '%s\n' "${{ steps.diff.outputs.files }}"
+          echo "force_all=${{ steps.diff.outputs.force_all }}"
+          echo "build_matrix=$(echo "$RESULT" | jq -c '.build_matrix')"
+          echo "images_matrix=$(echo "$RESULT" | jq -c '.images_matrix')"
+
   build:
+    needs: changes
+    if: needs.changes.outputs.build_matrix != '[]'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - name: Andor Accounts
-            projectName: Src/Budget/Andor.Accounts.Service/Andor.Accounts.Service.csproj
-            projectTestNames: |
-              Tests/Budget/Andor.Accounts.Domain.Tests/Andor.Accounts.Domain.Tests.csproj
-              Tests/Budget/Andor.Accounts.Infrastructure.Tests/Andor.Accounts.Infrastructure.Tests.csproj
-              Tests/Budget/Andor.Accounts.ComponentTests/Andor.Accounts.ComponentTests.csproj
-            sonarProjectKey: adas-it_andor-accounts
-            coverageFile: coverage-andor-accounts.xml
-          - name: Andor Investments
-            projectName: Src/Assets/Andor.Assets.Service/Andor.Assets.Service.csproj
-            projectTestNames: |
-              Tests/Assets/Andor.Assets.Domain.Tests/Andor.Assets.Domain.Tests.csproj
-              Tests/Assets/Andor.Assets.ComponentTests/Andor.Assets.ComponentTests.csproj
-            sonarProjectKey: adas-it_andor-investments
-            coverageFile: coverage-andor-investments.xml
-          - name: Andor User Identity
-            projectName: Src/Administrations/Users/Andor.Users.WebApi/Andor.Users.WebApi.csproj
-            projectTestNames: |
-              Tests/Administrations/Users/Andor.Users.Domain.Tests/Andor.Users.Domain.Tests.csproj
-            sonarProjectKey: adas-it_andor-users-identity
-            coverageFile: coverage-andor-users-identity.xml
-          - name: Andor Communications
-            projectName: Src/Communications/Andor.Communications.Service/Andor.Communications.Service.csproj
-            projectTestNames: |
-              Tests/Communications/Andor.Communications.Domain.Tests/Andor.Communications.Domain.Tests.csproj
-              Tests/Communications/Andor.Communications.Infrastructure.Tests/Andor.Communications.Infrastructure.Tests.csproj
-              Tests/Communications/Andor.Communications.ComponentTests/Andor.Communications.ComponentTests.csproj
-            sonarProjectKey: adas-it_andor-communications
-            coverageFile: coverage-andor-communications.xml
-          - name: Andor Onboarding
-            projectName: Src/Onboarding/Andor.Onboarding.Service/Andor.Onboarding.Service.csproj
-            projectTestNames: |
-              Tests/Onboarding/Andor.Onboarding.Domain.Tests/Andor.Onboarding.Domain.Tests.csproj
-              Tests/Onboarding/Andor.Onboarding.Infrastructure.Tests/Andor.Onboarding.Infrastructure.Tests.csproj
-              Tests/Onboarding/Andor.Onboarding.ComponentTests/Andor.Onboarding.ComponentTests.csproj
-            sonarProjectKey: adas-it_andor-onboarding
-            coverageFile: coverage-andor-onboarding.xml
-          - name: Andor Configurations
-            projectName: Src/Administrations/Configurations/Andor.Configurations.Service/Andor.Configurations.Service.csproj
-            projectTestNames: |
-              Tests/Administrations/Configurations/Andor.Configurations.Domain.Tests/Andor.Configurations.Domain.Tests.csproj
-              Tests/Administrations/Configurations/Andor.Configurations.ComponentTests/Andor.Configurations.ComponentTests.csproj
-            sonarProjectKey: adas-it_andor-configurations
-            coverageFile: coverage-andor-configurations.xml
-          - name: Andor Goals
-            projectName: Src/Goals/Andor.Goals.Service/Andor.Goals.Service.csproj
-            projectTestNames: |
-              Tests/Goals/Andor.Goals.Domain.Tests/Andor.Goals.Domain.Tests.csproj
-            sonarProjectKey: adas-it_andor-goals
-            coverageFile: coverage-andor-goals.xml
-          - name: Andor Tasks
-            projectName: Src/Tasks/Andor.Tasks.Service/Andor.Tasks.Service.csproj
-            projectTestNames: |
-              Tests/Tasks/Andor.Tasks.Domain.Tests/Andor.Tasks.Domain.Tests.csproj
-            sonarProjectKey: adas-it_andor-tasks
-            coverageFile: coverage-andor-tasks.xml
+        include: ${{ fromJSON(needs.changes.outputs.build_matrix) }}
 
     steps:
       - uses: actions/checkout@v4
@@ -134,47 +141,28 @@ jobs:
 
   build-push:
     name: Build & push service images to ACR
-    needs: build
-    if: github.event_name == 'push'
+    needs: [ changes, build ]
+    if: >
+      always() &&
+      github.event_name == 'push' &&
+      needs.changes.outputs.images_matrix != '[]' &&
+      needs.build.result != 'failure' &&
+      needs.build.result != 'cancelled'
     runs-on: ubuntu-latest
+    environment: production
     permissions:
       contents: read
+      id-token: write
     concurrency:
       group: images-${{ github.sha }}
       cancel-in-progress: true
     env:
       ACR_LOGIN_SERVER: adait.azurecr.io
+      AZURE_RESOURCE_GROUP: Personal
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - image: configurations-service
-            project: Src/Administrations/Configurations/Andor.Configurations.Service/Andor.Configurations.Service.csproj
-            dll: Andor.Configurations.Service.dll
-          - image: users-api
-            project: Src/Administrations/Users/Andor.Users.WebApi/Andor.Users.WebApi.csproj
-            dll: Andor.Users.WebApi.dll
-          - image: assets-service
-            project: Src/Assets/Andor.Assets.Service/Andor.Assets.Service.csproj
-            dll: Andor.Assets.Service.dll
-          - image: accounts-api
-            project: Src/Budget/Andor.Accounts.Service/Andor.Accounts.Service.csproj
-            dll: Andor.Accounts.Service.dll
-          - image: communications-api
-            project: Src/Communications/Andor.Communications.Service/Andor.Communications.Service.csproj
-            dll: Andor.Communications.Service.dll
-          - image: onboarding-api
-            project: Src/Onboarding/Andor.Onboarding.Service/Andor.Onboarding.Service.csproj
-            dll: Andor.Onboarding.Service.dll
-          - image: goals-service
-            project: Src/Goals/Andor.Goals.Service/Andor.Goals.Service.csproj
-            dll: Andor.Goals.Service.dll
-          - image: tasks-service
-            project: Src/Tasks/Andor.Tasks.Service/Andor.Tasks.Service.csproj
-            dll: Andor.Tasks.Service.dll
-          - image: reverse-proxy
-            project: Src/Administrations/ReverseProxy/Andor.Admin.ReverseProxy.Yarp/Andor.Admin.ReverseProxy.Yarp.csproj
-            dll: Andor.Admin.ReverseProxy.Yarp.dll
+        include: ${{ fromJSON(needs.changes.outputs.images_matrix) }}
 
     steps:
       - uses: actions/checkout@v4
@@ -213,3 +201,23 @@ jobs:
           cache-from: type=gha,scope=${{ matrix.image }}
           cache-to: type=gha,mode=max,scope=${{ matrix.image }}
           provenance: false
+
+      - name: Log in to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Point ${{ matrix.webApp }} at the new image
+        run: |
+          az webapp config container set \
+            --name ${{ matrix.webApp }} \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --docker-custom-image-name ${{ env.ACR_LOGIN_SERVER }}/${{ matrix.image }}:sha-${{ github.sha }} \
+            --docker-registry-server-url https://${{ env.ACR_LOGIN_SERVER }} \
+            --docker-registry-server-user ${{ secrets.ACR_USERNAME }} \
+            --docker-registry-server-password ${{ secrets.ACR_PASSWORD }}
+
+      - name: Restart ${{ matrix.webApp }}
+        run: az webapp restart --name ${{ matrix.webApp }} --resource-group ${{ env.AZURE_RESOURCE_GROUP }}
