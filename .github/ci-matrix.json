@@ -44,7 +44,7 @@
       }
     },
     {
-      "key": "users",
+      "key": "userIdentity",
       "paths": ["Src/Administrations/Users/", "Tests/Administrations/Users/"],
       "build": {
         "name": "Andor User Identity",
@@ -54,10 +54,27 @@
         "coverageFile": "coverage-andor-users-identity.xml"
       },
       "image": {
-        "image": "users-api",
+        "image": "user-identity",
         "project": "Src/Administrations/Users/Andor.Users.WebApi/Andor.Users.WebApi.csproj",
         "dll": "Andor.Users.WebApi.dll",
-        "webApp": "andor-user"
+        "webApp": "andor-user-identity"
+      }
+    },
+    {
+      "key": "userService",
+      "paths": ["Src/Users/", "Tests/Users/"],
+      "build": {
+        "name": "Andor Users Service",
+        "projectName": "Src/Users/Andor.Users.Service/Andor.Users.Service.csproj",
+        "projectTestNames": "Tests/Users/Andor.Users.Tests/Andor.Users.Domain.Tests.csproj",
+        "sonarProjectKey": "adas-it_andor-user-service",
+        "coverageFile": "coverage-andor-user-service.xml"
+      },
+      "image": {
+        "image": "user-service",
+        "project": "Src/Users/Andor.Users.Service/Andor.Users.Service.csproj",
+        "dll": "Andor.Users.Service.dll",
+        "webApp": "andor-user-service"
       }
     },
     {

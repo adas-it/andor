@@ -3,7 +3,10 @@ var builder = DistributedApplication.CreateBuilder(args);
 var configurationsApi = builder.AddProject<Projects.Andor_Configurations_Service>("configurations-service")
     .WithHttpHealthCheck("/health");
 
-var usersApi = builder.AddProject<Projects.Andor_Users_WebApi>("users-api");
+var userIdentityApi = builder.AddProject<Projects.Andor_Users_WebApi>("user-identity");
+
+var userServiceApi = builder.AddProject<Projects.Andor_Users_Service>("user-service")
+    .WithHttpHealthCheck("/health");
 
 var assetsApi = builder.AddProject<Projects.Andor_Assets_Service>("assets-service")
     .WithHttpHealthCheck("/health");
@@ -24,13 +27,15 @@ builder.AddProject<Projects.Andor_Admin_ReverseProxy_Yarp>("reverse-proxy", laun
         endpoint.IsProxied = false;
     })
     .WithReference(configurationsApi)
-    .WithReference(usersApi)
+    .WithReference(userIdentityApi)
+    .WithReference(userServiceApi)
     .WithReference(assetsApi)
     .WithReference(accountsApi)
     .WithReference(communicationsApi)
     .WithReference(onboardingApi)
     .WaitFor(configurationsApi)
-    .WaitFor(usersApi)
+    .WaitFor(userIdentityApi)
+    .WaitFor(userServiceApi)
     .WaitFor(assetsApi)
     .WaitFor(accountsApi)
     .WaitFor(communicationsApi)
