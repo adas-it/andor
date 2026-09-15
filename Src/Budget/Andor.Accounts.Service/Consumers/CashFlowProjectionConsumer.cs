@@ -197,7 +197,10 @@ public sealed class CashFlowProjectionConsumer : BackgroundService
 
     public override async Task StopAsync(CancellationToken cancellationToken)
     {
-        await _processor.DisposeAsync();
+        // Let ExecuteAsync's finally block call StopProcessingAsync on a still-live processor
+        // before we dispose it; disposing first races the message pump and disposes its
+        // internal SemaphoreSlim out from under it, crashing the host on shutdown.
         await base.StopAsync(cancellationToken);
+        await _processor.DisposeAsync();
     }
 }
