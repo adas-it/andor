@@ -2,6 +2,7 @@ using Andor.Users.WebApi;
 using Andor.Users.WebApi.Consumers;
 using Azure.Identity;
 using Azure.Messaging.ServiceBus;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -9,6 +10,15 @@ using Microsoft.OpenApi;
 using OpenIddict.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Kestrel sits behind Azure's ingress, which terminates TLS and forwards plain HTTP.
+// Without this, OpenIddict sees every request as HTTP and rejects it (ID2083).
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownIPNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 builder.Services.AddControllersWithViews();
 
@@ -245,6 +255,8 @@ if (app.Environment.IsDevelopment())
         o.OAuthUsePkce();
     });
 }
+
+app.UseForwardedHeaders();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
