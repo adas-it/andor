@@ -3,6 +3,7 @@
     <File Path=".editorconfig" />
     <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
+    <File Path="Dockerfile" />
   </Folder>
   <Folder Name="/Src/" />
   <Folder Name="/Src/Administrations/" />
@@ -86,7 +87,9 @@
     <Project Path="Src/Shared/AuthorizationDomain/Andor.Authorizations.Application/Andor.Authorizations.Application.csproj" Id="c21800ce-ac9f-41ea-84ad-3dfc417c76b1" />
     <Project Path="Src/Shared/AuthorizationDomain/Andor.Authorizations.Domain/Andor.Authorizations.Domain.csproj" />
   </Folder>
-  <Folder Name="/Src/Tasks/" />
+  <Folder Name="/Src/Tasks/">
+    <Project Path="Src/Tasks/Andor.Tasks.Service/Andor.Tasks.Service.csproj" Id="f62892ad-a012-4a85-9730-af985089bbf5" />
+  </Folder>
   <Folder Name="/Src/Users/">
     <Project Path="Src/Users/Andor.Users.Application/Andor.Users.Application.csproj" />
     <Project Path="Src/Users/Andor.Users.Binder/Andor.Users.Binder.csproj" />
@@ -131,6 +134,9 @@
     <Project Path="Tests/Onboarding/Andor.Onboarding.ComponentTests/Andor.Onboarding.ComponentTests.csproj" />
     <Project Path="Tests/Onboarding/Andor.Onboarding.Domain.Tests/Andor.Onboarding.Domain.Tests.csproj" />
     <Project Path="Tests/Onboarding/Andor.Onboarding.Infrastructure.Tests/Andor.Onboarding.Infrastructure.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Tests/Tasks/">
+    <Project Path="Tests/Tasks/Andor.Tasks.Domain.Tests/Andor.Tasks.Domain.Tests.csproj" Id="38113ae1-c61f-4df4-a17e-450e66210319" />
   </Folder>
   <Folder Name="/Tests/Users/">
     <Project Path="Tests/Users/Andor.Users.Tests/Andor.Users.Domain.Tests.csproj" Id="af9af97f-89e4-462d-a334-4d346326d48b" />

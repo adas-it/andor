@@ -52,6 +52,9 @@ jobs:
           - image: goals-service
             project: Src/Goals/Andor.Goals.Service/Andor.Goals.Service.csproj
             dll: Andor.Goals.Service.dll
+          - image: tasks-service
+            project: Src/Tasks/Andor.Tasks.Service/Andor.Tasks.Service.csproj
+            dll: Andor.Tasks.Service.dll
           - image: reverse-proxy
             project: Src/Administrations/ReverseProxy/Andor.Admin.ReverseProxy.Yarp/Andor.Admin.ReverseProxy.Yarp.csproj
             dll: Andor.Admin.ReverseProxy.Yarp.dll
