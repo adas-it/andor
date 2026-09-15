@@ -1,0 +1,6 @@
+@Andor.Goals.Service_HostAddress = http://localhost:5076
+
+GET {{Andor.Goals.Service_HostAddress}}/health
+Accept: application/json
+
+###

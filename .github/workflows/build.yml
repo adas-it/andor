@@ -59,6 +59,12 @@ jobs:
               Tests/Administrations/Configurations/Andor.Configurations.ComponentTests/Andor.Configurations.ComponentTests.csproj
             sonarProjectKey: adas-it_andor-configurations
             coverageFile: coverage-andor-configurations.xml
+          - name: Andor Goals
+            projectName: Src/Goals/Andor.Goals.Service/Andor.Goals.Service.csproj
+            projectTestNames: |
+              Tests/Goals/Andor.Goals.Domain.Tests/Andor.Goals.Domain.Tests.csproj
+            sonarProjectKey: adas-it_andor-goals
+            coverageFile: coverage-andor-goals.xml
 
     steps:
       - uses: actions/checkout@v4

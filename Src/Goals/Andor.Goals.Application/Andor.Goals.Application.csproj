@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Akka" />
+    <PackageReference Include="Akka.Hosting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Andor.Foundation.Application\Andor.Foundation.Application.csproj" />
+    <ProjectReference Include="..\..\Shared\Andor.Foundation.Contracts\Andor.Foundation.Contracts.csproj" />
+    <ProjectReference Include="..\Andor.Goals.Contracts\Andor.Goals.Contracts.csproj" />
+    <ProjectReference Include="..\Andor.Goals.Domain\Andor.Goals.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

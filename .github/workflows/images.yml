@@ -49,6 +49,9 @@ jobs:
           - image: onboarding-api
             project: Src/Onboarding/Andor.Onboarding.Service/Andor.Onboarding.Service.csproj
             dll: Andor.Onboarding.Service.dll
+          - image: goals-service
+            project: Src/Goals/Andor.Goals.Service/Andor.Goals.Service.csproj
+            dll: Andor.Goals.Service.dll
           - image: reverse-proxy
             project: Src/Administrations/ReverseProxy/Andor.Admin.ReverseProxy.Yarp/Andor.Admin.ReverseProxy.Yarp.csproj
             dll: Andor.Admin.ReverseProxy.Yarp.dll

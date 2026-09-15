@@ -36,4 +36,7 @@ builder.AddProject<Projects.Andor_Admin_ReverseProxy_Yarp>("reverse-proxy", laun
     .WaitFor(communicationsApi)
     .WaitFor(onboardingApi);
 
+builder.AddProject<Projects.Andor_Goals_Service>("goals-service")
+    .WithHttpHealthCheck("/health");
+
 builder.Build().Run();

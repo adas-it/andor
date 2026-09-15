@@ -52,7 +52,15 @@
     <Project Path="Src/Communications/Andor.Communications.RestApi/Andor.Communications.RestApi.csproj" />
     <Project Path="Src/Communications/Andor.Communications.Service/Andor.Communications.Service.csproj" />
   </Folder>
-  <Folder Name="/Src/Goals/" />
+  <Folder Name="/Src/Goals/">
+    <Project Path="Src/Goals/Andor.Goals.Application/Andor.Goals.Application.csproj" />
+    <Project Path="Src/Goals/Andor.Goals.Binder/Andor.Goals.Binder.csproj" />
+    <Project Path="Src/Goals/Andor.Goals.Contracts/Andor.Goals.Contracts.csproj" />
+    <Project Path="Src/Goals/Andor.Goals.Domain/Andor.Goals.Domain.csproj" />
+    <Project Path="Src/Goals/Andor.Goals.Infrastructure/Andor.Goals.Infrastructure.csproj" />
+    <Project Path="Src/Goals/Andor.Goals.RestApi/Andor.Goals.RestApi.csproj" />
+    <Project Path="Src/Goals/Andor.Goals.Service/Andor.Goals.Service.csproj" />
+  </Folder>
   <Folder Name="/Src/Onboarding/">
     <Project Path="Src/Onboarding/Andor.Onboarding.Application/Andor.Onboarding.Application.csproj" />
     <Project Path="Src/Onboarding/Andor.Onboarding.Binder/Andor.Onboarding.Binder.csproj" />
@@ -115,6 +123,9 @@
     <Project Path="Tests/Communications/Andor.Communications.ComponentTests/Andor.Communications.ComponentTests.csproj" />
     <Project Path="Tests/Communications/Andor.Communications.Domain.Tests/Andor.Communications.Domain.Tests.csproj" />
     <Project Path="Tests/Communications/Andor.Communications.Infrastructure.Tests/Andor.Communications.Infrastructure.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Tests/Goals/">
+    <Project Path="Tests/Goals/Andor.Goals.Domain.Tests/Andor.Goals.Domain.Tests.csproj" />
   </Folder>
   <Folder Name="/Tests/Onboarding/">
     <Project Path="Tests/Onboarding/Andor.Onboarding.ComponentTests/Andor.Onboarding.ComponentTests.csproj" />

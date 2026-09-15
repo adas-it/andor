@@ -16,6 +16,7 @@
 # accounts-api       Src/Budget/Andor.Accounts.Service/Andor.Accounts.Service.csproj                                      Andor.Accounts.Service.dll
 # communications-api Src/Communications/Andor.Communications.Service/Andor.Communications.Service.csproj                   Andor.Communications.Service.dll
 # onboarding-api     Src/Onboarding/Andor.Onboarding.Service/Andor.Onboarding.Service.csproj                              Andor.Onboarding.Service.dll
+# goals-service      Src/Goals/Andor.Goals.Service/Andor.Goals.Service.csproj                                            Andor.Goals.Service.dll
 # reverse-proxy      Src/Administrations/ReverseProxy/Andor.Admin.ReverseProxy.Yarp/Andor.Admin.ReverseProxy.Yarp.csproj  Andor.Admin.ReverseProxy.Yarp.dll
 
 ARG DOTNET_VERSION=10.0
