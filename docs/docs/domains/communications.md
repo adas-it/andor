@@ -67,31 +67,45 @@ Example `Values`: `{ "<name>": "Ada", "<code>": "123456" }`
 
 ## Seeded configuration (already in the database)
 
-Migration
-[`20260902110428_SeedInitialRulesAndTemplates`](https://github.com/adas-it/andor/blob/main/Src/Communications/Andor.Communications.Infrastructure/Migrations/20260902110428_SeedInitialRulesAndTemplates.cs)
-inserts **two rules**, each with **one default English template**. These are applied automatically
-on service start-up by `app.ApplyCommunicationMigrationsAsync()`.
+Two migrations seed this data, applied automatically on service start-up by
+`app.ApplyCommunicationMigrationsAsync()`:
+
+- [`20260902110428_SeedInitialRulesAndTemplates`](https://github.com/adas-it/andor/blob/main/Src/Communications/Andor.Communications.Infrastructure/Migrations/20260902110428_SeedInitialRulesAndTemplates.cs)
+  — initial seed with placeholder/dummy template content.
+- [`20260917101701_SeedRealTemplates`](https://github.com/adas-it/andor/blob/main/Src/Communications/Andor.Communications.Infrastructure/Migrations/20260917101701_SeedRealTemplates.cs)
+  — replaces the dummy `onboarding-verification-code` template with the real HTML from
+  `Src/Communications/templates/01-codigo-verificacao.html`, adds two new rules/templates from
+  `02-boas-vindas.html` and `03-convite-conta.html`, and removes the orphaned `wellcome` rule
+  (`42b2aa27-…`) that the first migration seeded but no producer ever targeted.
 
 ### Rules
 
 | `Id` | `Name` | `Type` |
 |---|---|---|
 | `acb860a5-1af6-4b03-afae-e290dfcac7d4` | `onboarding-verification-code` | `1` (Information) |
-| `42b2aa27-82e9-4d20-8e88-afbf25e2c721` | `wellcome` | `1` (Information) |
+| `875725eb-683a-4f33-b27f-32489d127e4b` | `welcome-after-verification` | `1` (Information) |
+| `ef680a94-c366-4d8a-92a4-65ed8c8fc807` | `account-invite` | `1` (Information) |
 
 ### Templates
 
-| `Id` | `RuleId` | `Title` | `Lang` | `Partner` | `IsDefault` | `Subject` | `Value` |
+| `Id` | `RuleId` | `Title` | `Lang` | `Partner` | `IsDefault` | `Subject` | Source file |
 |---|---|---|---|---|---|---|---|
-| `a382b4e7-db3d-49a8-a15b-c258e86cd6d0` | `acb860a5-…dfcac7d4` (`onboarding-verification-code`) | `wellcome` | `en` | `1` (InHouse) | `true` | `Welcome Email` | `<h1>Hello <name>!</h1><br>Your code is <code>` |
-| `d5b1f6c2-8a34-4e79-9c1b-2f7e0a4d6b83` | `42b2aa27-…afbf25e2c721` (`wellcome`) | `wellcome` | `en` | `1` (InHouse) | `true` | `Welcome Email` | `<h1>Welcome <name>!</h1><br>We're glad to have you on board.` |
+| `a382b4e7-db3d-49a8-a15b-c258e86cd6d0` | `acb860a5-…dfcac7d4` (`onboarding-verification-code`) | `wellcome` | `en` | `1` (InHouse) | `true` | `Seu código de verificação Berry` | `01-codigo-verificacao.html` (tokens: `<code>`) |
+| `9f501ec1-0d01-4826-acb3-25592c4de98e` | `875725eb-…` (`welcome-after-verification`) | `wellcome` | `en` | `1` (InHouse) | `true` | `Bem-vindo ao Berry` | `02-boas-vindas.html` (tokens: `<name>`) |
+| `4bfcd0b7-59b3-4bd9-89db-424dcef74ccd` | `ef680a94-…` (`account-invite`) | `wellcome` | `en` | `1` (InHouse) | `true` | `Você foi convidado para uma conta no Berry` | `03-convite-conta.html` (tokens: `<inviter_name>`, `<inviter_full_name>`, `<inviter_email>`, `<inviter_initials>`, `<account_name>`, `<access_level>`, `<accept_url>`, `<decline_url>`) |
 
-!!! note "About the first row"
-    The `onboarding-verification-code` rule currently carries a template whose `Title` is
-    `wellcome`. That is intentional: the Onboarding consumer requests
-    `RuleId = acb860a5-…`, `TemplateTitle = "wellcome"`, `ContentLanguage = "en"`, so the lookup
-    key matches. The `wellcome` **rule** (`42b2aa27-…`) is configured and ready but is not wired to
-    a producer yet — it exists for a future "welcome the user after verification" flow.
+!!! note "Title is always `wellcome`, and `ContentLanguage` is always `en`"
+    Every seeded template uses the literal `Title = "wellcome"` — that's not a naming mistake,
+    it's the lookup key every producer sends (`RuleActor` matches on `RuleId + Title +
+    ContentLanguage`). Likewise `ContentLanguage` stays `"en"` even though the actual HTML is
+    Portuguese (`pt-BR`); changing either would break every existing producer, since they hardcode
+    `TemplateTitle: "wellcome"` and `ContentLanguage: "en"` in their `SendNotificationInput`. Treat
+    both as an established (if awkward) convention rather than something to "fix" in isolation.
+
+!!! note "No producer yet for `account-invite`"
+    `ef680a94-c366-4d8a-92a4-65ed8c8fc807` is seeded and ready, but nothing publishes a
+    `SendNotificationInput` for it yet. Whichever module implements the "invite someone to a
+    shared account" flow should send `Values` for all eight tokens listed above.
 
 ## How Communications is invoked
 
@@ -132,6 +146,11 @@ Consumer behaviour:
 `SendNotificationInput` (with `RuleId = acb860a5-…`, `TemplateTitle = "wellcome"`, and
 `Values` `<code>` / `<name>`) and drops it on `request-communication`. Communications picks it up
 and sends the e-mail. Onboarding never knows the subject line, the wording or that SMTP is used.
+
+Similarly, when a signup is verified, Onboarding emits `SignupVerifiedDomainEvent`; its
+`SignupVerifiedConsumer` sends a `SendNotificationInput` with `RuleId = 875725eb-…`,
+`TemplateTitle = "wellcome"`, and `Values` `<name>` — matching the `welcome-after-verification`
+rule/template above.
 
 ### 2. Via REST (direct / operational use)
 

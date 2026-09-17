@@ -35,7 +35,11 @@ builder.Services.UseAuthorizations();
 builder.Services.Configure<UserVerifiedSubscriptionOptions>(
     builder.Configuration.GetSection(UserVerifiedSubscriptionOptions.SectionName));
 
+builder.Services.Configure<SignupVerifiedSubscriptionOptions>(
+    builder.Configuration.GetSection(SignupVerifiedSubscriptionOptions.SectionName));
+
 builder.Services.AddHostedService<SignupCodeGeneratedConsumer>();
+builder.Services.AddHostedService<SignupVerifiedConsumer>();
 
 var app = builder.Build();
 
