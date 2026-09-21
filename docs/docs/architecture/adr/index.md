@@ -15,6 +15,7 @@ Format: lightweight [MADR](https://adr.github.io/madr/)-style. Template: [`templ
 | [0003](0003-transactional-outbox.md) | Transactional Outbox + Azure Service Bus for integration events | Accepted | 2026-09 |
 | [0004](0004-result-pattern-over-exceptions.md) | Result / Notification pattern instead of exceptions | Accepted | 2026-09 |
 | [0005](0005-schema-per-module-persistence.md) | One DbContext and schema per module | Accepted | 2026-09 |
+| [0006](0006-consumer-owned-integration-event-types.md) | Consumer-owned deserialization types for integration events | Accepted | 2026-09 |
 
 ## Relationship to arc42
 

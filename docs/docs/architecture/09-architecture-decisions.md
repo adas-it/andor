@@ -13,6 +13,7 @@ and template are under [Architecture Decision Records](adr/index.md).
 | [ADR-0003](adr/0003-transactional-outbox.md) | Publish integration events via a **transactional Outbox** relayed to **Azure Service Bus**. | Accepted | Atomic state + event; eventual consistency; consumers must be idempotent. |
 | [ADR-0004](adr/0004-result-pattern-over-exceptions.md) | Represent expected failures with a **Result / Notification** pattern, not exceptions. | Accepted | Deterministic HTTP mapping; every layer threads results. |
 | [ADR-0005](adr/0005-schema-per-module-persistence.md) | Give each module its **own `DbContext` and schema**; no cross-module joins or FKs. | Accepted | Real data isolation; some duplication; integration only via contracts/events. |
+| [ADR-0006](adr/0006-consumer-owned-integration-event-types.md) | Consumers of an **integration event** declare their own local type; no shared event DTO or cross-module `Domain` reference. | Accepted | No compile-time coupling across modules; schema drift only fails at runtime, not build time. |
 
 ## 9.2 Decisions still implicit (candidates for future ADRs)
 

@@ -41,6 +41,7 @@ nav:
       - ADR-0003 Transactional outbox: architecture/adr/0003-transactional-outbox.md
       - ADR-0004 Result pattern over exceptions: architecture/adr/0004-result-pattern-over-exceptions.md
       - ADR-0005 Schema-per-module persistence: architecture/adr/0005-schema-per-module-persistence.md
+      - ADR-0006 Consumer-owned integration event types: architecture/adr/0006-consumer-owned-integration-event-types.md
       - ADR template: architecture/adr/template.md
 
 markdown_extensions:
