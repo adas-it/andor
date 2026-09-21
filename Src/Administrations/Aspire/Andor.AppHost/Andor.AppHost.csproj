@@ -6,8 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.Azure.Functions" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\Assets\Andor.Assets.Service\Andor.Assets.Service.csproj" />
     <ProjectReference Include="..\..\..\Budget\Andor.Accounts.Service\Andor.Accounts.Service.csproj" />
+    <ProjectReference Include="..\..\..\Communications\Andor.Communications.External\Andor.Communications.External.csproj" />
     <ProjectReference Include="..\..\..\Communications\Andor.Communications.Service\Andor.Communications.Service.csproj" />
     <ProjectReference Include="..\..\..\Goals\Andor.Goals.Service\Andor.Goals.Service.csproj" />
     <ProjectReference Include="..\..\..\Onboarding\Andor.Onboarding.Service\Andor.Onboarding.Service.csproj" />

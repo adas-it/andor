@@ -1,7 +1,6 @@
 using Andor.Authentication.Jwt;
 using Andor.Authorizations.Application;
 using Andor.Communications.Binder;
-using Andor.Communications.Service.Consumers;
 using Andor.Documentation.Swagger;
 using Andor.Foundation.Binder;
 using Andor.Foundation.ServerServices;
@@ -31,8 +30,6 @@ builder.UseAkkaModules("AndorCommunicationsSystem");
 builder.UseCommunications(builder.Configuration);
 
 builder.Services.UseAuthorizations();
-
-builder.Services.AddHostedService<RequestCommunicationConsumer>();
 
 var app = builder.Build();
 

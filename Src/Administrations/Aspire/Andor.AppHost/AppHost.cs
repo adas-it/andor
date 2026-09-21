@@ -44,4 +44,6 @@ builder.AddProject<Projects.Andor_Admin_ReverseProxy_Yarp>("reverse-proxy", laun
 builder.AddProject<Projects.Andor_Goals_Service>("goals-service")
     .WithHttpHealthCheck("/health");
 
+builder.AddAzureFunctionsProject<Projects.Andor_Communications_External>("andor-communications-external");
+
 builder.Build().Run();

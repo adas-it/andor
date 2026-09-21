@@ -1,7 +1,6 @@
 using Andor.Communications.Binder.Application;
 using Andor.Communications.Binder.Infrastructure;
 using Andor.Communications.RestApi;
-using Andor.Foundation.Application;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,8 +11,6 @@ public static class CommunicationExtensions
 {
     public static WebApplicationBuilder UseCommunications(this WebApplicationBuilder builder, IConfiguration configuration)
     {
-        _ = builder.Services.AddScoped<ITenantService, TenantService>();
-
         _ = builder.Services.UseApi()
             .WithCommunicationApplication()
             .WithCommunicationInfrastructure(configuration);

@@ -1,5 +1,5 @@
 using Andor.Communications.Infrastructure.Context;
-using Andor.Foundation.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,9 +9,14 @@ internal static class InfrastructureDbContext
 {
     internal static IServiceCollection WithCommunicationDbContext(this IServiceCollection services,
         IConfiguration configuration)
-        => services.WithTenantDbContext<CommunicationContext>();
+        => services.AddDbContext<CommunicationContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString("Communication")));
 
-    internal static Task ApplyCommunicationMigrationsAsync(this IServiceProvider serviceProvider)
-        => serviceProvider.ApplyTenantMigrationsAsync<CommunicationContext>(
-            options => new CommunicationContext(options));
+    internal static async Task ApplyCommunicationMigrationsAsync(this IServiceProvider serviceProvider)
+    {
+        await using var scope = serviceProvider.CreateAsyncScope();
+        var context = scope.ServiceProvider.GetRequiredService<CommunicationContext>();
+
+        await context.Database.MigrateAsync();
+    }
 }

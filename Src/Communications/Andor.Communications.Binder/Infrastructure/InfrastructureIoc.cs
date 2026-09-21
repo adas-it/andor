@@ -22,6 +22,8 @@ internal static class InfrastructureIoc
 
         services.WithAzureServiceBusMessaging(configuration);
 
+        services.AddMemoryCache();
+
         services.AddOptions<ApplicationSettings>()
             .Bind(configuration.GetSection("ApplicationSettings"));
 

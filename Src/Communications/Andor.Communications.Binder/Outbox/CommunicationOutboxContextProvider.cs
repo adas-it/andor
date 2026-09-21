@@ -1,35 +1,23 @@
 using Andor.Communications.Infrastructure.Context;
-using Andor.Foundation.Application;
 using Andor.Foundation.Infrastructure;
 using Andor.Foundation.Infrastructure.Outbox;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Andor.Communications.Binder.Outbox;
 
 /// <summary>
-/// Exposes one <see cref="CommunicationContext"/> per configured SQL Server tenant so the
-/// generic <see cref="OutboxDispatcher"/> can drain each tenant's Outbox table.
+/// Exposes the single <see cref="CommunicationContext"/> so the generic
+/// <see cref="OutboxDispatcher"/> can drain its Outbox table.
 /// </summary>
-internal sealed class CommunicationOutboxContextProvider(ITenantService tenantService)
+internal sealed class CommunicationOutboxContextProvider(IConfiguration configuration)
     : IOutboxContextProvider
 {
     public IReadOnlyCollection<PrincipalContext> CreateContexts()
     {
-        var contexts = new List<PrincipalContext>();
+        var optionsBuilder = new DbContextOptionsBuilder<CommunicationContext>();
+        _ = optionsBuilder.UseSqlServer(configuration.GetConnectionString("Communication"));
 
-        foreach (var tenant in tenantService.GetTenants())
-        {
-            if (tenant.DatabaseType != TenantService.SQLServer)
-            {
-                continue;
-            }
-
-            var optionsBuilder = new DbContextOptionsBuilder<CommunicationContext>();
-            _ = optionsBuilder.UseSqlServer(tenant.ConnectionString);
-
-            contexts.Add(new CommunicationContext(optionsBuilder.Options));
-        }
-
-        return contexts;
+        return [new CommunicationContext(optionsBuilder.Options)];
     }
 }

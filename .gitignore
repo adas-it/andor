@@ -362,3 +362,6 @@ MigrationBackup/
 
 # MkDocs local build output (docs/ is now the MkDocs project; the site is built in CI)
 docs/site/
+
+# Azure Functions local dev settings (per-machine secrets, never committed)
+local.settings.json
