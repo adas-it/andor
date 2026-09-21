@@ -43,6 +43,9 @@ internal static class UserFixture
         string? lastName = null,
         Guid? preferredCurrencyId = null,
         Guid? preferredLanguageId = null,
+        bool marketingOptIn = false,
+        bool termsAndConditionsAccepted = false,
+        bool privacyPolicyAccepted = false,
         CancellationToken cancellationToken = default)
         => User.NewAsync(
             userId ?? UserId.New(),
@@ -51,6 +54,9 @@ internal static class UserFixture
             lastName ?? ValidLastName,
             preferredCurrencyId ?? ValidCurrencyId,
             preferredLanguageId ?? ValidLanguageId,
+            marketingOptIn,
+            termsAndConditionsAccepted,
+            privacyPolicyAccepted,
             (validator ?? CreateDefaultValidator()).Object,
             cancellationToken);
 }

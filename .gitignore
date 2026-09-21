@@ -365,3 +365,5 @@ docs/site/
 
 # Azure Functions local dev settings (per-machine secrets, never committed)
 local.settings.json
+/Src/Tasks/Andor.Tasks.Service/appsettings.Development.json
+/Src/Users/Andor.Users.Service/appsettings.Development.json

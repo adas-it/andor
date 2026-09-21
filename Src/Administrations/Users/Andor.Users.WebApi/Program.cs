@@ -74,6 +74,7 @@ builder.Services.AddOpenIddict()
         _ = opt.AllowPasswordFlow();
         _ = opt.AllowAuthorizationCodeFlow().RequireProofKeyForCodeExchange();
         _ = opt.AllowRefreshTokenFlow();
+        _ = opt.AllowClientCredentialsFlow();
 
         _ = opt.SetAuthorizationEndpointUris("/connect/authorize");
         _ = opt.SetTokenEndpointUris("/connect/token");
@@ -114,19 +115,20 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod());
 });
 
-builder.Services.AddOptions<UserVerifiedSubscriptionOptions>()
-    .Bind(builder.Configuration.GetSection(UserVerifiedSubscriptionOptions.SectionName));
+builder.Services.AddOptions<IdentityProvisioningQueueOptions>()
+    .Bind(builder.Configuration.GetSection(IdentityProvisioningQueueOptions.SectionName));
 
 builder.Services.AddSingleton(serviceProvider =>
 {
-    var options = serviceProvider.GetRequiredService<IOptions<UserVerifiedSubscriptionOptions>>().Value;
+    var options = serviceProvider.GetRequiredService<IOptions<IdentityProvisioningQueueOptions>>().Value;
 
     var clientOptions = new ServiceBusClientOptions
     {
         TransportType = ServiceBusTransportType.AmqpWebSockets,
     };
 
-    // An explicit connection string takes precedence (e.g. local dev via User Secrets).
+    // An explicit connection string takes precedence (e.g. local dev via User Secrets). This is a
+    // Listen-only SAS scoped to just this one queue — not the app's broader ServiceBus credential.
     if (!string.IsNullOrWhiteSpace(options.ConnectionString))
     {
         return new ServiceBusClient(options.ConnectionString, clientOptions);
@@ -147,7 +149,7 @@ builder.Services.AddSingleton(serviceProvider =>
         clientOptions);
 });
 
-builder.Services.AddHostedService<UserVerifiedConsumer>();
+builder.Services.AddHostedService<IdentityProvisioningConsumer>();
 
 var app = builder.Build();
 
@@ -172,6 +174,32 @@ using (var scope = app.Services.CreateScope())
             {
                 OpenIddictConstants.Permissions.Endpoints.Token,
                 OpenIddictConstants.Permissions.GrantTypes.Password
+            }
+        });
+    }
+
+    // Service-to-service client: lets Onboarding call Users.Service's POST /users endpoint with a
+    // client-credentials token instead of that endpoint trusting Service Bus alone. The secret
+    // MUST be overridden outside appsettings.json for any non-local environment (User Secrets /
+    // Key Vault / env var) — this fallback only exists so local dev works out of the box.
+    var onboardingServiceConfig = app.Configuration.GetSection("OpenIddictClients:OnboardingService");
+    var onboardingServiceSecret = onboardingServiceConfig["ClientSecret"] ?? "dev-only-onboarding-service-secret";
+
+    var onboardingServiceClientId = onboardingServiceConfig["ClientId"] ?? "onboarding-service";
+    var existingOnboardingServiceClient = await manager.FindByClientIdAsync(onboardingServiceClientId);
+
+    if (existingOnboardingServiceClient is null)
+    {
+        _ = await manager.CreateAsync(new OpenIddictApplicationDescriptor
+        {
+            ClientId = onboardingServiceClientId,
+            ClientSecret = onboardingServiceSecret,
+            DisplayName = "Onboarding Service",
+            Permissions =
+            {
+                OpenIddictConstants.Permissions.Endpoints.Token,
+                OpenIddictConstants.Permissions.GrantTypes.ClientCredentials,
+                OpenIddictConstants.Permissions.Prefixes.Scope + "users.write"
             }
         });
     }

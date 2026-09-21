@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace Andor.Onboarding.Service.Consumers;
 
-internal sealed record UserVerifiedMessage(Guid UserId, string Name, string Email, string Code);
+internal sealed record UserVerifiedMessage(Guid UserId, string Name, string Email, string Code, string PreferredLanguage);
 
 /// <summary>
 /// Subscribes to the "user-verified-events" topic and, upon receiving a message, publishes a
@@ -75,7 +75,7 @@ public sealed class SignupCodeGeneratedConsumer : BackgroundService
             RuleId: Guid.Parse("acb860a5-1af6-4b03-afae-e290dfcac7d4"),
             RecipientEmail: message.Email,
             TemplateTitle: "wellcome",
-            ContentLanguage: "en",
+            ContentLanguage: string.IsNullOrWhiteSpace(message.PreferredLanguage) ? "en" : message.PreferredLanguage,
             Values: new Dictionary<string, string>
             {
                 { "<code>", message.Code },

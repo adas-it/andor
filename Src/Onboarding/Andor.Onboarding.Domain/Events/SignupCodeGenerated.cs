@@ -7,6 +7,7 @@ public sealed record SignupCodeGenerated : DomainEvent
     public required string Name { get; init; }
     public required string Email { get; init; }
     public required string Code { get; init; }
+    public required string PreferredLanguage { get; init; }
 
     public static SignupCodeGenerated FromSignupRequest(SignupRequest request) => new()
     {
@@ -15,5 +16,6 @@ public sealed record SignupCodeGenerated : DomainEvent
         Name = request.Name,
         Email = request.Email,
         Code = request.VerificationCode,
+        PreferredLanguage = request.PreferredLanguage,
     };
 }

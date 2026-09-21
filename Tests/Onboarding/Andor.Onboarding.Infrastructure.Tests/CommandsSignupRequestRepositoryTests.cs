@@ -80,7 +80,7 @@ public class CommandsSignupRequestRepositoryTests
         var secondScopeContext = CreateContext();
         var secondScopeRepository = new CommandsSignupRequestRepository(secondScopeContext);
         var loadedRequest = await secondScopeRepository.GetByIdAsync(request.Id, CancellationToken.None);
-        loadedRequest!.Verify(loadedRequest.VerificationCode, "hashed-password");
+        loadedRequest!.Verify(loadedRequest.VerificationCode, "hashed-password", Guid.NewGuid(), "en", true, true, true);
         await secondScopeRepository.PersistAsync(loadedRequest, CancellationToken.None);
 
         await using var verifyContext = CreateContext();
@@ -103,6 +103,7 @@ public class CommandsSignupRequestRepositoryTests
             SignupRequestId.New(),
             GeneralFixture.GetValidName(),
             email,
+            "en",
             validatorMock.Object,
             CancellationToken.None);
 

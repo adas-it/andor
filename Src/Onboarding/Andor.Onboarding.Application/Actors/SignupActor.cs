@@ -1,6 +1,7 @@
 using Akka.Actor;
 using Andor.Foundation.Domain.ValuesObjects;
 using Andor.Onboarding.Application.Commands;
+using Andor.Onboarding.Application.Interfaces;
 using Andor.Onboarding.Domain;
 using Andor.Onboarding.Domain.Errors;
 using Andor.Onboarding.Domain.Repositories;
@@ -65,6 +66,7 @@ public class SignupActor : ReceiveActor, IWithUnboundedStash
             _id,
             cmd.Name,
             cmd.Email,
+            cmd.PreferredLanguage,
             validator,
             cmd.CancellationToken);
 
@@ -93,7 +95,7 @@ public class SignupActor : ReceiveActor, IWithUnboundedStash
         var validator = scope.ServiceProvider.GetRequiredService<IOnboardingValidator>();
         var repo = scope.ServiceProvider.GetRequiredService<ICommandsSignupRequestRepository>();
 
-        var result = await _signupRequest!.RestartAsync(cmd.Name, validator, cmd.CancellationToken);
+        var result = await _signupRequest!.RestartAsync(cmd.Name, cmd.PreferredLanguage, validator, cmd.CancellationToken);
 
         if (result.IsSuccess && _signupRequest.Events.Count > 0)
             await repo.PersistAsync(_signupRequest, cmd.CancellationToken);
@@ -114,10 +116,41 @@ public class SignupActor : ReceiveActor, IWithUnboundedStash
             return;
         }
 
+        var precondition = _signupRequest.CanVerify(cmd.Code);
+
+        if (precondition.IsFailure)
+        {
+            Sender.Tell((precondition, _signupRequest));
+            return;
+        }
+
         using var scope = _serviceProvider.CreateScope();
         var repo = scope.ServiceProvider.GetRequiredService<ICommandsSignupRequestRepository>();
+        var provisioningClient = scope.ServiceProvider.GetRequiredService<IUserProvisioningClient>();
 
-        var result = _signupRequest.Verify(cmd.Code, cmd.PasswordHash);
+        // Provisioning (User → Identity → Account) is a hard dependency of Verify succeeding —
+        // do it before touching the aggregate, so a failure here never leaves the signup marked
+        // verified without a User to match it. The user can simply retry verification.
+        var userId = Guid.NewGuid();
+
+        var provisioningResult = await provisioningClient.ProvisionAsync(
+            userId,
+            _signupRequest.Name,
+            _signupRequest.Email,
+            cmd.PasswordHash,
+            cmd.MarketingOptIn,
+            cmd.TermsAndConditionsAccepted,
+            cmd.PrivacyPolicyAccepted,
+            cmd.CancellationToken);
+
+        if (provisioningResult.IsFailure)
+        {
+            Sender.Tell((provisioningResult, _signupRequest));
+            return;
+        }
+
+        var result = _signupRequest.Verify(cmd.Code, cmd.PasswordHash, userId, cmd.PreferredLanguage,
+            cmd.MarketingOptIn, cmd.TermsAndConditionsAccepted, cmd.PrivacyPolicyAccepted);
 
         if (result.IsSuccess)
         {

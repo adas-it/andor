@@ -10,4 +10,10 @@ public record CreateUserCommand(
     string LastName,
     Guid PreferredCurrencyId,
     Guid PreferredLanguageId,
+    bool MarketingOptIn,
+    bool TermsAndConditionsAccepted,
+    bool PrivacyPolicyAccepted,
+    // Not persisted on User (that's Identity's own concern) — carried only so CreateUserAsync
+    // can hand it off on the "request-identity-user" queue after the User is provisioned.
+    string PasswordHash,
     CancellationToken CancellationToken);

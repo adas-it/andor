@@ -1,33 +1,39 @@
-using Andor.Foundation.Domain.Events;
 using Azure.Messaging.ServiceBus;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Andor.Users.WebApi.Consumers;
 
-internal sealed record UserVerifiedMessage(Guid UserId, string Name, string Email, string PasswordHash);
+internal sealed record IdentityProvisioningRequestedMessage(Guid UserId, string Email, string Name, string PasswordHash);
 
 /// <summary>
-/// Consumes the "user-verified-events" topic (published by the Onboarding module once a
-/// signup is confirmed) and creates the corresponding credentials row. The password arrives
-/// already hashed — Onboarding never puts a raw password on the bus.
+/// Consumes the dedicated "request-identity-user" queue — published by
+/// <c>Andor.Users.Service</c> right after it provisions a User — and creates the corresponding
+/// credentials row. The password arrives already hashed; Onboarding never puts a raw password on
+/// the bus. Unlike the old "user-verified-events" topic subscription this replaces, this queue is
+/// single-purpose, so there's no envelope/event-name gate to check before deserializing.
 /// </summary>
-public sealed class UserVerifiedConsumer : BackgroundService
+public sealed class IdentityProvisioningConsumer : BackgroundService
 {
     private readonly ServiceBusProcessor _processor;
     private readonly IServiceScopeFactory _scopeFactory;
-    private readonly ILogger<UserVerifiedConsumer> _logger;
+    private readonly ILogger<IdentityProvisioningConsumer> _logger;
 
-    public UserVerifiedConsumer(
+    public IdentityProvisioningConsumer(
         ServiceBusClient client,
-        IOptions<UserVerifiedSubscriptionOptions> options,
+        IOptions<IdentityProvisioningQueueOptions> options,
         IServiceScopeFactory scopeFactory,
-        ILogger<UserVerifiedConsumer> logger)
+        ILogger<IdentityProvisioningConsumer> logger)
     {
         _scopeFactory = scopeFactory;
         _logger = logger;
 
-        _processor = client.CreateProcessor(options.Value.TopicName, options.Value.SubscriptionName);
+        if (string.IsNullOrWhiteSpace(options.Value.QueueName))
+        {
+            throw new InvalidOperationException("IdentityProvisioningQueue:QueueName must be configured.");
+        }
+
+        _processor = client.CreateProcessor(options.Value.QueueName);
         _processor.ProcessMessageAsync += ProcessMessageAsync;
         _processor.ProcessErrorAsync += ProcessErrorAsync;
     }
@@ -51,18 +57,7 @@ public sealed class UserVerifiedConsumer : BackgroundService
 
     private async Task ProcessMessageAsync(ProcessMessageEventArgs args)
     {
-        var domainEvent = args.Message.Body.ToObjectFromJson<DomainEvent>();
-
-        if (domainEvent.EventName != "SignupVerifiedDomainEvent")
-        {
-            _logger.LogDebug("Received unexpected event type: {EventType}.", domainEvent.EventName);
-
-            await args.CompleteMessageAsync(args.Message, args.CancellationToken);
-            return;
-        }
-        ;
-
-        var message = args.Message.Body.ToObjectFromJson<UserVerifiedMessage>();
+        var message = args.Message.Body.ToObjectFromJson<IdentityProvisioningRequestedMessage>();
 
         using var scope = _scopeFactory.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -87,7 +82,7 @@ public sealed class UserVerifiedConsumer : BackgroundService
 
     private Task ProcessErrorAsync(ProcessErrorEventArgs args)
     {
-        _logger.LogError(args.Exception, "Error processing user-verified message.");
+        _logger.LogError(args.Exception, "Error processing identity provisioning message.");
         return Task.CompletedTask;
     }
 
@@ -99,4 +94,18 @@ public sealed class UserVerifiedConsumer : BackgroundService
         await base.StopAsync(cancellationToken);
         await _processor.DisposeAsync();
     }
+}
+
+/// <summary>
+/// Deliberately its own connection, separate from any other Service Bus config in this app: this
+/// queue is meant to carry a Listen-only SAS scoped to just "request-identity-user", not the
+/// broader credential other parts of the app might use.
+/// </summary>
+public sealed class IdentityProvisioningQueueOptions
+{
+    public const string SectionName = "IdentityProvisioningQueue";
+
+    public string? FullyQualifiedNamespace { get; set; }
+    public string? ConnectionString { get; set; }
+    public string QueueName { get; set; } = string.Empty;
 }

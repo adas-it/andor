@@ -18,18 +18,19 @@ public class SignupCommandsService(ActorRegistry registry, ICommandsSignupReques
 {
     private readonly IActorRef _signupActor = registry.Get<SignupManagerActor>();
 
-    public async Task<ApplicationResult<object?>> StartSignupAsync(string name, string email,
+    public async Task<ApplicationResult<object?>> StartSignupAsync(string name, string email, string preferredLanguage,
         ApplicationUser currentUser, CancellationToken cancellationToken)
     {
         var existing = await repository.GetByEmailAsync(email, cancellationToken);
         var id = existing != null && !existing.IsVerified ? existing.Id : SignupRequestId.New();
 
-        var command = new StartSignupCommand(id, name, email, currentUser, cancellationToken);
+        var command = new StartSignupCommand(id, name, email, preferredLanguage, currentUser, cancellationToken);
 
         return await Handler(command);
     }
 
     public async Task<ApplicationResult<object?>> VerifySignupAsync(string email, string code, string password,
+        string preferredLanguage, bool marketingOptIn, bool termsAndConditionsAccepted, bool privacyPolicyAccepted,
         ApplicationUser currentUser, CancellationToken cancellationToken)
     {
         var response = ApplicationResult<object?>.Success();
@@ -44,7 +45,8 @@ public class SignupCommandsService(ActorRegistry registry, ICommandsSignupReques
 
         var passwordHash = passwordHasher.HashPassword(password);
 
-        var command = new VerifySignupCommand(signupRequest.Id, code, passwordHash, currentUser, cancellationToken);
+        var command = new VerifySignupCommand(signupRequest.Id, code, passwordHash, preferredLanguage,
+            marketingOptIn, termsAndConditionsAccepted, privacyPolicyAccepted, currentUser, cancellationToken);
 
         return await Handler(command);
     }

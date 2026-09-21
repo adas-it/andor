@@ -31,5 +31,11 @@ public class UserConfig : IEntityTypeConfiguration<User>
         _ = entity.Property(k => k.PreferredCurrencyId);
 
         _ = entity.Property(k => k.PreferredLanguageId);
+
+        _ = entity.Property(k => k.MarketingOptIn);
+
+        _ = entity.Property(k => k.TermsAndConditionsAccepted);
+
+        _ = entity.Property(k => k.PrivacyPolicyAccepted);
     }
 }

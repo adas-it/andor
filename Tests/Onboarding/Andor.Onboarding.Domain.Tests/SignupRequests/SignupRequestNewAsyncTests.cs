@@ -28,7 +28,7 @@ public class SignupRequestNewAsyncTests
 
         // Act
         var (result, signupRequest) = await SignupRequest.NewAsync(
-            id, name, email, _validatorMock.Object, CancellationToken.None);
+            id, name, email, "en", _validatorMock.Object, CancellationToken.None);
 
         // Assert
         Assert.True(result.IsSuccess);
@@ -36,6 +36,7 @@ public class SignupRequestNewAsyncTests
         Assert.Equal(id, signupRequest.Id);
         Assert.Equal(name.Value, signupRequest.Name.Value);
         Assert.Equal(email, signupRequest.Email);
+        Assert.Equal("en", signupRequest.PreferredLanguage);
         Assert.False(signupRequest.IsVerified);
     }
 
@@ -66,6 +67,7 @@ public class SignupRequestNewAsyncTests
         Assert.Equal(signupRequest.Name.Value, codeGenerated.Name);
         Assert.Equal(signupRequest.Email, codeGenerated.Email);
         Assert.Equal(signupRequest.VerificationCode, codeGenerated.Code);
+        Assert.Equal(signupRequest.PreferredLanguage, codeGenerated.PreferredLanguage);
     }
 
     [Fact]

@@ -3,48 +3,58 @@ using Andor.Accounts.Application.Commands.Interfaces;
 using Andor.Accounts.Domain.Accounts.ValueObjects;
 using Andor.Accounts.Domain.Currencies.Repositories;
 using Andor.Authorizations.Domain;
-using Andor.Foundation.Domain.Events;
 using Azure.Messaging.ServiceBus;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace Andor.Accounts.Service.Consumers;
 
-internal sealed record UserVerifiedMessage(Guid UserId, string Name, string Email);
+internal sealed record AccountProvisioningRequestedMessage(Guid UserId, string Email, string Name);
 
-public sealed class SignupVerifiedSubscriptionOptions
+/// <summary>
+/// Deliberately its own connection, separate from any other Service Bus config in this app: this
+/// queue is meant to carry a Listen-only SAS scoped to just "request-account-creation", not the
+/// broader credential this service's own event publishing uses.
+/// </summary>
+public sealed class AccountProvisioningQueueOptions
 {
-    public const string SectionName = "SignupVerifiedSubscription";
+    public const string SectionName = "AccountProvisioningQueue";
 
-    public string TopicName { get; set; } = string.Empty;
-    public string SubscriptionName { get; set; } = string.Empty;
+    public string? FullyQualifiedNamespace { get; set; }
+    public string? ConnectionString { get; set; }
+    public string QueueName { get; set; } = string.Empty;
 }
 
 /// <summary>
-/// Consumes the "user-verified-events" topic (published by the Onboarding module once a
-/// signup is confirmed) and auto-creates a personal Account for the newly verified user.
+/// Consumes the dedicated "request-account-creation" queue — published by
+/// <c>Andor.Users.Service</c> right after it provisions a User — and auto-creates a personal
+/// Account for the newly verified user. Replaces the old "user-verified-events" topic
+/// subscription: this queue is single-purpose, so there's no envelope/event-name gate to check
+/// before deserializing.
 /// </summary>
-public sealed class UserVerifiedConsumer : BackgroundService
+public sealed class AccountProvisioningConsumer : BackgroundService
 {
     private readonly ServiceBusProcessor _processor;
     private readonly IServiceScopeFactory _scopeFactory;
-    private readonly ILogger<UserVerifiedConsumer> _logger;
+    private readonly ILogger<AccountProvisioningConsumer> _logger;
 
-    public UserVerifiedConsumer(
-        ServiceBusClient client,
-        IOptions<SignupVerifiedSubscriptionOptions> options,
+    public const string ClientKey = "AccountProvisioningQueue";
+
+    public AccountProvisioningConsumer(
+        [FromKeyedServices(ClientKey)] ServiceBusClient client,
+        IOptions<AccountProvisioningQueueOptions> options,
         IServiceScopeFactory scopeFactory,
-        ILogger<UserVerifiedConsumer> logger)
+        ILogger<AccountProvisioningConsumer> logger)
     {
         _scopeFactory = scopeFactory;
         _logger = logger;
 
-        if (string.IsNullOrWhiteSpace(options.Value.TopicName) || string.IsNullOrWhiteSpace(options.Value.SubscriptionName))
+        if (string.IsNullOrWhiteSpace(options.Value.QueueName))
         {
-            throw new InvalidOperationException(
-                "SignupVerifiedSubscription:TopicName and SubscriptionName must be configured.");
+            throw new InvalidOperationException("AccountProvisioningQueue:QueueName must be configured.");
         }
 
-        _processor = client.CreateProcessor(options.Value.TopicName, options.Value.SubscriptionName);
+        _processor = client.CreateProcessor(options.Value.QueueName);
         _processor.ProcessMessageAsync += ProcessMessageAsync;
         _processor.ProcessErrorAsync += ProcessErrorAsync;
     }
@@ -68,18 +78,7 @@ public sealed class UserVerifiedConsumer : BackgroundService
 
     private async Task ProcessMessageAsync(ProcessMessageEventArgs args)
     {
-        var domainEvent = args.Message.Body.ToObjectFromJson<DomainEvent>();
-
-        if (domainEvent.EventName != "SignupVerifiedDomainEvent")
-        {
-            _logger.LogDebug("Received unexpected event type: {EventType}.", domainEvent.EventName);
-
-            await args.CompleteMessageAsync(args.Message, args.CancellationToken);
-            return;
-        }
-        ;
-
-        var message = args.Message.Body.ToObjectFromJson<UserVerifiedMessage>();
+        var message = args.Message.Body.ToObjectFromJson<AccountProvisioningRequestedMessage>();
 
         using var scope = _scopeFactory.CreateScope();
         var currencyRepository = scope.ServiceProvider.GetRequiredService<ICommandsCurrencyRepository>();
@@ -112,7 +111,7 @@ public sealed class UserVerifiedConsumer : BackgroundService
 
     private Task ProcessErrorAsync(ProcessErrorEventArgs args)
     {
-        _logger.LogError(args.Exception, "Error processing user-verified message.");
+        _logger.LogError(args.Exception, "Error processing account provisioning message.");
         return Task.CompletedTask;
     }
 

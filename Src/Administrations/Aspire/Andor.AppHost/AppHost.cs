@@ -18,7 +18,14 @@ var communicationsApi = builder.AddProject<Projects.Andor_Communications_Service
     .WithHttpHealthCheck("/health");
 
 var onboardingApi = builder.AddProject<Projects.Andor_Onboarding_Service>("onboarding-api")
-    .WithHttpHealthCheck("/health");
+    .WithHttpHealthCheck("/health")
+    // Verify calls Users.Service synchronously (POST /v1/users) and gets its client-credentials
+    // token from Users.WebApi — both are now hard dependencies of signup verification, not just
+    // choreographed reactions to it.
+    .WithReference(userServiceApi)
+    .WithReference(userIdentityApi)
+    .WaitFor(userServiceApi)
+    .WaitFor(userIdentityApi);
 
 builder.AddProject<Projects.Andor_Admin_ReverseProxy_Yarp>("reverse-proxy", launchProfileName: "https")
     .WithEndpoint("https", endpoint =>

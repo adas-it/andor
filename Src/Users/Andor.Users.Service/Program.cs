@@ -5,7 +5,6 @@ using Andor.Foundation.Binder;
 using Andor.Foundation.ServerServices;
 using Andor.ServiceDefaults;
 using Andor.Users.Binder;
-using Andor.Users.Service.Consumers;
 using Asp.Versioning.ApiExplorer;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,10 +26,9 @@ builder.Services.ConfigureJwt(builder.Configuration);
 builder.UseUsers(builder.Configuration);
 builder.Services.UseAuthorizations();
 
-builder.Services.Configure<UserVerifiedSubscriptionOptions>(
-    builder.Configuration.GetSection(UserVerifiedSubscriptionOptions.SectionName));
-
-builder.Services.AddHostedService<UserVerifiedConsumer>();
+// Lets Onboarding's client-credentials token call POST /v1/users; nothing else needs this scope.
+builder.Services.AddAuthorization(options =>
+    options.AddPolicy("users.write", policy => policy.Requirements.Add(new ScopeRequirement("users.write"))));
 
 var app = builder.Build();
 

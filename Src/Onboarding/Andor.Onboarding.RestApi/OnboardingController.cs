@@ -29,7 +29,7 @@ public class OnboardingController(ISignupCommandsService commandsService,
     public async Task<IActionResult> StartAsync([FromBody] StartSignupInput input,
         CancellationToken cancellationToken)
     {
-        var output = await commandsService.StartSignupAsync(input.Name, input.Email,
+        var output = await commandsService.StartSignupAsync(input.Name, input.Email, input.PreferredLanguage,
             currentUserService.GetCurrentUser(), cancellationToken);
 
         return Result<object?>(output);
@@ -43,6 +43,7 @@ public class OnboardingController(ISignupCommandsService commandsService,
         CancellationToken cancellationToken)
     {
         var output = await commandsService.VerifySignupAsync(input.Email, input.Code, input.Password,
+            input.PreferredLanguage, input.OptIn.Marketing, input.OptIn.TermsAndConditions, input.OptIn.PrivacyPolicy,
             currentUserService.GetCurrentUser(), cancellationToken);
 
         return Result<object?>(output);

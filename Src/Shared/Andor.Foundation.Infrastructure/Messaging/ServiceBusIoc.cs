@@ -37,50 +37,31 @@ public static class ServiceBusIoc
         services.AddSingleton(serviceProvider =>
         {
             var options = serviceProvider.GetRequiredService<IOptions<ServiceBusOptions>>().Value;
-
-            var clientOptions = new ServiceBusClientOptions
-            {
-                TransportType = ServiceBusTransportType.AmqpWebSockets,
-                RetryOptions = new ServiceBusRetryOptions
-                {
-                    Mode = ServiceBusRetryMode.Exponential,
-                    MaxRetries = 5,
-                    Delay = TimeSpan.FromMilliseconds(500),
-                    MaxDelay = TimeSpan.FromSeconds(30),
-                },
-            };
-
-            // An explicit connection string takes precedence when provided (e.g. local dev
-            // via User Secrets). Otherwise use Managed Identity via DefaultAzureCredential,
-            // which is the recommended, secret-less approach for Azure environments.
-            if (!string.IsNullOrWhiteSpace(options.ConnectionString))
-            {
-                return new ServiceBusClient(options.ConnectionString, clientOptions);
-            }
-
             var environment = serviceProvider.GetService<IHostEnvironment>();
 
-            var credentialOptions = new DefaultAzureCredentialOptions();
-
-            // Locally there is no IMDS endpoint (169.254.169.254), so the ManagedIdentity
-            // probe hangs and fails. Skip it during development and rely on the developer's
-            // Visual Studio / Azure CLI sign-in instead.
-            if (environment?.IsDevelopment() == true)
-            {
-                credentialOptions.ExcludeManagedIdentityCredential = true;
-                credentialOptions.ExcludeWorkloadIdentityCredential = true;
-            }
-
-            return new ServiceBusClient(
-                options.FullyQualifiedNamespace,
-                new DefaultAzureCredential(credentialOptions),
-                clientOptions);
+            return CreateClient(options.FullyQualifiedNamespace, options.ConnectionString, environment);
         });
 
         services.AddSingleton(serviceProvider =>
         {
             var options = serviceProvider.GetRequiredService<IOptions<ServiceBusOptions>>().Value;
             var client = serviceProvider.GetRequiredService<ServiceBusClient>();
+            var environment = serviceProvider.GetService<IHostEnvironment>();
+
+            var namedQueues = new Dictionary<string, ServiceBusSender>();
+
+            foreach (var (key, queue) in options.Queues)
+            {
+                // Each named queue may carry its own (narrower) credential, so it gets its own
+                // client instead of reusing the module's default one — a queue whose config omits
+                // both a namespace and a connection string just reuses the default client/credential.
+                var queueClient = string.IsNullOrWhiteSpace(queue.FullyQualifiedNamespace) &&
+                    string.IsNullOrWhiteSpace(queue.ConnectionString)
+                        ? client
+                        : CreateClient(queue.FullyQualifiedNamespace, queue.ConnectionString, environment);
+
+                namedQueues[key] = queueClient.CreateSender(queue.QueueName);
+            }
 
             return new ServiceBusSenders
             {
@@ -88,11 +69,52 @@ public static class ServiceBusIoc
                 Queue = string.IsNullOrWhiteSpace(options.QueueName)
                     ? null
                     : client.CreateSender(options.QueueName),
+                NamedQueues = namedQueues,
             };
         });
 
         services.AddScoped<IMessageSenderInterface, MessageSenderAzure>();
 
         return services;
+    }
+
+    private static ServiceBusClient CreateClient(string? fullyQualifiedNamespace, string? connectionString,
+        IHostEnvironment? environment)
+    {
+        var clientOptions = new ServiceBusClientOptions
+        {
+            TransportType = ServiceBusTransportType.AmqpWebSockets,
+            RetryOptions = new ServiceBusRetryOptions
+            {
+                Mode = ServiceBusRetryMode.Exponential,
+                MaxRetries = 5,
+                Delay = TimeSpan.FromMilliseconds(500),
+                MaxDelay = TimeSpan.FromSeconds(30),
+            },
+        };
+
+        // An explicit connection string takes precedence when provided (e.g. local dev
+        // via User Secrets). Otherwise use Managed Identity via DefaultAzureCredential,
+        // which is the recommended, secret-less approach for Azure environments.
+        if (!string.IsNullOrWhiteSpace(connectionString))
+        {
+            return new ServiceBusClient(connectionString, clientOptions);
+        }
+
+        var credentialOptions = new DefaultAzureCredentialOptions();
+
+        // Locally there is no IMDS endpoint (169.254.169.254), so the ManagedIdentity
+        // probe hangs and fails. Skip it during development and rely on the developer's
+        // Visual Studio / Azure CLI sign-in instead.
+        if (environment?.IsDevelopment() == true)
+        {
+            credentialOptions.ExcludeManagedIdentityCredential = true;
+            credentialOptions.ExcludeWorkloadIdentityCredential = true;
+        }
+
+        return new ServiceBusClient(
+            fullyQualifiedNamespace,
+            new DefaultAzureCredential(credentialOptions),
+            clientOptions);
     }
 }

@@ -15,6 +15,7 @@ public class SignupRequest : AggregateRoot<SignupRequestId>
     public Name Name { get; private set; }
     public Email Email { get; private set; }
     public VerificationCode VerificationCode { get; private set; }
+    public string PreferredLanguage { get; private set; }
     public bool IsVerified { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
@@ -26,6 +27,7 @@ public class SignupRequest : AggregateRoot<SignupRequestId>
         Name = Name.Empty;
         Email = Email.Empty;
         VerificationCode = VerificationCode.Empty;
+        PreferredLanguage = string.Empty;
     }
 
     private SignupRequest(
@@ -33,12 +35,14 @@ public class SignupRequest : AggregateRoot<SignupRequestId>
         Name name,
         Email email,
         VerificationCode verificationCode,
+        string preferredLanguage,
         DateTime createdAt)
     {
         Id = id;
         Name = name;
         Email = email;
         VerificationCode = verificationCode;
+        PreferredLanguage = preferredLanguage;
         CreatedAt = createdAt;
         IsVerified = false;
     }
@@ -52,6 +56,7 @@ public class SignupRequest : AggregateRoot<SignupRequestId>
         SignupRequestId id,
         Name name,
         Email email,
+        string preferredLanguage,
         IOnboardingValidator validator,
         CancellationToken cancellationToken)
     {
@@ -62,6 +67,7 @@ public class SignupRequest : AggregateRoot<SignupRequestId>
             name,
             email,
             code,
+            preferredLanguage,
             DateTime.UtcNow);
 
         var result = await entity.ValidateAsync(validator, cancellationToken);
@@ -80,7 +86,7 @@ public class SignupRequest : AggregateRoot<SignupRequestId>
     /// <see cref="SignupCodeGenerated"/> again so a fresh code gets e-mailed. This is the
     /// only way to invalidate a previously issued code — codes don't expire on their own.
     /// </summary>
-    public async Task<DomainResult> RestartAsync(Name name, IOnboardingValidator validator, CancellationToken cancellationToken)
+    public async Task<DomainResult> RestartAsync(Name name, string preferredLanguage, IOnboardingValidator validator, CancellationToken cancellationToken)
     {
         if (IsVerified)
         {
@@ -89,6 +95,7 @@ public class SignupRequest : AggregateRoot<SignupRequestId>
         }
 
         Name = name;
+        PreferredLanguage = preferredLanguage;
         VerificationCode = VerificationCode.New();
 
         var result = await ValidateAsync(validator, cancellationToken);
@@ -102,11 +109,11 @@ public class SignupRequest : AggregateRoot<SignupRequestId>
     }
 
     /// <summary>
-    /// Confirms the code and, on success, raises <see cref="SignupVerifiedDomainEvent"/>
-    /// (carrying a freshly minted user id and the already-hashed password) so Identity and
-    /// Accounts can each create their own records from the same event.
+    /// Read-only precondition check for <see cref="Verify"/> — lets a caller that needs to do
+    /// I/O before committing (e.g. provisioning the User over HTTP) bail out early on a stale or
+    /// wrong code without paying for that I/O first.
     /// </summary>
-    public DomainResult Verify(VerificationCode code, string passwordHash)
+    public DomainResult CanVerify(VerificationCode code)
     {
         if (IsVerified)
         {
@@ -120,14 +127,35 @@ public class SignupRequest : AggregateRoot<SignupRequestId>
             return Validate();
         }
 
-        var result = Validate();
+        return DomainResult.Success();
+    }
 
-        if (result.IsSuccess)
+    /// <summary>
+    /// Confirms the code and, on success, raises <see cref="SignupVerifiedDomainEvent"/> (carrying
+    /// the given, already-provisioned user id and the already-hashed password) so Communications
+    /// can react to it too. <paramref name="userId"/> is supplied rather than minted here because
+    /// by the time this is called, the User it refers to must already exist — see
+    /// <see cref="CanVerify"/> for the check a caller should run before doing that provisioning.
+    /// </summary>
+    public DomainResult Verify(VerificationCode code, string passwordHash, Guid userId, string preferredLanguage,
+        bool marketingOptIn, bool termsAndConditionsAccepted, bool privacyPolicyAccepted)
+    {
+        var precondition = CanVerify(code);
+
+        if (precondition.IsFailure)
         {
-            IsVerified = true;
-            RaiseDomainEvent(SignupVerifiedDomainEvent.FromSignupRequest(this, Guid.NewGuid(), passwordHash));
+            return precondition;
         }
 
-        return result;
+        if (!string.IsNullOrWhiteSpace(preferredLanguage))
+        {
+            PreferredLanguage = preferredLanguage;
+        }
+
+        IsVerified = true;
+        RaiseDomainEvent(SignupVerifiedDomainEvent.FromSignupRequest(this, userId, passwordHash,
+            marketingOptIn, termsAndConditionsAccepted, privacyPolicyAccepted));
+
+        return DomainResult.Success();
     }
 }

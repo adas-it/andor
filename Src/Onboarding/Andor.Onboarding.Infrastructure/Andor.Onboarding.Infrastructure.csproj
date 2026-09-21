@@ -10,7 +10,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Andor.Onboarding.Domain\Andor.Onboarding.Domain.csproj" />
+    <ProjectReference Include="..\Andor.Onboarding.Application\Andor.Onboarding.Application.csproj" />
     <ProjectReference Include="..\..\Shared\Andor.Foundation.Application\Andor.Foundation.Application.csproj" />
     <ProjectReference Include="..\..\Shared\Andor.Foundation.Infrastructure\Andor.Foundation.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Users\Andor.Users.Contracts\Andor.Users.Contracts.csproj" />
   </ItemGroup>
 </Project>

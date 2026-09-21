@@ -15,6 +15,7 @@ internal static class SignupRequestFixture
         SignupRequestId? id = null,
         Name? name = null,
         string? email = null,
+        string? preferredLanguage = null,
         CancellationToken cancellationToken = default)
     {
         var validator = validatorMock ?? CreateDefaultValidator();
@@ -23,6 +24,7 @@ internal static class SignupRequestFixture
             id ?? SignupRequestId.New(),
             name ?? GeneralFixture.GetValidName(),
             email ?? "someone@example.com",
+            preferredLanguage ?? "en",
             validator.Object,
             cancellationToken);
 

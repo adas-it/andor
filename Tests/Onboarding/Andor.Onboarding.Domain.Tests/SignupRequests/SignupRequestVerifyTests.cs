@@ -21,7 +21,7 @@ public class SignupRequestVerifyTests
         var code = signupRequest!.VerificationCode;
 
         // Act
-        var result = signupRequest.Verify(code, "hashed-password");
+        var result = signupRequest.Verify(code, "hashed-password", Guid.NewGuid(), "en", true, true, true);
 
         // Assert
         Assert.True(result.IsSuccess);
@@ -36,7 +36,7 @@ public class SignupRequestVerifyTests
         var code = signupRequest!.VerificationCode;
 
         // Act
-        var result = signupRequest.Verify(code, "hashed-password");
+        var result = signupRequest.Verify(code, "hashed-password", Guid.NewGuid(), "pt-BR", true, true, false);
 
         // Assert
         Assert.True(result.IsSuccess);
@@ -45,6 +45,10 @@ public class SignupRequestVerifyTests
         Assert.Equal(signupRequest.Name.Value, domainEvent.Name);
         Assert.Equal(signupRequest.Email, domainEvent.Email);
         Assert.Equal("hashed-password", domainEvent.PasswordHash);
+        Assert.Equal("pt-BR", domainEvent.PreferredLanguage);
+        Assert.True(domainEvent.MarketingOptIn);
+        Assert.True(domainEvent.TermsAndConditionsAccepted);
+        Assert.False(domainEvent.PrivacyPolicyAccepted);
     }
 
     [Fact]
@@ -54,7 +58,7 @@ public class SignupRequestVerifyTests
         var (_, signupRequest) = await SignupRequestFixture.CreateValidSignupRequestAsync(_validatorMock);
 
         // Act
-        var result = signupRequest!.Verify("0000000000", "hashed-password");
+        var result = signupRequest!.Verify("0000000000", "hashed-password", Guid.NewGuid(), "en", true, true, true);
 
         // Assert
         Assert.True(result.IsFailure);
@@ -69,7 +73,7 @@ public class SignupRequestVerifyTests
         var (_, signupRequest) = await SignupRequestFixture.CreateValidSignupRequestAsync(_validatorMock);
 
         // Act
-        var result = signupRequest!.Verify("0000000000", "hashed-password");
+        var result = signupRequest!.Verify("0000000000", "hashed-password", Guid.NewGuid(), "en", true, true, true);
 
         // Assert
         Assert.True(result.IsFailure);
@@ -82,10 +86,10 @@ public class SignupRequestVerifyTests
         // Arrange
         var (_, signupRequest) = await SignupRequestFixture.CreateValidSignupRequestAsync(_validatorMock);
         var code = signupRequest!.VerificationCode;
-        _ = signupRequest.Verify(code, "hashed-password");
+        _ = signupRequest.Verify(code, "hashed-password", Guid.NewGuid(), "en", true, true, true);
 
         // Act - verify again with the same (still correct) code
-        var result = signupRequest.Verify(code, "hashed-password");
+        var result = signupRequest.Verify(code, "hashed-password", Guid.NewGuid(), "en", true, true, true);
 
         // Assert
         Assert.True(result.IsFailure);

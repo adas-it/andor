@@ -9,6 +9,9 @@ using Andor.Foundation.Binder;
 using Andor.Foundation.ServerServices;
 using Andor.ServiceDefaults;
 using Asp.Versioning.ApiExplorer;
+using Azure.Identity;
+using Azure.Messaging.ServiceBus;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,10 +39,40 @@ builder.UseAccounts(builder.Configuration);
 
 builder.Services.UseAuthorizations();
 
-builder.Services.Configure<SignupVerifiedSubscriptionOptions>(
-    builder.Configuration.GetSection(SignupVerifiedSubscriptionOptions.SectionName));
+builder.Services.AddOptions<AccountProvisioningQueueOptions>()
+    .Bind(builder.Configuration.GetSection(AccountProvisioningQueueOptions.SectionName));
 
-builder.Services.AddHostedService<UserVerifiedConsumer>();
+// Keyed, separate from the shared ServiceBusClient this app publishes its own events through:
+// this queue is meant to carry a Listen-only SAS scoped to just "request-account-creation".
+builder.Services.AddKeyedSingleton(AccountProvisioningConsumer.ClientKey, (serviceProvider, _) =>
+{
+    var options = serviceProvider.GetRequiredService<IOptions<AccountProvisioningQueueOptions>>().Value;
+
+    var clientOptions = new ServiceBusClientOptions
+    {
+        TransportType = ServiceBusTransportType.AmqpWebSockets,
+    };
+
+    if (!string.IsNullOrWhiteSpace(options.ConnectionString))
+    {
+        return new ServiceBusClient(options.ConnectionString, clientOptions);
+    }
+
+    var credentialOptions = new DefaultAzureCredentialOptions();
+
+    if (builder.Environment.IsDevelopment())
+    {
+        credentialOptions.ExcludeManagedIdentityCredential = true;
+        credentialOptions.ExcludeWorkloadIdentityCredential = true;
+    }
+
+    return new ServiceBusClient(
+        options.FullyQualifiedNamespace,
+        new DefaultAzureCredential(credentialOptions),
+        clientOptions);
+});
+
+builder.Services.AddHostedService<AccountProvisioningConsumer>();
 
 builder.Services.Configure<AccountCreatedSubscriptionOptions>(
     builder.Configuration.GetSection(AccountCreatedSubscriptionOptions.SectionName));

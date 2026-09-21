@@ -15,4 +15,7 @@ public sealed class NullMessageSender : IMessageSenderInterface
 
     public Task QueueSendAsync(object data, string messageId, CancellationToken cancellationToken)
         => Task.CompletedTask;
+
+    public Task QueueSendAsync(string queueKey, object data, string messageId, CancellationToken cancellationToken)
+        => Task.CompletedTask;
 }

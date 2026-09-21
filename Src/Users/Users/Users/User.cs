@@ -12,6 +12,9 @@ public class User : AggregateRoot<UserId>
     public Email Email { get; private set; }
     public Guid PreferredCurrencyId { get; private set; }
     public Guid PreferredLanguageId { get; private set; }
+    public bool MarketingOptIn { get; private set; }
+    public bool TermsAndConditionsAccepted { get; private set; }
+    public bool PrivacyPolicyAccepted { get; private set; }
 
     protected User()
     {
@@ -28,7 +31,10 @@ public class User : AggregateRoot<UserId>
         Name firstName,
         Name lastName,
         Guid preferredCurrencyId,
-        Guid preferredLanguageId)
+        Guid preferredLanguageId,
+        bool marketingOptIn,
+        bool termsAndConditionsAccepted,
+        bool privacyPolicyAccepted)
     {
         Id = id;
         Email = email;
@@ -36,6 +42,9 @@ public class User : AggregateRoot<UserId>
         LastName = lastName;
         PreferredCurrencyId = preferredCurrencyId;
         PreferredLanguageId = preferredLanguageId;
+        MarketingOptIn = marketingOptIn;
+        TermsAndConditionsAccepted = termsAndConditionsAccepted;
+        PrivacyPolicyAccepted = privacyPolicyAccepted;
     }
 
     public static async Task<(DomainResult, User?)> NewAsync(
@@ -45,6 +54,9 @@ public class User : AggregateRoot<UserId>
         string lastName,
         Guid preferredCurrencyId,
         Guid preferredLanguageId,
+        bool marketingOptIn,
+        bool termsAndConditionsAccepted,
+        bool privacyPolicyAccepted,
         IUserValidator validator,
         CancellationToken cancellationToken)
     {
@@ -54,7 +66,10 @@ public class User : AggregateRoot<UserId>
             firstName,
             lastName,
             preferredCurrencyId,
-            preferredLanguageId);
+            preferredLanguageId,
+            marketingOptIn,
+            termsAndConditionsAccepted,
+            privacyPolicyAccepted);
 
         var result = entity.Validate();
 

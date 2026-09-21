@@ -19,6 +19,7 @@ public static class JwtAuthenticationMiddleware
             return services;
 
         services.AddTransient<IClaimsTransformation, ClaimsTransformer>();
+        services.AddSingleton<IAuthorizationHandler, ScopeAuthorizationHandler>();
 
         services.AddOpenIddict()
             .AddValidation(options =>

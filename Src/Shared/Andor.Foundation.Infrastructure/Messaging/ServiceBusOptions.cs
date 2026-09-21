@@ -29,4 +29,27 @@ public sealed class ServiceBusOptions
     /// Leave empty for modules that only publish to <see cref="TopicName"/>.
     /// </summary>
     public string? QueueName { get; set; }
+
+    /// <summary>
+    /// Additional named queues, each with its own credential — for point-to-point sends where the
+    /// receiver should only be able to grant the sender a Send-only SAS scoped to that one queue,
+    /// instead of every sender in the process sharing one broad connection string/credential.
+    /// Keyed by an arbitrary logical name passed to
+    /// <see cref="Application.IMessageSenderInterface.QueueSendAsync(string, object, string, System.Threading.CancellationToken)"/>.
+    /// </summary>
+    public Dictionary<string, NamedQueueOptions> Queues { get; set; } = new();
+}
+
+/// <summary>
+/// Connection + destination for one entry in <see cref="ServiceBusOptions.Queues"/>. Mirrors
+/// <see cref="ServiceBusOptions"/>'s own namespace/connection-string/name shape, but scoped to a
+/// single queue so it can carry its own (narrower) credential.
+/// </summary>
+public sealed class NamedQueueOptions
+{
+    public string? FullyQualifiedNamespace { get; set; }
+
+    public string? ConnectionString { get; set; }
+
+    public string QueueName { get; set; } = string.Empty;
 }

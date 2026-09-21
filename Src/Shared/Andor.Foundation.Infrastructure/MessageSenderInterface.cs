@@ -36,6 +36,17 @@ internal sealed class MessageSenderAzure : IMessageSenderInterface
         return SendAsync(_senders.Queue, data, messageId, cancellationToken);
     }
 
+    public Task QueueSendAsync(string queueKey, object data, string messageId, CancellationToken cancellationToken)
+    {
+        if (!_senders.NamedQueues.TryGetValue(queueKey, out var sender))
+        {
+            throw new InvalidOperationException(
+                $"No queue was configured under ServiceBus:Queues:{queueKey}.");
+        }
+
+        return SendAsync(sender, data, messageId, cancellationToken);
+    }
+
     private async Task SendAsync(ServiceBusSender sender, object data, string messageId, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(data);
@@ -93,4 +104,5 @@ internal sealed class ServiceBusSenders
 {
     public required ServiceBusSender Topic { get; init; }
     public ServiceBusSender? Queue { get; init; }
+    public IReadOnlyDictionary<string, ServiceBusSender> NamedQueues { get; init; } = new Dictionary<string, ServiceBusSender>();
 }
