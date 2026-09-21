@@ -1,6 +1,5 @@
-using Andor.Communications.Contracts.Requests;
-using Andor.Foundation.Application;
 using Andor.Foundation.Domain.Events;
+using Andor.Onboarding.Application.Interfaces;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Options;
 
@@ -10,9 +9,10 @@ internal sealed record SignupVerifiedMessage(Guid UserId, string Name, string Em
 
 /// <summary>
 /// Subscribes to the "user-verified-events" topic and, upon receiving a
-/// <see cref="SignupVerifiedDomainEvent"/>, publishes a <see cref="SendNotificationInput"/> to the
-/// Communications module's "request-communication" queue so a welcome email can be sent to the
-/// newly verified user.
+/// <see cref="SignupVerifiedDomainEvent"/>, requests the welcome email via
+/// Communications.Service's POST /v1/communications/requests — passing only the UserId, since
+/// that endpoint enriches Email/PreferredLanguage/"&lt;name&gt;" from its own Recipient projection
+/// instead of needing them resent here.
 /// </summary>
 public sealed class SignupVerifiedConsumer : BackgroundService
 {
@@ -72,28 +72,26 @@ public sealed class SignupVerifiedConsumer : BackgroundService
 
         var message = args.Message.Body.ToObjectFromJson<SignupVerifiedMessage>();
 
-        var notification = new SendNotificationInput(
-            RuleId: Guid.Parse("875725eb-683a-4f33-b27f-32489d127e4b"),
-            RecipientEmail: message.Email,
-            TemplateTitle: "wellcome",
-            ContentLanguage: string.IsNullOrWhiteSpace(message.PreferredLanguage) ? "en" : message.PreferredLanguage,
-            Values: new Dictionary<string, string>
-            {
-                { "<name>", message.Name }
-            });
-
         using var scope = _scopeFactory.CreateScope();
-        var messageSender = scope.ServiceProvider.GetRequiredService<IMessageSenderInterface>();
+        var communicationRequestClient = scope.ServiceProvider.GetRequiredService<ICommunicationRequestClient>();
 
-        try
+        var result = await communicationRequestClient.RequestAsync(
+            ruleId: Guid.Parse("875725eb-683a-4f33-b27f-32489d127e4b"),
+            templateTitle: "wellcome",
+            userId: message.UserId,
+            recipientEmail: null,
+            contentLanguage: null,
+            values: null,
+            args.CancellationToken);
+
+        if (result.IsSuccess)
         {
-            await messageSender.QueueSendAsync(notification, args.Message.MessageId, args.CancellationToken);
-
             await args.CompleteMessageAsync(args.Message, args.CancellationToken);
         }
-        catch (Exception ex)
+        else
         {
-            _logger.LogError(ex, "Failed to publish welcome communication request for user {UserId}.", message.UserId);
+            _logger.LogError("Failed to request welcome communication for user {UserId}: {Errors}.",
+                message.UserId, string.Join(", ", result.Errors.Select(e => e.Message)));
 
             await args.AbandonMessageAsync(args.Message, cancellationToken: args.CancellationToken);
         }

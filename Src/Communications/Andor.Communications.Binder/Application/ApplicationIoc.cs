@@ -22,6 +22,8 @@ internal static class ApplicationIoc
 
         services.AddScoped<IRuleCommandsService, RuleCommandsService>();
 
+        services.AddScoped<IRequestCommunicationService, RequestCommunicationService>();
+
         return services;
     }
 }

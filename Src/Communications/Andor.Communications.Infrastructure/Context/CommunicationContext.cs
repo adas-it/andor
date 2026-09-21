@@ -1,5 +1,6 @@
 using System.Reflection;
 using Andor.Communications.Domain;
+using Andor.Communications.Domain.Users;
 using Andor.Foundation.Application;
 using Andor.Foundation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -37,4 +38,6 @@ public class CommunicationContext : PrincipalContext
     public DbSet<Rule> Rule => Set<Rule>();
 
     public DbSet<Template> Template => Set<Template>();
+
+    public DbSet<Recipient> Recipient => Set<Recipient>();
 }

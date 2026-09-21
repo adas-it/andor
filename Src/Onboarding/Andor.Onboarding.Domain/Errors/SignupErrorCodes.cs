@@ -8,6 +8,7 @@ public record SignupErrorCodes
     public static readonly DomainErrorCode InvalidCode = DomainErrorCode.New(8_001);
     public static readonly DomainErrorCode AlreadyVerified = DomainErrorCode.New(8_003);
     public static readonly DomainErrorCode ProvisioningFailed = DomainErrorCode.New(8_005);
+    public static readonly DomainErrorCode CommunicationRequestFailed = DomainErrorCode.New(8_006);
 
     // Info codes
     public static readonly DomainErrorCode SkippedValidations = DomainErrorCode.New(8_004);

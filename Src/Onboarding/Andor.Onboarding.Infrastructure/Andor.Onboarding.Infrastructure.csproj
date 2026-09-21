@@ -14,5 +14,6 @@
     <ProjectReference Include="..\..\Shared\Andor.Foundation.Application\Andor.Foundation.Application.csproj" />
     <ProjectReference Include="..\..\Shared\Andor.Foundation.Infrastructure\Andor.Foundation.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Users\Andor.Users.Contracts\Andor.Users.Contracts.csproj" />
+    <ProjectReference Include="..\..\Communications\Andor.Communications.Contracts\Andor.Communications.Contracts.csproj" />
   </ItemGroup>
 </Project>

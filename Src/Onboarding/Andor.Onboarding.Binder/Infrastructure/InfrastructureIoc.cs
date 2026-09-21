@@ -41,6 +41,14 @@ internal static class InfrastructureIoc
             client.BaseAddress = new Uri(baseAddress);
         });
 
+        services.AddHttpClient<ICommunicationRequestClient, CommunicationRequestClient>(client =>
+        {
+            // "https+http://communications-api" resolves via Aspire service discovery locally;
+            // set CommunicationsServiceClient:BaseAddress to override (e.g. production).
+            var baseAddress = configuration["CommunicationsServiceClient:BaseAddress"] ?? "https+http://communications-api";
+            client.BaseAddress = new Uri(baseAddress);
+        });
+
         return services;
     }
 }

@@ -31,6 +31,8 @@ internal static class InfrastructureIoc
 
         services.AddScoped<ICommandsRuleRepository, CommandsRuleRepository>();
 
+        services.AddScoped<ICommandsRecipientRepository, CommandsRecipientRepository>();
+
         services.AddScoped<IOutboxContextProvider, CommunicationOutboxContextProvider>();
 
         services.AddHostedService<OutboxDispatcher>();

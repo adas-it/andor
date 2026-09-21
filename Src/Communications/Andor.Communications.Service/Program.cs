@@ -1,6 +1,7 @@
 using Andor.Authentication.Jwt;
 using Andor.Authorizations.Application;
 using Andor.Communications.Binder;
+using Andor.Communications.Service.Consumers;
 using Andor.Documentation.Swagger;
 using Andor.Foundation.Binder;
 using Andor.Foundation.ServerServices;
@@ -30,6 +31,15 @@ builder.UseAkkaModules("AndorCommunicationsSystem");
 builder.UseCommunications(builder.Configuration);
 
 builder.Services.UseAuthorizations();
+
+// Lets Onboarding's client-credentials token call POST /v1/communications/requests.
+builder.Services.AddAuthorization(options =>
+    options.AddPolicy("communications.write", policy => policy.Requirements.Add(new ScopeRequirement("communications.write"))));
+
+builder.Services.AddOptions<RecipientSyncSubscriptionOptions>()
+    .Bind(builder.Configuration.GetSection(RecipientSyncSubscriptionOptions.SectionName));
+
+builder.Services.AddHostedService<RecipientSyncConsumer>();
 
 var app = builder.Build();
 

@@ -178,30 +178,40 @@ using (var scope = app.Services.CreateScope())
         });
     }
 
-    // Service-to-service client: lets Onboarding call Users.Service's POST /users endpoint with a
-    // client-credentials token instead of that endpoint trusting Service Bus alone. The secret
-    // MUST be overridden outside appsettings.json for any non-local environment (User Secrets /
-    // Key Vault / env var) — this fallback only exists so local dev works out of the box.
+    // Service-to-service client: lets Onboarding call Users.Service's POST /users and
+    // Communications.Service's POST /communications/requests with a client-credentials token
+    // instead of those endpoints trusting Service Bus alone. The secret MUST be overridden
+    // outside appsettings.json for any non-local environment (User Secrets / Key Vault / env
+    // var) — this fallback only exists so local dev works out of the box. Upserted (not just
+    // created-once) so adding a new scope here actually reaches an already-seeded client on
+    // redeploy, the same way EnsureSpaClientAsync does for the SPA clients below.
     var onboardingServiceConfig = app.Configuration.GetSection("OpenIddictClients:OnboardingService");
     var onboardingServiceSecret = onboardingServiceConfig["ClientSecret"] ?? "dev-only-onboarding-service-secret";
-
     var onboardingServiceClientId = onboardingServiceConfig["ClientId"] ?? "onboarding-service";
+
     var existingOnboardingServiceClient = await manager.FindByClientIdAsync(onboardingServiceClientId);
+
+    var onboardingServiceDescriptor = new OpenIddictApplicationDescriptor
+    {
+        ClientId = onboardingServiceClientId,
+        ClientSecret = onboardingServiceSecret,
+        DisplayName = "Onboarding Service",
+        Permissions =
+        {
+            OpenIddictConstants.Permissions.Endpoints.Token,
+            OpenIddictConstants.Permissions.GrantTypes.ClientCredentials,
+            OpenIddictConstants.Permissions.Prefixes.Scope + "users.write",
+            OpenIddictConstants.Permissions.Prefixes.Scope + "communications.write"
+        }
+    };
 
     if (existingOnboardingServiceClient is null)
     {
-        _ = await manager.CreateAsync(new OpenIddictApplicationDescriptor
-        {
-            ClientId = onboardingServiceClientId,
-            ClientSecret = onboardingServiceSecret,
-            DisplayName = "Onboarding Service",
-            Permissions =
-            {
-                OpenIddictConstants.Permissions.Endpoints.Token,
-                OpenIddictConstants.Permissions.GrantTypes.ClientCredentials,
-                OpenIddictConstants.Permissions.Prefixes.Scope + "users.write"
-            }
-        });
+        _ = await manager.CreateAsync(onboardingServiceDescriptor);
+    }
+    else
+    {
+        await manager.UpdateAsync(existingOnboardingServiceClient, onboardingServiceDescriptor);
     }
 
     var webAppConfig = app.Configuration.GetSection("OpenIddictClients:WebApp");

@@ -10,6 +10,8 @@ public sealed class CommunicationsApiFactory : ComponentTestWebApplicationFactor
 {
     public FakeSmtp Smtp { get; } = new();
 
+    protected override string? ConnectionStringName => "Communication";
+
     protected override void ConfigureAdditionalTestServices(IServiceCollection services)
     {
         services.RemoveAll(typeof(ISMTP));

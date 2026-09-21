@@ -1,6 +1,5 @@
-using Andor.Communications.Contracts.Requests;
-using Andor.Foundation.Application;
 using Andor.Foundation.Domain.Events;
+using Andor.Onboarding.Application.Interfaces;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Options;
 
@@ -9,9 +8,10 @@ namespace Andor.Onboarding.Service.Consumers;
 internal sealed record UserVerifiedMessage(Guid UserId, string Name, string Email, string Code, string PreferredLanguage);
 
 /// <summary>
-/// Subscribes to the "user-verified-events" topic and, upon receiving a message, publishes a
-/// <see cref="SendNotificationInput"/> to the Communications module's "request-communication"
-/// queue so a notification can be sent to the verified user.
+/// Subscribes to the "user-verified-events" topic and, upon receiving a message, requests the
+/// verification-code email via Communications.Service's POST /v1/communications/requests. No
+/// User exists yet at this point in the flow, so this passes RecipientEmail (not UserId) — the
+/// one case the enrichment/consent path in that endpoint doesn't apply to.
 /// </summary>
 public sealed class SignupCodeGeneratedConsumer : BackgroundService
 {
@@ -71,29 +71,30 @@ public sealed class SignupCodeGeneratedConsumer : BackgroundService
 
         var message = args.Message.Body.ToObjectFromJson<UserVerifiedMessage>();
 
-        var notification = new SendNotificationInput(
-            RuleId: Guid.Parse("acb860a5-1af6-4b03-afae-e290dfcac7d4"),
-            RecipientEmail: message.Email,
-            TemplateTitle: "wellcome",
-            ContentLanguage: string.IsNullOrWhiteSpace(message.PreferredLanguage) ? "en" : message.PreferredLanguage,
-            Values: new Dictionary<string, string>
+        using var scope = _scopeFactory.CreateScope();
+        var communicationRequestClient = scope.ServiceProvider.GetRequiredService<ICommunicationRequestClient>();
+
+        var result = await communicationRequestClient.RequestAsync(
+            ruleId: Guid.Parse("acb860a5-1af6-4b03-afae-e290dfcac7d4"),
+            templateTitle: "wellcome",
+            userId: null,
+            recipientEmail: message.Email,
+            contentLanguage: string.IsNullOrWhiteSpace(message.PreferredLanguage) ? "en" : message.PreferredLanguage,
+            values: new Dictionary<string, string>
             {
                 { "<code>", message.Code },
-                { "<name>", message.Name }
-            });
+                { "<name>", message.Name },
+            },
+            args.CancellationToken);
 
-        using var scope = _scopeFactory.CreateScope();
-        var messageSender = scope.ServiceProvider.GetRequiredService<IMessageSenderInterface>();
-
-        try
+        if (result.IsSuccess)
         {
-            await messageSender.QueueSendAsync(notification, args.Message.MessageId, args.CancellationToken);
-
             await args.CompleteMessageAsync(args.Message, args.CancellationToken);
         }
-        catch (Exception ex)
+        else
         {
-            _logger.LogError(ex, "Failed to publish communication request for user {UserId}.", message.UserId);
+            _logger.LogError("Failed to request communication for user {UserId}: {Errors}.",
+                message.UserId, string.Join(", ", result.Errors.Select(e => e.Message)));
 
             await args.AbandonMessageAsync(args.Message, cancellationToken: args.CancellationToken);
         }

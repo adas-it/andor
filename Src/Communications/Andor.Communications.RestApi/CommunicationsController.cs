@@ -22,6 +22,7 @@ namespace Andor.Communications.RestApi;
 [Produces(MediaTypeNames.Application.Json)]
 [Consumes(MediaTypeNames.Application.Json)]
 public class CommunicationsController(IRuleCommandsService commandsService,
+    IRequestCommunicationService requestCommunicationService,
     ICurrentUserService currentUserService) : BaseController
 {
     [HttpPost("rules")]
@@ -66,6 +67,22 @@ public class CommunicationsController(IRuleCommandsService commandsService,
             CancellationToken: cancellationToken);
 
         var output = await commandsService.SendNotificationAsync(command);
+
+        return Result<object?>(output);
+    }
+
+    // The only sanctioned way to land a message on "request-communication" — enriches from the
+    // Recipient projection and gates Marketing sends on consent, so callers pass a UserId/Email
+    // instead of publishing to the queue themselves.
+    [HttpPost("requests")]
+    [MapToApiVersion("1.0")]
+    [Authorize(Policy = "communications.write")]
+    [ProducesResponseType(typeof(DefaultResponse<object>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DefaultResponse<object>), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> RequestCommunicationAsync([FromBody] RequestCommunicationInput input,
+        CancellationToken cancellationToken)
+    {
+        var output = await requestCommunicationService.RequestAsync(input, cancellationToken);
 
         return Result<object?>(output);
     }

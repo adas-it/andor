@@ -33,12 +33,23 @@ public abstract class ComponentTestWebApplicationFactory<TEntryPoint, TDbContext
 
         builder.ConfigureAppConfiguration((_, configBuilder) =>
         {
-            configBuilder.AddInMemoryCollection(new Dictionary<string, string?>
+            var overrides = new Dictionary<string, string?>
             {
                 ["Tenants:0:Name"] = "TenantA",
                 ["Tenants:0:DatabaseType"] = "ComponentTest",
                 ["Tenants:0:ConnectionString"] = string.Empty,
-            });
+            };
+
+            // A module that dropped per-tenant resolution (e.g. Communications) configures its
+            // DbContext straight from a ConnectionStrings entry with no test/env gate of its own
+            // - blank that one specific key so its registration skips UseSqlServer here too,
+            // same effect as the Tenants override above has for tenant-resolved modules.
+            if (ConnectionStringName is { } connectionStringName)
+            {
+                overrides[$"ConnectionStrings:{connectionStringName}"] = string.Empty;
+            }
+
+            configBuilder.AddInMemoryCollection(overrides);
         });
 
         builder.ConfigureTestServices(services =>
@@ -58,6 +69,13 @@ public abstract class ComponentTestWebApplicationFactory<TEntryPoint, TDbContext
     protected virtual void ConfigureAdditionalTestServices(IServiceCollection services)
     {
     }
+
+    /// <summary>
+    /// Set by a module whose DbContext registration reads a single <c>ConnectionStrings</c> entry
+    /// directly (no per-tenant resolution) — e.g. <c>"Communication"</c> — so this base class can
+    /// blank that entry out here instead of the module needing its own test-only gate.
+    /// </summary>
+    protected virtual string? ConnectionStringName => null;
 
     public HttpClient CreateAuthenticatedClient(TestUser? user = null)
     {
