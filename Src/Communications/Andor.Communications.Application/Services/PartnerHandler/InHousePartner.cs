@@ -1,28 +1,24 @@
 ﻿using Andor.Application.Communications.Interfaces;
 using Andor.Communications.Domain;
+using Andor.Communications.Domain.Users.ValueObjects;
 
 namespace Andor.Application.Communications.Services.PartnerHandler;
 
 public class InHousePartner(ISMTP _smtp) : IPartner
 {
-    public async Task SendEmail(string recipientEmail,
+    public async Task SendAsync(RecipientId? recipientId,
+        string? recipientEmail,
         Template template,
         Dictionary<string, string> values,
         CancellationToken cancellationToken)
     {
-        var body = template.Value;
-
-        if (values is not null && values.Any())
+        if (string.IsNullOrWhiteSpace(recipientEmail))
         {
-            values.ToList().ForEach(x => body = body.Replace(x.Key, x.Value));
+            throw new InvalidOperationException("InHousePartner requires a recipient email address.");
         }
 
-        var subject = template.Subject;
-
-        if (values is not null && values.Any())
-        {
-            values.ToList().ForEach(x => subject = subject.Replace(x.Key, x.Value));
-        }
+        var body = TemplateRendering.Render(template.Value, values);
+        var subject = TemplateRendering.Render(template.Subject, values);
 
         await _smtp.Handler(recipientEmail, body, subject, cancellationToken);
     }

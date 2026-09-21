@@ -6,6 +6,7 @@ using Andor.Communications.Application.Commands;
 using Andor.Communications.Domain;
 using Andor.Communications.Domain.Errors;
 using Andor.Communications.Domain.Repositories;
+using Andor.Communications.Domain.Users.ValueObjects;
 using Andor.Communications.Domain.ValueObjects;
 using Andor.Foundation.Domain.ValuesObjects;
 using Microsoft.Extensions.DependencyInjection;
@@ -166,7 +167,9 @@ public class RuleActor : ReceiveActor, IWithUnboundedStash
 
         var partner = partnerManager.GetPartnerHandler(template.Partner);
 
-        await partner.SendEmail(cmd.RecipientEmail, template, cmd.Values, cmd.CancellationToken);
+        var recipientId = cmd.RecipientId is { } id ? RecipientId.Load(id) : (RecipientId?)null;
+
+        await partner.SendAsync(recipientId, cmd.RecipientEmail, template, cmd.Values, cmd.CancellationToken);
 
         Sender.Tell((DomainResult.Success(), _rule));
 

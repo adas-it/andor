@@ -4,6 +4,7 @@ using Andor.Application.Communications.Services.PartnerHandler;
 using Andor.Communications.Application;
 using Andor.Communications.Application.Interfaces;
 using Andor.Communications.Domain;
+using Andor.Communications.Domain.ValueObjects;
 using Andor.Foundation.Binder;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,12 +18,15 @@ internal static class ApplicationIoc
 
         services.AddScoped<IRuleValidator, RuleValidator>();
 
-        services.AddScoped<IPartner, InHousePartner>();
+        services.AddKeyedScoped<IPartner, InHousePartner>(Partner.InHouse.Key);
+        services.AddKeyedScoped<IPartner, PushPartner>(Partner.Push.Key);
         services.AddScoped<IPartnerManager, PartnerManager>();
 
         services.AddScoped<IRuleCommandsService, RuleCommandsService>();
 
         services.AddScoped<IRequestCommunicationService, RequestCommunicationService>();
+
+        services.AddScoped<IMessageQueriesService, MessageQueriesService>();
 
         return services;
     }

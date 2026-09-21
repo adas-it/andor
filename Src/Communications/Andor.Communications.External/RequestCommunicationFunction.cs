@@ -1,6 +1,7 @@
 using Andor.Application.Communications.Services.Manager;
 using Andor.Communications.Contracts.Requests;
 using Andor.Communications.Domain.Repositories;
+using Andor.Communications.Domain.Users.ValueObjects;
 using Andor.Communications.Domain.ValueObjects;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Azure.Functions.Worker;
@@ -56,7 +57,9 @@ public class RequestCommunicationFunction(
 
             var partner = partnerManager.GetPartnerHandler(template.Partner);
 
-            await partner.SendEmail(input.RecipientEmail, template, input.Values, cancellationToken);
+            var recipientId = input.RecipientId is { } id ? RecipientId.Load(id) : (RecipientId?)null;
+
+            await partner.SendAsync(recipientId, input.RecipientEmail, template, input.Values, cancellationToken);
         }
         catch (Exception ex)
         {

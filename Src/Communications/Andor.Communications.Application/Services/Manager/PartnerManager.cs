@@ -1,5 +1,6 @@
 ﻿using Andor.Application.Communications.Interfaces;
 using Andor.Communications.Domain.ValueObjects;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Andor.Application.Communications.Services.Manager;
 
@@ -8,25 +9,11 @@ public interface IPartnerManager
     IPartner GetPartnerHandler(Partner partner);
 }
 
-public class PartnerManager : IPartnerManager
+// Keyed by Partner.Key so adding a new channel is just another AddKeyedScoped<IPartner, T>(...)
+// registration — this manager doesn't need to change to route to it.
+public class PartnerManager(IServiceProvider serviceProvider) : IPartnerManager
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly IPartner _partners;
-
-    public PartnerManager(IServiceProvider serviceProvider,
-        IPartner partners)
-    {
-        _serviceProvider = serviceProvider;
-        _partners = partners;
-    }
-
     public IPartner GetPartnerHandler(Partner partner)
-    {
-        if (partner == Partner.InHouse)
-        {
-            return _partners;
-        }
-
-        throw new ArgumentOutOfRangeException(nameof(partner), $"Not expected partner value: {partner}");
-    }
+        => serviceProvider.GetKeyedService<IPartner>(partner.Key)
+            ?? throw new ArgumentOutOfRangeException(nameof(partner), $"Not expected partner value: {partner}");
 }

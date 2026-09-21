@@ -3,6 +3,7 @@ using Andor.Application.Communications.Interfaces;
 using Andor.Application.Communications.Services.Manager;
 using Andor.Application.Communications.Services.PartnerHandler;
 using Andor.Communications.Domain.Repositories;
+using Andor.Communications.Domain.ValueObjects;
 using Andor.Communications.Infrastructure;
 using Andor.Communications.Infrastructure.Context;
 using Andor.Infrastructure.Communication.Gateway;
@@ -34,7 +35,9 @@ builder.Services.AddOptions<ApplicationSettings>()
 
 builder.Services.AddScoped<ISMTP, Smtp>();
 builder.Services.AddScoped<ICommandsRuleRepository, CommandsRuleRepository>();
-builder.Services.AddScoped<IPartner, InHousePartner>();
+builder.Services.AddScoped<ICommandsMessageRepository, CommandsMessageRepository>();
+builder.Services.AddKeyedScoped<IPartner, InHousePartner>(Partner.InHouse.Key);
+builder.Services.AddKeyedScoped<IPartner, PushPartner>(Partner.Push.Key);
 builder.Services.AddScoped<IPartnerManager, PartnerManager>();
 
 builder.Build().Run();

@@ -22,6 +22,7 @@ public class RequestCommunicationService(
 
         var recipientEmail = input.RecipientEmail;
         var contentLanguage = input.ContentLanguage;
+        Guid? recipientId = null;
         var values = input.Values is null
             ? new Dictionary<string, string>()
             : new Dictionary<string, string>(input.Values);
@@ -54,6 +55,7 @@ public class RequestCommunicationService(
 
             recipientEmail = recipient.Email;
             contentLanguage ??= recipient.PreferredLanguage;
+            recipientId = recipient.Id.Value;
             values.TryAdd("<name>", recipient.Name);
         }
 
@@ -63,7 +65,7 @@ public class RequestCommunicationService(
         }
 
         var notification = new SendNotificationInput(
-            input.RuleId, recipientEmail, input.TemplateTitle, contentLanguage, values);
+            input.RuleId, recipientEmail, input.TemplateTitle, contentLanguage, values, recipientId);
 
         await messageSender.QueueSendAsync(notification, Guid.NewGuid().ToString("N"), cancellationToken);
 

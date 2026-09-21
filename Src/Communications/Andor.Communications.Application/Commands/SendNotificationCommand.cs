@@ -6,4 +6,4 @@ namespace Andor.Communications.Application.Commands;
 
 public record SendNotificationCommand(RuleId Id, string RecipientEmail,
     string? TemplateTitle, string ContentLanguage, Dictionary<string, string> Values, ApplicationUser CurrentUser,
-    CancellationToken CancellationToken) : ICommands<RuleId>;
+    CancellationToken CancellationToken, Guid? RecipientId = null) : ICommands<RuleId>;

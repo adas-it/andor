@@ -23,6 +23,7 @@ namespace Andor.Communications.RestApi;
 [Consumes(MediaTypeNames.Application.Json)]
 public class CommunicationsController(IRuleCommandsService commandsService,
     IRequestCommunicationService requestCommunicationService,
+    IMessageQueriesService messageQueriesService,
     ICurrentUserService currentUserService) : BaseController
 {
     [HttpPost("rules")]
@@ -64,7 +65,8 @@ public class CommunicationsController(IRuleCommandsService commandsService,
             ContentLanguage: input.ContentLanguage,
             Values: input.Values,
             CurrentUser: currentUserService.GetCurrentUser(),
-            CancellationToken: cancellationToken);
+            CancellationToken: cancellationToken,
+            RecipientId: input.RecipientId);
 
         var output = await commandsService.SendNotificationAsync(command);
 
@@ -85,5 +87,19 @@ public class CommunicationsController(IRuleCommandsService commandsService,
         var output = await requestCommunicationService.RequestAsync(input, cancellationToken);
 
         return Result<object?>(output);
+    }
+
+    // The push "inbox": the caller's own token decides whose messages come back, so there's no
+    // separate scope check here beyond the class-level [Authorize] — this is an end-user route,
+    // not a service-to-service one like the two above.
+    [HttpGet("messages")]
+    [MapToApiVersion("1.0")]
+    [ProducesResponseType(typeof(DefaultResponse<IReadOnlyList<MessageOutput>>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetMessagesAsync(CancellationToken cancellationToken)
+    {
+        var output = await messageQueriesService.GetByRecipientAsync(
+            currentUserService.GetCurrentUser().UserId, cancellationToken);
+
+        return Result(output);
     }
 }

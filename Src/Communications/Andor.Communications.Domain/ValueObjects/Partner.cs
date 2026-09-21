@@ -11,4 +11,5 @@ public record Partner : Enumeration<int>
     public static readonly Partner Undefined = new(0, nameof(Undefined));
     public static readonly Partner InHouse = new(1, nameof(InHouse));
     public static readonly Partner SendGrid = new(2, nameof(SendGrid));
+    public static readonly Partner Push = new(3, nameof(Push));
 }
