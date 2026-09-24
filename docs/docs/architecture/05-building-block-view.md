@@ -44,10 +44,10 @@ flowchart TB
 | Building block | Responsibility | Notes |
 |---|---|---|
 | **Reverse Proxy** | Single entry point; path-prefix routing to each service; CORS. | `PathRemovePrefix` transform; destinations via Aspire service discovery. |
-| **Budget / Accounts slice** (`accounts-api`) | Current accounts, financial movements, categories, budgets, invites, cash-flow projections, currencies. | Also hosts a `/ws` WebSocket for push and several Service Bus consumers (`UserVerifiedConsumer`, `AccountCreatedConsumer`, `CashFlowProjectionConsumer`). |
+| **Budget / Accounts slice** (`accounts-api`) | Current accounts, financial movements, categories, budgets, invites, cash-flow projections, currencies. | Also hosts a `/ws` WebSocket for push and several Service Bus consumers (`AccountProvisioningConsumer`, `AccountCreatedConsumer`, `CashFlowProjectionConsumer`). |
 | **Assets / Investing slice** (`assets-service`) | Investment assets & positions, FIFO cost calculation. | |
-| **Users / Identity slice** (`users-api`) | User records and identity data. | Consumes `SignupVerifiedDomainEvent`. |
-| **Onboarding slice** (`onboarding-api`) | Public signup: `start` (code) and `verify` (password). Only `[AllowAnonymous]` surface. | Emits `SignupCodeGenerated`, `SignupVerifiedDomainEvent`. |
+| **Users / Identity slice** (`users-service` + `users-api`) | User records (`Andor.Users.Service`) and identity credentials (`Andor.Users.WebApi`). | Users.Service consumes `request-user-provisioning`, orchestrates Identity/Accounts via `request-identity-user` / `request-account-creation`, and emits `UserCreatedDomainEvent` on `andor-users-events`. |
+| **Onboarding slice** (`onboarding-api`) | Public signup: `start` (code) and `verify` (password). Only `[AllowAnonymous]` surface. | Emits `SignupCodeGenerated`, `SignupVerifiedDomainEvent`; requests User provisioning; sends the welcome e-mail on `UserCreatedDomainEvent`. |
 | **Communications slice** (`communications-api` + `communications-external` Function) | Renders and sends outbound notifications from `Rule` + `Template`. | API consumes `request-communication`, enriches/consent-gates, republishes `send-communication`; the Azure Function consumes `send-communication` and sends via `InHousePartner` (SMTP). |
 | **Configurations slice** (`configurations-service`) | Cross-cutting runtime configuration. | |
 | **Foundation / Shared** | Base types, Result pattern, EF/Outbox/Service Bus helpers, `BaseController`, JWT, Swagger, password hashing, authorization. | No slice-specific code; every slice references it. |

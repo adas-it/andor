@@ -183,10 +183,13 @@ module's default `IMessageSenderInterface.QueueSendAsync` (`ServiceBus:QueueName
 directly onto `request-communication`. Onboarding never knows the subject line, the wording or
 that SMTP is used — and never calls Communications over HTTP.
 
-Similarly, when a signup is verified, Onboarding emits `SignupVerifiedDomainEvent`; its
-`SignupVerifiedConsumer` publishes a `RequestCommunicationInput` with `RuleId = 875725eb-…`,
-`TemplateTitle = "wellcome"` and just the `UserId` — matching the `welcome-after-verification`
-rule/template above, enriched from the Recipient projection on the Communications side.
+Similarly, once the User is actually created, the Users module emits `UserCreatedDomainEvent` on
+`andor-users-events`; Onboarding's `UserCreatedConsumer` publishes a `RequestCommunicationInput`
+with `RuleId = 875725eb-…`, `TemplateTitle = "wellcome"` and just the `UserId` — matching the
+`welcome-after-verification` rule/template above, enriched from the Recipient projection on the
+Communications side. That projection is fed by `RecipientSyncConsumer`, which subscribes to the
+same `UserCreatedDomainEvent` (not to Onboarding), so Communications' view of a user comes from
+the module that owns it.
 
 ### 2. `send-communication` — dispatch only, Communications-owned
 

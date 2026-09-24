@@ -69,7 +69,7 @@ One `*Actor` instance per aggregate id means **all commands for that aggregate a
 no optimistic-concurrency retries, no distributed lock. State is held in memory only after a
 successful load; a fresh DI scope per load keeps the `DbContext` short-lived.
 
-## 6.3 Cross-module flow — signup provisions identity + account
+## 6.3 Cross-module flow — signup provisions user, identity + account
 
 ```mermaid
 sequenceDiagram
@@ -78,9 +78,10 @@ sequenceDiagram
     participant ONB as onboarding-api
     participant OBX as Outbox + Dispatcher
     participant SB as Azure Service Bus
-    participant COM as communications-api
-    participant USR as users-api
+    participant USV as users-service<br/>(Andor.Users.Service)
+    participant IDP as users-api<br/>(Identity, Andor.Users.WebApi)
     participant ACC as accounts-api
+    participant COM as communications-api
 
     V->>ONB: POST /onboarding/start { name, email }
     ONB->>ONB: SignupActor generates 6-digit code
@@ -92,17 +93,36 @@ sequenceDiagram
     V->>ONB: POST /onboarding/verify { email, code, password }
     ONB->>ONB: validate code; hash password (PasswordHasher)
     ONB->>OBX: persist verified state + OutboxMessage(SignupVerifiedDomainEvent)
-    OBX->>SB: relay SignupVerifiedDomainEvent { userId, passwordHash }
-    par fan-out, same event
-        SB->>USR: UserVerifiedConsumer → create user identity
+    OBX->>SB: relay SignupVerifiedDomainEvent on user-verified-events
+    SB->>ONB: UserProvisioningRequestConsumer
+    ONB->>SB: request-user-provisioning (queue)
+    SB->>USV: UserProvisioningRequestedConsumer → create User
+    USV->>USV: persist User + OutboxMessage(UserCreatedDomainEvent)
+    par orchestrated by Users.Service
+        USV->>SB: request-identity-user (queue)
+        SB->>IDP: IdentityProvisioningConsumer → create credentials
     and
-        SB->>ACC: UserVerifiedConsumer → create first account
+        USV->>SB: request-account-creation (queue)
+        SB->>ACC: AccountProvisioningConsumer → create first account
+    end
+    USV->>SB: relay UserCreatedDomainEvent on andor-users-events
+    par fan-out, same event
+        SB->>COM: RecipientSyncConsumer → upsert Recipient projection
+    and
+        SB->>ONB: UserCreatedConsumer → request welcome e-mail
+        ONB->>SB: request-communication (UserId only)
+        SB->>COM: RequestCommunicationConsumer → enrich from Recipient, send
     end
 ```
 
-Onboarding never learns the e-mail wording, the channel, or that Users and Accounts exist as
-separate stores — it just raises events. Consumers must be **idempotent** (at-least-once
-delivery). The password is hashed before it ever reaches the domain layer or an event.
+Onboarding only owns the signup; the **Users module owns the User** and orchestrates Identity and
+Accounts provisioning through dedicated single-purpose queues. Everything that reacts to "a user
+now exists" (the Recipient projection, the welcome e-mail) subscribes to `UserCreatedDomainEvent`
+on `andor-users-events` rather than to the signup being verified, so it never runs for a signup
+whose User failed to be created. The welcome request can reach Communications before the
+Recipient projection is written; `RequestCommunicationConsumer` abandons it and Service Bus
+retries. Consumers must be **idempotent** (at-least-once delivery). The password is hashed before
+it ever reaches the domain layer or an event.
 
 ## 6.4 Outbound notification — request to delivery
 

@@ -35,14 +35,14 @@ builder.Services.UseAuthorizations();
 builder.Services.Configure<UserVerifiedSubscriptionOptions>(
     builder.Configuration.GetSection(UserVerifiedSubscriptionOptions.SectionName));
 
-builder.Services.Configure<SignupVerifiedSubscriptionOptions>(
-    builder.Configuration.GetSection(SignupVerifiedSubscriptionOptions.SectionName));
+builder.Services.Configure<UserCreatedSubscriptionOptions>(
+    builder.Configuration.GetSection(UserCreatedSubscriptionOptions.SectionName));
 
 builder.Services.Configure<UserProvisioningRequestSubscriptionOptions>(
     builder.Configuration.GetSection(UserProvisioningRequestSubscriptionOptions.SectionName));
 
 builder.Services.AddHostedService<SignupCodeGeneratedConsumer>();
-builder.Services.AddHostedService<SignupVerifiedConsumer>();
+builder.Services.AddHostedService<UserCreatedConsumer>();
 builder.Services.AddHostedService<UserProvisioningRequestConsumer>();
 
 var app = builder.Build();

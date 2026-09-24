@@ -22,7 +22,7 @@ user and the account in other domains via events.
 | Method | Route | Description |
 |---|---|---|
 | `POST` | `/v{version}/onboarding/start` | Starts (or restarts) a signup request. Generates a 6-digit verification code and publishes the `SignupCodeGenerated` event, consumed by the Communications domain to send the code by e-mail. |
-| `POST` | `/v{version}/onboarding/verify` | Confirms the signup with the received code and sets the password. On success, publishes `SignupVerifiedDomainEvent`, consumed by the Users/Identity and Accounts domains so each one creates its own records. |
+| `POST` | `/v{version}/onboarding/verify` | Confirms the signup with the received code and sets the password. On success, publishes `SignupVerifiedDomainEvent`, which Onboarding turns into a `request-user-provisioning` message for the Users module (which in turn provisions Identity and Accounts). |
 
 ## Business rules
 
@@ -51,8 +51,15 @@ user and the account in other domains via events.
 - **`SignupCodeGenerated`** — raised when the verification code is generated (or regenerated);
   consumed by the Communications domain to send the e-mail.
 - **`SignupVerifiedDomainEvent`** — raised when the code is confirmed; carries a new `UserId` and
-  the password hash, consumed by the Users/Identity and Accounts domains so each one creates its
-  own records from the same event.
+  the password hash. Onboarding's own `UserProvisioningRequestConsumer` forwards it to the Users
+  module via the `request-user-provisioning` queue.
+
+## Consumed events
+
+- **`UserCreatedDomainEvent`** (topic `andor-users-events`, from the Users module) —
+  `UserCreatedConsumer` requests the welcome e-mail (`RuleId 875725eb-…`, template `wellcome`)
+  on `request-communication`. It is sent on User creation, not on code verification, so no
+  welcome goes out for a signup whose User was never created.
 
 ## Next steps
 

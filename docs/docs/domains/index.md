@@ -24,9 +24,11 @@ the shape and [ADR-0001](../architecture/adr/0001-modular-monolith.md) for why.
 
 ## How these fit together
 
-- **Onboarding** starts a user off; on verification it publishes `SignupVerifiedDomainEvent`,
-  which **Budget** consumes to auto-create a personal account, and `SignupCodeGenerated`, which
-  **Communications** consumes to e-mail the code.
+- **Onboarding** starts a user off: `SignupCodeGenerated` makes **Communications** e-mail the
+  code, and on verification it asks the **Users** module to provision the User. Users then
+  orchestrates Identity credentials and a personal **Budget** account, and publishes
+  `UserCreatedDomainEvent` on `andor-users-events` — which feeds Communications' Recipient
+  projection and triggers Onboarding's welcome e-mail.
 - **Budget** publishes `Account*` events on `andor-accounts-events`; its own consumers seed a
   new account with default templates and maintain the CashFlow projection.
 - **Communications** is called by any other slice through the `request-communication` queue —

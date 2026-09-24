@@ -7,7 +7,7 @@ namespace Andor.Communications.Domain.Users;
 
 /// <summary>
 /// Local copy of a Users-module User, kept in sync by a Service Bus consumer reacting to
-/// SignupVerifiedDomainEvent, so callers requesting a communication don't need to resend
+/// UserCreatedDomainEvent, so callers requesting a communication don't need to resend
 /// Name/Email/PreferredLanguage on every request and so Marketing sends can be gated on consent
 /// without a synchronous call back to Users.Service. <see cref="Id"/> equals the User's own id
 /// (see <see cref="RecipientId.Load(Guid)"/>) rather than a locally minted one, since this is a
