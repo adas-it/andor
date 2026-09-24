@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Andor.Accounts.Application.Interfaces;
 using Andor.Accounts.Contracts.Accounts.Responses;
+using Andor.Accounts.Contracts.Invites.Responses;
 using Andor.Accounts.Domain.Accounts.ValueObjects;
 using Andor.Accounts.Domain.CashFlows.Repositories;
 using Andor.Accounts.Domain.FinancialMovements.Repositories;
@@ -42,6 +43,22 @@ public class AccountQueriesService(IAccountQueriesRepository accountQueriesRepos
         resultAccount.LastMovement = firstMovementDate;
 
         return ApplicationResult<AccountOutput>.Success(Data: resultAccount);
+    }
+
+    public async Task<ApplicationResult<ListInviteOutput>> GetInvitesAsync(AccountId id, CancellationToken cancellationToken)
+    {
+        var userId = _currentUser.GetCurrentUser().UserId;
+
+        var result = await _accountQueriesRepository.GetByIdAsync(id, cancellationToken);
+
+        if (result is null || !result.Members.Any(x => x.UserId == userId))
+        {
+            return ApplicationResult<ListInviteOutput>.Failure();
+        }
+
+        var invites = result.Invites.Select(x => x.ToInviteOutput()!).ToList();
+
+        return ApplicationResult<ListInviteOutput>.Success(Data: new ListInviteOutput(invites));
     }
 
     public async Task<ApplicationResult<ListAccountOutput>> GetListAsync(SearchInput input, CancellationToken cancellationToken)

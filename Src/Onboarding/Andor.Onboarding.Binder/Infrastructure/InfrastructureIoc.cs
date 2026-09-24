@@ -24,30 +24,7 @@ internal static class InfrastructureIoc
 
         services.AddHostedService<OutboxDispatcher>();
 
-        services.AddOptions<UsersIdentityClientOptions>()
-            .Bind(configuration.GetSection(UsersIdentityClientOptions.SectionName));
-
-        services.AddHttpClient<IUsersIdentityTokenProvider, UsersIdentityTokenProvider>(client =>
-        {
-            var authority = configuration["IdentityProvider:Authority"] ?? "https://localhost:7116";
-            client.BaseAddress = new Uri(authority.TrimEnd('/') + "/");
-        });
-
-        services.AddHttpClient<IUserProvisioningClient, UserProvisioningClient>(client =>
-        {
-            // "https+http://user-service" resolves via Aspire service discovery locally; set
-            // UsersServiceClient:BaseAddress to override outside the AppHost (e.g. production).
-            var baseAddress = configuration["UsersServiceClient:BaseAddress"] ?? "https+http://user-service";
-            client.BaseAddress = new Uri(baseAddress);
-        });
-
-        services.AddHttpClient<ICommunicationRequestClient, CommunicationRequestClient>(client =>
-        {
-            // "https+http://communications-api" resolves via Aspire service discovery locally;
-            // set CommunicationsServiceClient:BaseAddress to override (e.g. production).
-            var baseAddress = configuration["CommunicationsServiceClient:BaseAddress"] ?? "https+http://communications-api";
-            client.BaseAddress = new Uri(baseAddress);
-        });
+        services.AddScoped<ICommunicationRequestClient, CommunicationRequestClient>();
 
         return services;
     }

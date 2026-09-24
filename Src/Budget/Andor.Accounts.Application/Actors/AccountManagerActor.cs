@@ -33,6 +33,42 @@ public class AccountManagerActor : ReceiveActor
         {
             Handler(serviceProvider, cmd);
         });
+
+        Receive<InviteMemberByEmailCommand>(cmd =>
+        {
+            Handler(serviceProvider, cmd);
+        });
+
+        Receive<InviteMemberByUserCommand>(cmd =>
+        {
+            Handler(serviceProvider, cmd);
+        });
+
+        Receive<AnswerInviteCommand>(cmd =>
+        {
+            Handler(serviceProvider, cmd);
+        });
+
+        Receive<CreateCustomCategoryCommand>(cmd =>
+        {
+            Handler(serviceProvider, cmd);
+        });
+
+        Receive<CreateCustomSubCategoryCommand>(cmd =>
+        {
+            Handler(serviceProvider, cmd);
+        });
+
+        Receive<CreateCustomPaymentMethodCommand>(cmd =>
+        {
+            Handler(serviceProvider, cmd);
+        });
+
+        Receive<UpdateAccountDetailsCommand>(cmd =>
+        {
+            Handler(serviceProvider, cmd);
+        });
+
     }
 
     private static void Handler(IServiceProvider serviceProvider, ICommands<AccountId> cmd)

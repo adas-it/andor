@@ -9,9 +9,9 @@ internal sealed record SignupVerifiedMessage(Guid UserId, string Name, string Em
 
 /// <summary>
 /// Subscribes to the "user-verified-events" topic and, upon receiving a
-/// <see cref="SignupVerifiedDomainEvent"/>, requests the welcome email via
-/// Communications.Service's POST /v1/communications/requests — passing only the UserId, since
-/// that endpoint enriches Email/PreferredLanguage/"&lt;name&gt;" from its own Recipient projection
+/// <see cref="SignupVerifiedDomainEvent"/>, requests the welcome email by publishing onto
+/// Communications' "request-communication" queue — passing only the UserId, since the consumer on
+/// the other end enriches Email/PreferredLanguage/"&lt;name&gt;" from its own Recipient projection
 /// instead of needing them resent here.
 /// </summary>
 public sealed class SignupVerifiedConsumer : BackgroundService

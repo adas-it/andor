@@ -11,5 +11,5 @@ public record PermissionType : Enumeration<int>
     public static readonly PermissionType Undefined = new(0, "undefined");
     public static readonly PermissionType Viewer = new(1, "viewer");
     public static readonly PermissionType Editor = new(2, "editor");
-    public static readonly PermissionType Owner = new(2, "owner");
+    public static readonly PermissionType Owner = new(3, "owner");
 }

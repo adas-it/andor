@@ -4,7 +4,7 @@ public record Description : StringValueObject
 {
     public static Description Empty => new Description();
 
-    public const int MinLength = 3;
+    public const int MinLength = 0;
     public const int MaxLength = 250;
 
     private Description() : base() { }
@@ -16,7 +16,8 @@ public record Description : StringValueObject
     public static implicit operator string?(Description? symbol) => symbol?.Value;
     public virtual bool Equals(Name? other)
     {
-        if (other is null) return false;
+        if (other is null)
+            return false;
         return string.Equals(Value, other.Value,
             StringComparison.OrdinalIgnoreCase);
     }

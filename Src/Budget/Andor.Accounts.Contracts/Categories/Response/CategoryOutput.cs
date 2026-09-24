@@ -7,6 +7,7 @@ public record CategoryOutput
     public string Description { get; set; }
     public CategoryTypeOutput Type { get; set; }
     public int? Order { get; set; }
+    public bool IsTemplate { get; set; }
 }
 
 public record CategoryTypeOutput(int Key, string Name);

@@ -41,7 +41,7 @@ flowchart LR
 | **Operator** | in/out | `/health`, `/alive`, OTLP telemetry | Liveness/readiness and observability. |
 | **OpenIddict token issuer** | in | JWT validation (issuer, audience, signing key) | Every business service authenticates requests the same way. |
 | **SQL Server** | out | EF Core 10 provider | Persistence; one schema/database per module. |
-| **Azure Service Bus** | out/in | `IMessageSenderInterface` (send), `BackgroundService` consumers (receive), queue `request-communication` + topic subscriptions | Asynchronous integration between modules and out to Communications. |
+| **Azure Service Bus** | out/in | `IMessageSenderInterface` (send), `BackgroundService` consumers (receive), queues `request-communication` / `send-communication` + topic subscriptions | Asynchronous integration between modules and out to Communications. |
 | **SMTP / e-mail provider** | out | `InHousePartner` (SMTP today); `Partner` enum reserves `SendGrid` | Actual delivery of notification e-mails. |
 | **OpenTelemetry backend** | out | OTLP exporter (enabled when `OTEL_EXPORTER_OTLP_ENDPOINT` is set); Aspire dashboard locally | Traces, metrics and logs. |
 | **Container registry / runtime** | out | OCI images (`adait.azurecr.io/<service>`), Kubernetes/Azure Web App | Deployment target. |

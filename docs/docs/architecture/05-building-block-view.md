@@ -48,7 +48,7 @@ flowchart TB
 | **Assets / Investing slice** (`assets-service`) | Investment assets & positions, FIFO cost calculation. | |
 | **Users / Identity slice** (`users-api`) | User records and identity data. | Consumes `SignupVerifiedDomainEvent`. |
 | **Onboarding slice** (`onboarding-api`) | Public signup: `start` (code) and `verify` (password). Only `[AllowAnonymous]` surface. | Emits `SignupCodeGenerated`, `SignupVerifiedDomainEvent`. |
-| **Communications slice** (`communications-api`) | Renders and sends outbound notifications from `Rule` + `Template`. | Consumes queue `request-communication`; SMTP via `InHousePartner`. |
+| **Communications slice** (`communications-api` + `communications-external` Function) | Renders and sends outbound notifications from `Rule` + `Template`. | API consumes `request-communication`, enriches/consent-gates, republishes `send-communication`; the Azure Function consumes `send-communication` and sends via `InHousePartner` (SMTP). |
 | **Configurations slice** (`configurations-service`) | Cross-cutting runtime configuration. | |
 | **Foundation / Shared** | Base types, Result pattern, EF/Outbox/Service Bus helpers, `BaseController`, JWT, Swagger, password hashing, authorization. | No slice-specific code; every slice references it. |
 

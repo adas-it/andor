@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 namespace Andor.Communications.Service.Consumers;
 
 internal sealed record SignupVerifiedMessage(
-    Guid UserId, string Name, string Email, string PreferredLanguage,
+    Guid UserId, string Name, string Email, Guid PreferredLanguageId,
     bool MarketingOptIn, bool TermsAndConditionsAccepted, bool PrivacyPolicyAccepted);
 
 public sealed class RecipientSyncSubscriptionOptions
@@ -89,7 +89,7 @@ public sealed class RecipientSyncConsumer : BackgroundService
 
         if (existing is not null)
         {
-            var updateResult = existing.Update(message.Name, message.Email, message.PreferredLanguage, active: true,
+            var updateResult = existing.Update(message.Name, message.Email, message.PreferredLanguageId, active: true,
                 message.MarketingOptIn, message.TermsAndConditionsAccepted, message.PrivacyPolicyAccepted);
 
             if (updateResult.IsSuccess)
@@ -99,7 +99,7 @@ public sealed class RecipientSyncConsumer : BackgroundService
         }
         else
         {
-            var (result, recipient) = Recipient.New(recipientId, message.Name, message.Email, message.PreferredLanguage,
+            var (result, recipient) = Recipient.New(recipientId, message.Name, message.Email, message.PreferredLanguageId,
                 active: true, message.MarketingOptIn, message.TermsAndConditionsAccepted, message.PrivacyPolicyAccepted);
 
             if (result.IsSuccess && recipient is not null)

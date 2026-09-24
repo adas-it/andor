@@ -1,11 +1,20 @@
 using System.Net.Mime;
+using Andor.Accounts.Application.Commands.Contracts;
+using Andor.Accounts.Application.Commands.Interfaces;
 using Andor.Accounts.Application.Queries;
 using Andor.Accounts.Application.Queries.Contracts;
+using Andor.Accounts.Contracts.Accounts.Responses;
+using Andor.Accounts.Contracts.PaymentMethods;
 using Andor.Accounts.Contracts.PaymentMethods.Responses;
+using Andor.Accounts.Domain.Accounts.ValueObjects;
+using Andor.Accounts.Domain.MovementTypes;
+using Andor.Authorizations.Domain;
 using Andor.Foundation.Api;
 using Andor.Foundation.Contracts.Requests;
 using Andor.Foundation.Contracts.Results;
+using Andor.Foundation.Domain.ValuesObjects;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,9 +25,46 @@ namespace Andor.Accounts.RestApi;
 [Route("v{version:apiVersion}/account")]
 [Produces(MediaTypeNames.Application.Json)]
 [Consumes(MediaTypeNames.Application.Json)]
-public class AccountPaymentMethodController(IAccountPaymentMethodQueriesService service) : BaseController
+public class AccountPaymentMethodController(IAccountPaymentMethodQueriesService service,
+    IAccountCommandsService commandsService,
+    ICurrentUserService currentUserService) : BaseController
 {
     private readonly IAccountPaymentMethodQueriesService _service = service;
+
+    [HttpPost("{accountId:guid}/payment-method")]
+    [MapToApiVersion("1.0")]
+    [Authorize]
+    [ProducesResponseType(typeof(DefaultResponse<AccountOutput>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DefaultResponse<object>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult> Create(
+        [FromRoute] Guid accountId,
+        [FromBody] CreatePaymentMethodInput input,
+        CancellationToken cancellationToken
+    )
+    {
+        MovementType type;
+        try
+        {
+            type = MovementType.GetByKey<MovementType>(input.TypeId);
+        }
+        catch (InvalidOperationException)
+        {
+            return UnprocessableEntity();
+        }
+
+        var command = new CreateCustomPaymentMethodCommand(
+            AccountId.Load(accountId),
+            new Name(input.Name),
+            new Description(input.Description),
+            type,
+            currentUserService.GetCurrentUser(),
+            cancellationToken);
+
+        var output = await commandsService.CreateCustomPaymentMethodAsync(command);
+
+        return Result(output);
+    }
 
     [HttpGet("{accountId:guid}/payment-method/{paymentMethodId:guid}")]
     [MapToApiVersion("1.0")]

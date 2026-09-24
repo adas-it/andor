@@ -6,4 +6,6 @@ public record UserPreferencesOutput(
     string LastName,
     string Email,
     Guid PreferredCurrencyId,
-    Guid PreferredLanguageId);
+    Guid PreferredLanguageId,
+    string Avatar,
+    string AvatarThumbnail);

@@ -4,6 +4,7 @@ using Andor.Foundation.Api;
 using Andor.Foundation.Contracts.Results;
 using Andor.Onboarding.Application.Interfaces;
 using Andor.Onboarding.Contracts.Requests;
+using Andor.Shared.Lookups;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -43,9 +44,19 @@ public class OnboardingController(ISignupCommandsService commandsService,
         CancellationToken cancellationToken)
     {
         var output = await commandsService.VerifySignupAsync(input.Email, input.Code, input.Password,
-            input.PreferredLanguage, input.OptIn.Marketing, input.OptIn.TermsAndConditions, input.OptIn.PrivacyPolicy,
-            currentUserService.GetCurrentUser(), cancellationToken);
+            input.PreferredLanguage, input.PreferredCurrency, input.OptIn.Marketing, input.OptIn.TermsAndConditions,
+            input.OptIn.PrivacyPolicy, currentUserService.GetCurrentUser(), cancellationToken);
 
         return Result<object?>(output);
+    }
+
+    [HttpGet("currency")]
+    [MapToApiVersion("1.0")]
+    [ProducesResponseType(typeof(DefaultResponse<object>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(DefaultResponse<object>), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetCurrenciesAsync(
+        CancellationToken cancellationToken)
+    {
+        return Result<object?>(Currency.GetAll());
     }
 }

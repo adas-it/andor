@@ -1,5 +1,6 @@
 ﻿using Andor.Accounts.Domain.Accounts.Errors;
 using Andor.Accounts.Domain.Accounts.ValueObjects;
+using Andor.Accounts.Domain.Currencies;
 using Andor.Accounts.Domain.PermissionTypes;
 using Andor.Foundation.Domain.Validation;
 using Andor.Foundation.Domain.ValuesObjects;
@@ -29,10 +30,24 @@ public class AccountValidator()
 
     }
 
-    public Task<List<Notification>> ValidateUpdateAsync(Account account,
-        CancellationToken cancellationToken)
+    public Task<List<Notification>> ValidateUpdateAsync(Account account, Name name, Description description,
+        Currency currency, CancellationToken cancellationToken)
     {
         List<Notification> notifications = [];
+
+        if (name == null)
+        {
+            AddNotification(new Notification(nameof(account.Name),
+                AccountErrorMessages.NameCannotBeNull, AccountErrorCode.NameCannotBeNull),
+                notifications);
+        }
+
+        if (currency == null)
+        {
+            AddNotification(new Notification(nameof(account.Name),
+                AccountErrorMessages.CurrencyCannotBeNull, AccountErrorCode.CurrencyCannotBeNull),
+                notifications);
+        }
 
         return Task.FromResult(notifications);
     }

@@ -16,7 +16,7 @@ public class RecipientConfig : IEntityTypeConfiguration<Recipient>
 
         _ = entity.Property(x => x.Name).HasMaxLength(50);
         _ = entity.Property(x => x.Email).HasMaxLength(255);
-        _ = entity.Property(x => x.PreferredLanguage).HasMaxLength(10);
+        _ = entity.Property(x => x.PreferredLanguageId);
         _ = entity.Property(x => x.Active);
         _ = entity.Property(x => x.MarketingOptIn);
         _ = entity.Property(x => x.TermsAndConditionsAccepted);

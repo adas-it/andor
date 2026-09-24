@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Andor.Foundation.Api\Andor.Foundation.Api.csproj" />
     <ProjectReference Include="..\..\Shared\Andor.Foundation.Domain\Andor.Foundation.Domain.csproj" />
+    <ProjectReference Include="..\..\Shared\Andor.Shared.Lookups\Andor.Shared.Lookups.csproj" />
     <ProjectReference Include="..\Andor.Users.Application\Andor.Users.Application.csproj" />
     <ProjectReference Include="..\Users\Andor.Users.Domain.csproj" />
   </ItemGroup>

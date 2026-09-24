@@ -6,6 +6,7 @@ using Andor.Communications.Domain.Users.ValueObjects;
 using Andor.Communications.Domain.ValueObjects;
 using Andor.Foundation.Application;
 using Andor.Foundation.Contracts.Results;
+using Andor.Shared.Lookups;
 using CommunicationType = Andor.Communications.Domain.ValueObjects.Type;
 
 namespace Andor.Communications.Application;
@@ -54,7 +55,7 @@ public class RequestCommunicationService(
             }
 
             recipientEmail = recipient.Email;
-            contentLanguage ??= recipient.PreferredLanguage;
+            contentLanguage ??= Language.GetById(recipient.PreferredLanguageId).ISO;
             recipientId = recipient.Id.Value;
             values.TryAdd("<name>", recipient.Name);
         }

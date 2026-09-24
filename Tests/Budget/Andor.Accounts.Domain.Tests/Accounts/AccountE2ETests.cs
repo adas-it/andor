@@ -172,22 +172,18 @@ public class AccountE2ETests
         Assert.True(linkUserResult.IsSuccess);
         Assert.Equal(newUserId, account.Invites.First().UserId!.Value);
 
-        // Step 4: User Accepts Invite
+        // Step 4: User Accepts Invite — this now adds the invitee as a member synchronously,
+        // with the invite's own permission, instead of requiring a separate LinkMember call.
         var inviteId = account.Invites.First().Id;
         var respondResult = account.RespondInvite(inviteId, newUserId.Value);
         Assert.True(respondResult.IsSuccess);
         Assert.True(account.Invites.First().IsAccepted);
-
-        // Step 5: Link Member
-        var newUser = new User { Id = newUserId.Value };
-        var linkMemberResult = account.LinkMember(newUser, PermissionType.Editor, ownerUserId);
-        Assert.True(linkMemberResult.IsSuccess);
         Assert.Equal(2, account.Members.Count);
 
         var editorMember = account.Members.First(m => m.UserId == newUserId.Value);
         Assert.Equal(PermissionType.Editor, editorMember.PermissionType);
 
-        // Step 6: Setup entities for financial movement
+        // Step 5: Setup entities for financial movement
         var paymentMethod = PaymentMethodFixture.GetTemplatePaymentMethod(name: "Cash");
         _ = account.AddTemplatePaymentMethod(paymentMethod, ownerUserId);
 
@@ -197,7 +193,7 @@ public class AccountE2ETests
         var subCategory = SubCategoryFixture.GetTemplateSubCategory(name: "Electricity", category: category);
         _ = account.AddTemplateSubCategory(subCategory, ownerUserId);
 
-        // Step 7: New member creates a financial movement
+        // Step 6: New member creates a financial movement
         var financialMovement = FinancialMovementFixture.CreateFinancialMovement(
             date: DateTime.UtcNow,
             description: "Electricity bill payment",

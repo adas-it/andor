@@ -14,4 +14,12 @@ public class UserQueriesService(IQueriesUserRepository repository) : IUserQuerie
 
         return ApplicationResult<UserPreferencesOutput?>.Success(Data: user.ToUserPreferencesOutput());
     }
+
+    public async Task<ApplicationResult<UserPublicData?>> GetPublicDataByIdAsync(UserId id,
+        CancellationToken cancellationToken)
+    {
+        var user = await repository.GetByIdAsync(id, cancellationToken);
+
+        return ApplicationResult<UserPublicData?>.Success(Data: user.ToUserPublicData());
+    }
 }

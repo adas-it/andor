@@ -4,6 +4,7 @@
     </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Andor.Foundation.Api\Andor.Foundation.Api.csproj" />
+    <ProjectReference Include="..\..\Shared\Andor.Shared.Lookups\Andor.Shared.Lookups.csproj" />
     <ProjectReference Include="..\Andor.Accounts.Application\Andor.Accounts.Application.csproj" />
     <ProjectReference Include="..\Andor.Accounts.Contracts\Andor.Accounts.Contracts.csproj" />
   </ItemGroup>

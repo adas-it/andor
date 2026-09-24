@@ -7,6 +7,8 @@ public sealed record AccountErrorCode
     public static readonly DomainErrorCode AccountErrorOnDelete = DomainErrorCode.New(3_001);
     public static readonly DomainErrorCode AccountShouldHaveOneOwner = DomainErrorCode.New(3_002);
     public static readonly DomainErrorCode CurrencyNotFound = DomainErrorCode.New(3_003);
+    public static readonly DomainErrorCode NameCannotBeNull = DomainErrorCode.New(3_004);
+    public static readonly DomainErrorCode CurrencyCannotBeNull = DomainErrorCode.New(3_005);
 
     // AddTemplateCategory errors
     public static readonly DomainErrorCode CategoryCannotBeNull = DomainErrorCode.New(3_100);
@@ -23,6 +25,8 @@ public sealed record AccountErrorCode
     public static readonly DomainErrorCode SubCategoryCategoryNotInAccount = DomainErrorCode.New(3_203);
     public static readonly DomainErrorCode PaymentMethodShouldBeSameTypeAsCategory = DomainErrorCode.New(3_204);
     public static readonly DomainErrorCode SubCategoryPaymentMethodNotInAccount = DomainErrorCode.New(3_205);
+    public static readonly DomainErrorCode SubCategoryCategoryNotFound = DomainErrorCode.New(3_206);
+    public static readonly DomainErrorCode SubCategoryDefaultPaymentMethodNotFound = DomainErrorCode.New(3_207);
 
     // AddTemplatePaymentMethod errors
     public static readonly DomainErrorCode PaymentMethodCannotBeNull = DomainErrorCode.New(3_300);

@@ -34,5 +34,8 @@ public class SignupRequestConfig : IEntityTypeConfiguration<SignupRequest>
         _ = entity.Property(x => x.CreatedAt);
 
         _ = entity.Ignore(x => x.Events);
+
+        _ = entity.Ignore(x => x.PreferredLanguageId);
+        _ = entity.Ignore(x => x.PreferredCurrencyId);
     }
 }

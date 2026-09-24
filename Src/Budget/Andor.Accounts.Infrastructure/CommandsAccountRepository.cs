@@ -1,9 +1,12 @@
 using Andor.Accounts.Domain.Accounts;
 using Andor.Accounts.Domain.Accounts.Repositories;
 using Andor.Accounts.Domain.Accounts.ValueObjects;
+using Andor.Accounts.Domain.Categories;
 using Andor.Accounts.Domain.FinancialMovements;
 using Andor.Accounts.Domain.FinancialMovements.ValueObjects;
 using Andor.Accounts.Domain.Invites;
+using Andor.Accounts.Domain.PaymentMethods;
+using Andor.Accounts.Domain.SubCategories;
 using Andor.Accounts.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -162,16 +165,42 @@ public class CommandsAccountRepository(AccountsContext context) : ICommandsAccou
             context.Set<AccountCategory>().Where(x => x.AccountId == entity.Id).Select(x => x.CategoryId),
             cancellationToken);
 
+        // The join row above (AccountCategory) is one thing; for a *custom* category (as opposed
+        // to attaching an already-seeded template) the master Category row itself is also new and
+        // needs its own Added state — TrackOrMergeState only ever touches the entity passed to it,
+        // so without this the join row would insert a CategoryId that never got a matching Category
+        // row, and the category would silently vanish from Includes on the next read.
+        var categoryIds = entity.Categories.Select(x => x.CategoryId).ToList();
+        await ReconcileChildStatesAsync(
+            entity.Categories.Select(x => x.Category),
+            x => x.Id,
+            context.Set<Category>().Where(x => categoryIds.Contains(x.Id)).Select(x => x.Id),
+            cancellationToken);
+
         await ReconcileChildStatesAsync(
             entity.SubCategories,
             x => x.SubCategoryId,
             context.Set<AccountSubCategory>().Where(x => x.AccountId == entity.Id).Select(x => x.SubCategoryId),
             cancellationToken);
 
+        var subCategoryIds = entity.SubCategories.Select(x => x.SubCategoryId).ToList();
+        await ReconcileChildStatesAsync(
+            entity.SubCategories.Select(x => x.SubCategory),
+            x => x.Id,
+            context.Set<SubCategory>().Where(x => subCategoryIds.Contains(x.Id)).Select(x => x.Id),
+            cancellationToken);
+
         await ReconcileChildStatesAsync(
             entity.PaymentMethods,
             x => x.PaymentMethodId,
             context.Set<AccountPaymentMethod>().Where(x => x.AccountId == entity.Id).Select(x => x.PaymentMethodId),
+            cancellationToken);
+
+        var paymentMethodIds = entity.PaymentMethods.Select(x => x.PaymentMethodId).ToList();
+        await ReconcileChildStatesAsync(
+            entity.PaymentMethods.Select(x => x.PaymentMethod),
+            x => x.Id,
+            context.Set<PaymentMethod>().Where(x => paymentMethodIds.Contains(x.Id)).Select(x => x.Id),
             cancellationToken);
 
         await ReconcileChildStatesAsync(

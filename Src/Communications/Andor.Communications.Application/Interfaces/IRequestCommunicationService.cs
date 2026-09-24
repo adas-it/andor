@@ -4,9 +4,9 @@ using Andor.Foundation.Contracts.Results;
 namespace Andor.Communications.Application.Interfaces;
 
 /// <summary>
-/// Entry point for requesting a communication be sent: enriches from the Recipient projection,
-/// gates Marketing sends on consent, and is the only thing allowed to publish onto the
-/// "request-communication" queue — callers ask this instead of publishing themselves.
+/// Handles a message received on the "request-communication" queue: enriches from the Recipient
+/// projection, gates Marketing sends on consent, and is the only thing allowed to publish onto the
+/// "send-communication" queue that the Azure Function dispatches from.
 /// </summary>
 public interface IRequestCommunicationService
 {

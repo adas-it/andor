@@ -18,6 +18,22 @@ internal static class UserMapperExtensions
             user.LastName,
             user.Email.Value,
             user.PreferredCurrencyId,
-            user.PreferredLanguageId);
+            user.PreferredLanguageId,
+            user.Avatar,
+            user.AvatarThumbnail);
+    }
+
+    public static UserPublicData? ToUserPublicData(this User? user)
+    {
+        if (user is null)
+        {
+            return null;
+        }
+
+        return new UserPublicData(
+            user.Id,
+            user.FirstName,
+            user.Avatar,
+            user.AvatarThumbnail);
     }
 }

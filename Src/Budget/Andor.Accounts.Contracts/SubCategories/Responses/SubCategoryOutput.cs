@@ -11,4 +11,5 @@ public record SubCategoryOutput
     public CategoryOutput Category { get; set; }
     public PaymentMethodOutput? DefaultPaymentMethod { get; set; }
     public int? Order { get; set; }
+    public bool IsTemplate { get; set; }
 }

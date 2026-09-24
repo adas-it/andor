@@ -83,6 +83,13 @@ namespace Andor.Onboarding.Infrastructure.Migrations
                         .HasMaxLength(70)
                         .HasColumnType("nvarchar(70)");
 
+                    b.Property<string>("PreferredCurrency")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PreferredLanguage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("VerificationCode")
                         .IsRequired()
                         .HasMaxLength(10)

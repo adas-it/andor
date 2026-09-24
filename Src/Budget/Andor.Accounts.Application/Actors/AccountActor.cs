@@ -7,6 +7,7 @@ using Andor.Accounts.Domain.Accounts.ValueObjects;
 using Andor.Accounts.Domain.Categories.Repositories;
 using Andor.Accounts.Domain.Currencies.Repositories;
 using Andor.Accounts.Domain.FinancialMovements;
+using Andor.Accounts.Domain.PaymentMethods;
 using Andor.Accounts.Domain.PaymentMethods.Repositories;
 using Andor.Accounts.Domain.SubCategories.Repositories;
 using Andor.Foundation.Domain.ValuesObjects;
@@ -65,6 +66,49 @@ public class AccountActor : ReceiveActor, IWithUnboundedStash
         ReceiveAsync<AddFinancialMovementCommand>(HandleAddFinancialMovementAsync);
         ReceiveAsync<EditFinancialMovementCommand>(HandleEditFinancialMovementAsync);
         ReceiveAsync<DeleteFinancialMovementCommand>(HandleDeleteFinancialMovementAsync);
+        ReceiveAsync<InviteMemberByEmailCommand>(HandleInviteMemberByEmailAsync);
+        ReceiveAsync<InviteMemberByUserCommand>(HandleInviteMemberByUserAsync);
+        ReceiveAsync<AnswerInviteCommand>(HandleAnswerInviteAsync);
+        ReceiveAsync<CreateCustomCategoryCommand>(HandleCreateCustomCategoryAsync);
+        ReceiveAsync<CreateCustomSubCategoryCommand>(HandleCreateCustomSubCategoryAsync);
+        ReceiveAsync<CreateCustomPaymentMethodCommand>(HandleCreateCustomPaymentMethodAsync);
+        ReceiveAsync<UpdateAccountDetailsCommand>(HandleUpdateAccountDetailsAsync);
+    }
+
+
+    private async Task HandleUpdateAccountDetailsAsync(UpdateAccountDetailsCommand cmd)
+    {
+        using var scope = _serviceProvider.CreateScope();
+
+        var repo = scope.ServiceProvider.GetRequiredService<ICommandsAccountRepository>();
+        var currencyRepo = scope.ServiceProvider.GetRequiredService<ICommandsCurrencyRepository>();
+        var validator = scope.ServiceProvider.GetRequiredService<IAccountValidator>();
+
+        var currency = await currencyRepo.GetByIdAsync(cmd.CurrencyId, cmd.CancellationToken);
+
+        if (currency == null)
+        {
+            var notFound = DomainResult.Failure(errors: new List<Notification>
+            {
+                new(nameof(cmd.CurrencyId), "Currency not found.", AccountErrorCode.CurrencyNotFound),
+            });
+
+            Sender.Tell((notFound, (Account?)null));
+            return;
+        }
+
+        var domainResult = await _account!.UpdateAccountDetailsAsync(
+            cmd.Name,
+            cmd.Description,
+            currency,
+            cmd.CurrentUser.UserId,
+            validator,
+            cmd.CancellationToken);
+
+        if (_account?.Events.Count > 0)
+            await repo.PersistAsync(_account, cmd.CancellationToken);
+
+        Sender.Tell((domainResult, _account));
     }
 
     private async Task HandleCreateAsync(CreateAccountCommand cmd)
@@ -365,6 +409,128 @@ public class AccountActor : ReceiveActor, IWithUnboundedStash
         }
 
         Sender.Tell((result, result.IsSuccess ? movement : null));
+    }
+
+    private async Task HandleInviteMemberByEmailAsync(InviteMemberByEmailCommand cmd)
+    {
+        var result = _account!.InviteMemberByEmail(cmd.Email, cmd.Permission, cmd.CurrentUser.UserId);
+
+        if (result.IsSuccess && _account.Events.Count > 0)
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var repo = scope.ServiceProvider.GetRequiredService<ICommandsAccountRepository>();
+            await repo.PersistAsync(_account, cmd.CancellationToken);
+        }
+
+        Sender.Tell((result, _account));
+    }
+
+    private async Task HandleInviteMemberByUserAsync(InviteMemberByUserCommand cmd)
+    {
+        var result = _account!.InviteMemberByUser(cmd.InvitedUserId, cmd.Permission, cmd.CurrentUser.UserId);
+
+        if (result.IsSuccess && _account.Events.Count > 0)
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var repo = scope.ServiceProvider.GetRequiredService<ICommandsAccountRepository>();
+            await repo.PersistAsync(_account, cmd.CancellationToken);
+        }
+
+        Sender.Tell((result, _account));
+    }
+
+    private async Task HandleAnswerInviteAsync(AnswerInviteCommand cmd)
+    {
+        var result = cmd.Accept
+            ? _account!.RespondInvite(cmd.InviteId, cmd.CurrentUser.UserId)
+            : _account!.RejectInvite(cmd.InviteId, cmd.CurrentUser.UserId);
+
+        if (result.IsSuccess && _account.Events.Count > 0)
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var repo = scope.ServiceProvider.GetRequiredService<ICommandsAccountRepository>();
+            await repo.PersistAsync(_account, cmd.CancellationToken);
+        }
+
+        Sender.Tell((result, _account));
+    }
+
+    private async Task HandleCreateCustomCategoryAsync(CreateCustomCategoryCommand cmd)
+    {
+        var result = _account!.CreateCustomCategory(cmd.Name, cmd.Description, cmd.Type, cmd.CurrentUser.UserId);
+
+        if (result.IsSuccess && _account.Events.Count > 0)
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var repo = scope.ServiceProvider.GetRequiredService<ICommandsAccountRepository>();
+            await repo.PersistAsync(_account, cmd.CancellationToken);
+        }
+
+        Sender.Tell((result, _account));
+    }
+
+    private async Task HandleCreateCustomPaymentMethodAsync(CreateCustomPaymentMethodCommand cmd)
+    {
+        var result = _account!.CreateCustomPaymentMethod(cmd.Name, cmd.Description, cmd.Type, cmd.CurrentUser.UserId);
+
+        if (result.IsSuccess && _account.Events.Count > 0)
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var repo = scope.ServiceProvider.GetRequiredService<ICommandsAccountRepository>();
+            await repo.PersistAsync(_account, cmd.CancellationToken);
+        }
+
+        Sender.Tell((result, _account));
+    }
+
+    private async Task HandleCreateCustomSubCategoryAsync(CreateCustomSubCategoryCommand cmd)
+    {
+        // Resolve the Category/PaymentMethod instances already hanging off _account (same
+        // reasoning as HandleAddFinancialMovementAsync) instead of fetching separate copies -
+        // Account.CreateCustomSubCategory needs the real domain objects, not just their ids.
+        var accountCategory = _account!.Categories.FirstOrDefault(x => x.CategoryId == cmd.CategoryId);
+
+        if (accountCategory == null)
+        {
+            var notFound = DomainResult.Failure(errors: new List<Notification>
+            {
+                new(nameof(cmd.CategoryId), "Category not found.", AccountErrorCode.SubCategoryCategoryNotFound),
+            });
+
+            Sender.Tell((notFound, _account));
+            return;
+        }
+
+        PaymentMethod? defaultPaymentMethod = null;
+
+        if (cmd.DefaultPaymentMethodId.HasValue)
+        {
+            var accountPaymentMethod = _account.PaymentMethods.FirstOrDefault(x => x.PaymentMethodId == cmd.DefaultPaymentMethodId.Value);
+
+            if (accountPaymentMethod == null)
+            {
+                var notFound = DomainResult.Failure(errors: new List<Notification>
+                {
+                    new(nameof(cmd.DefaultPaymentMethodId), "Default payment method not found.", AccountErrorCode.SubCategoryDefaultPaymentMethodNotFound),
+                });
+
+                Sender.Tell((notFound, _account));
+                return;
+            }
+
+            defaultPaymentMethod = accountPaymentMethod.PaymentMethod;
+        }
+
+        var result = _account.CreateCustomSubCategory(cmd.Name, cmd.Description, accountCategory.Category, defaultPaymentMethod, cmd.CurrentUser.UserId);
+
+        if (result.IsSuccess && _account.Events.Count > 0)
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var repo = scope.ServiceProvider.GetRequiredService<ICommandsAccountRepository>();
+            await repo.PersistAsync(_account, cmd.CancellationToken);
+        }
+
+        Sender.Tell((result, _account));
     }
 
     private record PreLoadAccount(AccountId Id);

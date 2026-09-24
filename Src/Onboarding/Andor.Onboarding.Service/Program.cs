@@ -38,8 +38,12 @@ builder.Services.Configure<UserVerifiedSubscriptionOptions>(
 builder.Services.Configure<SignupVerifiedSubscriptionOptions>(
     builder.Configuration.GetSection(SignupVerifiedSubscriptionOptions.SectionName));
 
+builder.Services.Configure<UserProvisioningRequestSubscriptionOptions>(
+    builder.Configuration.GetSection(UserProvisioningRequestSubscriptionOptions.SectionName));
+
 builder.Services.AddHostedService<SignupCodeGeneratedConsumer>();
 builder.Services.AddHostedService<SignupVerifiedConsumer>();
+builder.Services.AddHostedService<UserProvisioningRequestConsumer>();
 
 var app = builder.Build();
 

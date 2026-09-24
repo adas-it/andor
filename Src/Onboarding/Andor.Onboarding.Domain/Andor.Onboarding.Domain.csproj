@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Andor.Foundation.Domain\Andor.Foundation.Domain.csproj" />
+    <ProjectReference Include="..\..\Shared\Andor.Shared.Lookups\Andor.Shared.Lookups.csproj" />
   </ItemGroup>
 
 </Project>

@@ -195,6 +195,7 @@ using (var scope = app.Services.CreateScope())
     {
         ClientId = onboardingServiceClientId,
         ClientSecret = onboardingServiceSecret,
+        ClientType = OpenIddictConstants.ClientTypes.Confidential,
         DisplayName = "Onboarding Service",
         Permissions =
         {
@@ -227,6 +228,7 @@ using (var scope = app.Services.CreateScope())
             OpenIddictConstants.Permissions.GrantTypes.AuthorizationCode,
             OpenIddictConstants.Permissions.ResponseTypes.Code,
             OpenIddictConstants.Permissions.Scopes.Email,
+            OpenIddictConstants.Permissions.Prefixes.Scope + "users.write",
             OpenIddictConstants.Permissions.Scopes.Profile
         ]);
 

@@ -3,6 +3,7 @@ using Andor.Foundation.Domain.ValuesObjects;
 using Andor.Onboarding.Domain.Errors;
 using Andor.Onboarding.Domain.Events;
 using Andor.Onboarding.Domain.ValueObjects;
+using Andor.Shared.Lookups;
 
 namespace Andor.Onboarding.Domain;
 
@@ -16,6 +17,9 @@ public class SignupRequest : AggregateRoot<SignupRequestId>
     public Email Email { get; private set; }
     public VerificationCode VerificationCode { get; private set; }
     public string PreferredLanguage { get; private set; }
+    public Guid PreferredLanguageId => Language.GetByISO(PreferredLanguage).Id;
+    public string? PreferredCurrency { get; private set; }
+    public Guid PreferredCurrencyId => Currency.GetByISO(PreferredCurrency).Id;
     public bool IsVerified { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
@@ -138,7 +142,7 @@ public class SignupRequest : AggregateRoot<SignupRequestId>
     /// <see cref="CanVerify"/> for the check a caller should run before doing that provisioning.
     /// </summary>
     public DomainResult Verify(VerificationCode code, string passwordHash, Guid userId, string preferredLanguage,
-        bool marketingOptIn, bool termsAndConditionsAccepted, bool privacyPolicyAccepted)
+        string? preferredCurrency, bool marketingOptIn, bool termsAndConditionsAccepted, bool privacyPolicyAccepted)
     {
         var precondition = CanVerify(code);
 
@@ -150,6 +154,11 @@ public class SignupRequest : AggregateRoot<SignupRequestId>
         if (!string.IsNullOrWhiteSpace(preferredLanguage))
         {
             PreferredLanguage = preferredLanguage;
+        }
+
+        if (!string.IsNullOrWhiteSpace(preferredCurrency))
+        {
+            PreferredCurrency = preferredCurrency;
         }
 
         IsVerified = true;

@@ -83,6 +83,7 @@
     <Project Path="Src/Shared/Andor.Foundation.Infrastructure/Andor.Foundation.Infrastructure.csproj" Id="f8818d91-21ce-4cc0-b3b2-39f4b1631c2e" />
     <Project Path="Src/Shared/Andor.Foundation.PasswordHasher/Andor.Foundation.PasswordHasher.csproj" Id="0f26474d-f1f8-40db-bcc7-556061f2a217" />
     <Project Path="Src/Shared/Andor.Foundation.ServerServices/Andor.Foundation.ServerServices.csproj" Id="34779c76-d417-442c-94e2-8380cc471299" />
+    <Project Path="Src/Shared/Andor.Shared.Lookups/Andor.Shared.Lookups.csproj" Id="fa502c64-a880-4b4d-a1b8-aea1344ac587" />
   </Folder>
   <Folder Name="/Src/Shared/AuthorizationDomain/">
     <Project Path="Src/Shared/AuthorizationDomain/Andor.Authorizations.Application/Andor.Authorizations.Application.csproj" Id="c21800ce-ac9f-41ea-84ad-3dfc417c76b1" />

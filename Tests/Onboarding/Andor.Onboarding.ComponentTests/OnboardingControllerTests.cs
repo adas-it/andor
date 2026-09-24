@@ -44,7 +44,7 @@ public sealed class OnboardingControllerTests : IClassFixture<OnboardingApiFacto
         var code = await GetVerificationCodeAsync(email);
 
         var response = await client.PostAsJsonAsync("v1/Onboarding/verify",
-            new VerifySignupInput(email, code, "S3curePassword!", "en", new OptIn(true, true, true)),
+            new VerifySignupInput(email, code, "S3curePassword!", "en", "USD", new OptIn(true, true, true)),
             ComponentTestJson.Options);
 
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -60,7 +60,7 @@ public sealed class OnboardingControllerTests : IClassFixture<OnboardingApiFacto
             new StartSignupInput("Katherine Johnson", email, "en"), ComponentTestJson.Options);
 
         var response = await client.PostAsJsonAsync("v1/Onboarding/verify",
-            new VerifySignupInput(email, "0000000000", "S3curePassword!", "en", new OptIn(true, true, true)),
+            new VerifySignupInput(email, "0000000000", "S3curePassword!", "en", "USD", new OptIn(true, true, true)),
             ComponentTestJson.Options);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -73,7 +73,7 @@ public sealed class OnboardingControllerTests : IClassFixture<OnboardingApiFacto
 
         var response = await client.PostAsJsonAsync("v1/Onboarding/verify",
             new VerifySignupInput($"missing-{Guid.NewGuid():N}@example.com", "0000000000", "S3curePassword!",
-                "en", new OptIn(true, true, true)),
+                "en", "USD", new OptIn(true, true, true)),
             ComponentTestJson.Options);
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);

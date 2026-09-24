@@ -32,14 +32,15 @@ builder.UseCommunications(builder.Configuration);
 
 builder.Services.UseAuthorizations();
 
-// Lets Onboarding's client-credentials token call POST /v1/communications/requests.
-builder.Services.AddAuthorization(options =>
-    options.AddPolicy("communications.write", policy => policy.Requirements.Add(new ScopeRequirement("communications.write"))));
-
 builder.Services.AddOptions<RecipientSyncSubscriptionOptions>()
     .Bind(builder.Configuration.GetSection(RecipientSyncSubscriptionOptions.SectionName));
 
 builder.Services.AddHostedService<RecipientSyncConsumer>();
+
+builder.Services.AddOptions<RequestCommunicationQueueOptions>()
+    .Bind(builder.Configuration.GetSection(RequestCommunicationQueueOptions.SectionName));
+
+builder.Services.AddHostedService<RequestCommunicationConsumer>();
 
 var app = builder.Build();
 

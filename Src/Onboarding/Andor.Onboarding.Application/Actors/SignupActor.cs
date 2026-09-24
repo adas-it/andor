@@ -116,41 +116,17 @@ public class SignupActor : ReceiveActor, IWithUnboundedStash
             return;
         }
 
-        var precondition = _signupRequest.CanVerify(cmd.Code);
-
-        if (precondition.IsFailure)
-        {
-            Sender.Tell((precondition, _signupRequest));
-            return;
-        }
-
         using var scope = _serviceProvider.CreateScope();
         var repo = scope.ServiceProvider.GetRequiredService<ICommandsSignupRequestRepository>();
-        var provisioningClient = scope.ServiceProvider.GetRequiredService<IUserProvisioningClient>();
 
-        // Provisioning (User → Identity → Account) is a hard dependency of Verify succeeding —
-        // do it before touching the aggregate, so a failure here never leaves the signup marked
-        // verified without a User to match it. The user can simply retry verification.
+        // User/Identity/Account provisioning is no longer a synchronous dependency of Verify: it
+        // happens out-of-band, triggered by consumers reacting to the SignupVerifiedDomainEvent
+        // raised below. The id is minted here so it's the one the aggregate (and thus the event)
+        // carries, and Users.Service creates its User row with this same id.
         var userId = Guid.NewGuid();
 
-        var provisioningResult = await provisioningClient.ProvisionAsync(
-            userId,
-            _signupRequest.Name,
-            _signupRequest.Email,
-            cmd.PasswordHash,
-            cmd.MarketingOptIn,
-            cmd.TermsAndConditionsAccepted,
-            cmd.PrivacyPolicyAccepted,
-            cmd.CancellationToken);
-
-        if (provisioningResult.IsFailure)
-        {
-            Sender.Tell((provisioningResult, _signupRequest));
-            return;
-        }
-
         var result = _signupRequest.Verify(cmd.Code, cmd.PasswordHash, userId, cmd.PreferredLanguage,
-            cmd.MarketingOptIn, cmd.TermsAndConditionsAccepted, cmd.PrivacyPolicyAccepted);
+            cmd.PreferredCurrency, cmd.MarketingOptIn, cmd.TermsAndConditionsAccepted, cmd.PrivacyPolicyAccepted);
 
         if (result.IsSuccess)
         {

@@ -18,5 +18,19 @@ public interface IAccountCommandsService
 
     Task<ApplicationResult<FinancialMovementOutput?>> DeleteFinancialMovementAsync(DeleteFinancialMovementCommand command);
 
+    Task<ApplicationResult<AccountOutput?>> InviteMemberByEmailAsync(InviteMemberByEmailCommand command);
+
+    Task<ApplicationResult<AccountOutput?>> InviteMemberByUserAsync(InviteMemberByUserCommand command);
+
+    Task<ApplicationResult<AccountOutput?>> AnswerInviteAsync(AnswerInviteCommand command);
+
+    Task<ApplicationResult<AccountOutput?>> CreateCustomCategoryAsync(CreateCustomCategoryCommand command);
+
+    Task<ApplicationResult<AccountOutput?>> CreateCustomSubCategoryAsync(CreateCustomSubCategoryCommand command);
+
+    Task<ApplicationResult<AccountOutput?>> CreateCustomPaymentMethodAsync(CreateCustomPaymentMethodCommand command);
+
+    Task<ApplicationResult<AccountOutput?>> UpdateAccountDetailsAsync(UpdateAccountDetailsCommand command);
+
     Task<ApplicationResult<AccountOutput?>> GetByIdAsync(AccountId id, CancellationToken cancellationToken);
 }

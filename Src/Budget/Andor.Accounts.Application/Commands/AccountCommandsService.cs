@@ -34,6 +34,27 @@ public class AccountCommandsService(ActorRegistry registry, ICommandsAccountRepo
     public Task<ApplicationResult<FinancialMovementOutput?>> DeleteFinancialMovementAsync(DeleteFinancialMovementCommand command)
         => Handler<FinancialMovement, FinancialMovementOutput?>(command, x => x.ToFinancialMovementOutput());
 
+    public Task<ApplicationResult<AccountOutput?>> InviteMemberByEmailAsync(InviteMemberByEmailCommand command)
+        => Handler(command);
+
+    public Task<ApplicationResult<AccountOutput?>> InviteMemberByUserAsync(InviteMemberByUserCommand command)
+        => Handler(command);
+
+    public Task<ApplicationResult<AccountOutput?>> AnswerInviteAsync(AnswerInviteCommand command)
+        => Handler(command);
+
+    public Task<ApplicationResult<AccountOutput?>> CreateCustomCategoryAsync(CreateCustomCategoryCommand command)
+        => Handler(command);
+
+    public Task<ApplicationResult<AccountOutput?>> CreateCustomSubCategoryAsync(CreateCustomSubCategoryCommand command)
+        => Handler(command);
+
+    public Task<ApplicationResult<AccountOutput?>> CreateCustomPaymentMethodAsync(CreateCustomPaymentMethodCommand command)
+        => Handler(command);
+
+    public Task<ApplicationResult<AccountOutput?>> UpdateAccountDetailsAsync(UpdateAccountDetailsCommand command)
+        => Handler(command);
+
     public async Task<ApplicationResult<AccountOutput?>> GetByIdAsync(AccountId id, CancellationToken cancellationToken)
     {
         var response = ApplicationResult<AccountOutput?>.Success();

@@ -9,9 +9,9 @@ internal sealed record UserVerifiedMessage(Guid UserId, string Name, string Emai
 
 /// <summary>
 /// Subscribes to the "user-verified-events" topic and, upon receiving a message, requests the
-/// verification-code email via Communications.Service's POST /v1/communications/requests. No
+/// verification-code email by publishing onto Communications' "request-communication" queue. No
 /// User exists yet at this point in the flow, so this passes RecipientEmail (not UserId) — the
-/// one case the enrichment/consent path in that endpoint doesn't apply to.
+/// one case the enrichment/consent path on the other end doesn't apply to.
 /// </summary>
 public sealed class SignupCodeGeneratedConsumer : BackgroundService
 {

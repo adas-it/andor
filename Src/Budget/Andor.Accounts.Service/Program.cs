@@ -97,7 +97,7 @@ app.Use(async (context, next) =>
             var clientId = context.Request.Query["id"].ToString();
             var sessionId = context.Request.Query["sessionId"].ToString();
 
-            if (string.IsNullOrEmpty(clientId) is false)
+            if (string.IsNullOrEmpty(clientId) is false && string.IsNullOrEmpty(sessionId) is false)
             {
                 var webSocket = await context.WebSockets.AcceptWebSocketAsync();
                 WebSocketMessages.WebSocketConnections.Add(new WebSocketMessages.WebSocketConnection(Guid.Parse(clientId),

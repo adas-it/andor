@@ -11,24 +11,27 @@ using Microsoft.Extensions.Logging;
 namespace Andor.Communications.External;
 
 /// <summary>
-/// Reads the Rule/Template requested by a "request-communication" message and dispatches it
+/// Reads the Rule/Template requested by a "send-communication" message and dispatches it
 /// through the Partner strategy directly, bypassing the Rules actor system: SendNotification
 /// never mutates the Rule aggregate, so it doesn't need the Manager/Actor/Stash write path.
+/// "send-communication" is only ever published by Communications.Service's
+/// RequestCommunicationConsumer, after it has enriched/consent-gated the original
+/// "request-communication" request — nothing else is sanctioned to publish onto this queue.
 /// </summary>
-public class RequestCommunicationFunction(
+public class SendCommunicationFunction(
     ICommandsRuleRepository ruleRepository,
     IPartnerManager partnerManager,
     IMemoryCache cache,
-    ILogger<RequestCommunicationFunction> logger)
+    ILogger<SendCommunicationFunction> logger)
 {
-    [Function(nameof(RequestCommunicationFunction))]
+    [Function(nameof(SendCommunicationFunction))]
     public async Task Run(
-        [ServiceBusTrigger("request-communication", Connection = "ServiceBusConnection")]
+        [ServiceBusTrigger("send-communication", Connection = "ServiceBusConnection")]
         ServiceBusReceivedMessage message,
         ServiceBusMessageActions messageActions,
         CancellationToken cancellationToken)
     {
-        var dedupeKey = $"request-communication:processed:{message.MessageId}";
+        var dedupeKey = $"send-communication:processed:{message.MessageId}";
 
         if (cache.TryGetValue(dedupeKey, out _))
         {

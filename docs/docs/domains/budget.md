@@ -231,7 +231,7 @@ record CashFlowOutput {
 | 3002 | `AccountShouldHaveOneOwner` |
 | 3003 | `CurrencyNotFound` |
 | 3100–3105 | `CategoryCannotBeNull`, `CategoryMustBeTemplate`, `CategoryAlreadyAdded`, `CannotAddDeletedCategory`, `UserNotMember`, `InsufficientPermissions` |
-| 3200–3205 | `SubCategoryCannotBeNull`, `SubCategoryMustBeTemplate`, `SubCategoryAlreadyAdded`, `SubCategoryCategoryNotInAccount`, `PaymentMethodShouldBeSameTypeAsCategory`, `SubCategoryPaymentMethodNotInAccount` |
+| 3200–3207 | `SubCategoryCannotBeNull`, `SubCategoryMustBeTemplate`, `SubCategoryAlreadyAdded`, `SubCategoryCategoryNotInAccount`, `PaymentMethodShouldBeSameTypeAsCategory`, `SubCategoryPaymentMethodNotInAccount`, `SubCategoryCategoryNotFound`, `SubCategoryDefaultPaymentMethodNotFound` |
 | 3300–3303 | `PaymentMethodCannotBeNull`, `PaymentMethodMustBeTemplate`, `PaymentMethodAlreadyAdded`, `CannotAddDeletedPaymentMethod` |
 | 3400–3402 | `UserCannotBeNull`, `UserAlreadyMember`, `OnlyOwnerCanLinkMembers` |
 | 3500–3505 | `InviteCannotBeNull`, `InviteAlreadyExists`, `OnlyOwnerCanInviteMembers`, `CannotInviteExistingMember`, `InviteNotFound`, `UserNotInvited` |
@@ -317,17 +317,53 @@ All published to topic **`andor-accounts-events`** with the event type as the me
 - **`AccountController.CreateAsync` stores the account name as its description**
   (`new Description(input.Name)`), so `AccountOutput.Description` echoes the name until a real
   description field is added to `AccountInput`.
-- **`PermissionType.Editor` and `PermissionType.Owner` share key `2`.** `Enumeration` lookups
-  by key cannot tell them apart; only reference comparisons (`== PermissionType.Owner`) are
-  reliable. Worth fixing to `Owner = 3`.
-- **No write endpoints for custom categories / sub-categories / payment methods yet** — the
-  domain supports `CreateCustomCategory` etc., but only template seeding and the queries are
-  wired to REST.
-- **`InvitesController` is entirely commented out** — invite/accept/reject exist on the
-  `Account` aggregate and raise events, but there is no HTTP surface for them.
+
+## Custom categories, sub-categories and payment methods
+
+`Account.CreateCustomCategory` / `CreateCustomSubCategory` / `CreateCustomPaymentMethod` existed
+on the aggregate but had no HTTP surface until now — only template attachment
+(`AddTemplateCategory` etc., via `SeedAccountDefaultsCommand`) was wired. Each now has a `POST`:
+
+| Verb | Route | Action |
+|---|---|---|
+| `POST` | `v1/account/{accountId}/category` | `CreateCustomCategoryCommand`, from `CreateCategoryInput` (`Name`, `Description`, `TypeId`). |
+| `POST` | `v1/account/{accountId}/sub-category` | `CreateCustomSubCategoryCommand`, from `CreateSubCategoryInput` (`Name`, `Description`, `CategoryId`, optional `DefaultPaymentMethodId`). The `AccountActor` resolves the `Category`/`PaymentMethod` domain objects off the already-loaded `_account.Categories`/`PaymentMethods` before calling the domain method, failing fast with `SubCategoryCategoryNotFound` / `SubCategoryDefaultPaymentMethodNotFound` (3206/3207) if either id doesn't belong to the account. |
+| `POST` | `v1/account/{accountId}/payment-method` | `CreateCustomPaymentMethodCommand`, from `CreatePaymentMethodInput` (`Name`, `Description`, `TypeId`). |
+
+**Persistence bug found and fixed while wiring this up**: `CommandsAccountRepository.PersistAsync`'s
+child reconciliation only ever marked the join row (`AccountCategory`/`AccountSubCategory`/`AccountPaymentMethod`)
+as `Added` — never the master `Category`/`SubCategory`/`PaymentMethod` row itself. That was
+invisible as long as the only caller was template attachment (the master row already exists,
+seeded separately); a *custom* create needs the master row inserted too, or the join row ends up
+pointing at nothing and the category silently disappears from the next `Include`-based read.
+Fixed by reconciling the master entities the same way, scoped to the ids the account now
+references (see the three `ReconcileChildStatesAsync` calls added after each join-table one).
+
+## Invites
+
+`InvitesController` (`v1/account/{accountId}/invites`) exposes the invite lifecycle that already
+existed on the `Account` aggregate:
+
+| Verb | Route | Action |
+|---|---|---|
+| `POST` | `.../invites` | Creates an invite, by e-mail (`InviteMemberByEmailCommand`) or by an existing `UserId` (`InviteMemberByUserCommand`) depending on which field of `InviteInput` is set. |
+| `GET` | `.../invites` | Lists the account's invites (`IAccountQueriesService.GetInvitesAsync`). |
+| `POST` | `.../invites/{inviteId}/answer` | Accepts or rejects (`AnswerInviteInput.Accept`) via `AnswerInviteCommand`. |
+
+`Account.RespondInvite` now adds the invitee as a member synchronously (with the invite's own
+`Permission`) instead of requiring a separate `LinkMember` call — there is no domain-event handler
+for this; see `Account.AddMemberRecord`, shared with `LinkMember`.
+
+`PermissionType.Editor`/`Owner` no longer share a key (`Owner` is `3`); see migration
+`FixPermissionTypeOwnerKeyCollision` for the one-time data fix this required. `InviteId` also
+gained a `ToString()` override (it was missing, unlike `AccountId`/`UserId`), since the
+`{inviteId:guid}` route depends on it serializing as a plain GUID.
 
 ## Next steps
 
-- Expose invite management and custom-classification endpoints.
+- Wire a Communications producer for the already-seeded `account-invite` rule/template (see
+  `Andor.Communications.Infrastructure`'s `SeedRealTemplates` migration) so creating an invite by
+  e-mail actually sends one.
+- Bridge Onboarding/signup with pending e-mail invites: today, verifying a new signup never checks
+  for a pending `Invite` for that e-mail and calls `LinkUserToInvite` automatically.
 - Document `FinancialSummariesOutput` / `CategorySummariesOutput` and the `/ws` protocol.
-- Resolve the `PermissionType` key collision and the name/description duplication.

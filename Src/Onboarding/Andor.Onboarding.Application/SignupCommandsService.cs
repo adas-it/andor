@@ -30,8 +30,8 @@ public class SignupCommandsService(ActorRegistry registry, ICommandsSignupReques
     }
 
     public async Task<ApplicationResult<object?>> VerifySignupAsync(string email, string code, string password,
-        string preferredLanguage, bool marketingOptIn, bool termsAndConditionsAccepted, bool privacyPolicyAccepted,
-        ApplicationUser currentUser, CancellationToken cancellationToken)
+        string preferredLanguage, string? preferredCurrency, bool marketingOptIn, bool termsAndConditionsAccepted,
+        bool privacyPolicyAccepted, ApplicationUser currentUser, CancellationToken cancellationToken)
     {
         var response = ApplicationResult<object?>.Success();
 
@@ -46,7 +46,7 @@ public class SignupCommandsService(ActorRegistry registry, ICommandsSignupReques
         var passwordHash = passwordHasher.HashPassword(password);
 
         var command = new VerifySignupCommand(signupRequest.Id, code, passwordHash, preferredLanguage,
-            marketingOptIn, termsAndConditionsAccepted, privacyPolicyAccepted, currentUser, cancellationToken);
+            preferredCurrency, marketingOptIn, termsAndConditionsAccepted, privacyPolicyAccepted, currentUser, cancellationToken);
 
         return await Handler(command);
     }

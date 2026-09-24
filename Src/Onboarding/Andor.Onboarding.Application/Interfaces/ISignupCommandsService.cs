@@ -9,6 +9,6 @@ public interface ISignupCommandsService
         ApplicationUser currentUser, CancellationToken cancellationToken);
 
     Task<ApplicationResult<object?>> VerifySignupAsync(string email, string code, string password,
-        string preferredLanguage, bool marketingOptIn, bool termsAndConditionsAccepted, bool privacyPolicyAccepted,
-        ApplicationUser currentUser, CancellationToken cancellationToken);
+        string preferredLanguage, string? preferredCurrency, bool marketingOptIn, bool termsAndConditionsAccepted,
+        bool privacyPolicyAccepted, ApplicationUser currentUser, CancellationToken cancellationToken);
 }

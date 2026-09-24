@@ -29,6 +29,8 @@ public readonly record struct InviteId : IId<InviteId>
             throw new ArgumentException(DefaultsErrorsMessages.InvalidGuid, nameof(value)) : new InviteId(guid);
     }
 
+    public override string ToString() => Value.ToString();
+
     public static implicit operator Guid(InviteId id) => id.Value;
     public static implicit operator InviteId(Guid value) => new(value);
 }

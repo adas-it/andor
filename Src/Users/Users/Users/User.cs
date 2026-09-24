@@ -15,6 +15,8 @@ public class User : AggregateRoot<UserId>
     public bool MarketingOptIn { get; private set; }
     public bool TermsAndConditionsAccepted { get; private set; }
     public bool PrivacyPolicyAccepted { get; private set; }
+    public string Avatar { get; private set; }
+    public string AvatarThumbnail { get; private set; }
 
     protected User()
     {
@@ -23,6 +25,8 @@ public class User : AggregateRoot<UserId>
         Email = Email.Empty;
         PreferredCurrencyId = Guid.Empty;
         PreferredLanguageId = Guid.Empty;
+        Avatar = string.Empty;
+        AvatarThumbnail = string.Empty;
     }
 
     private User(
@@ -34,7 +38,9 @@ public class User : AggregateRoot<UserId>
         Guid preferredLanguageId,
         bool marketingOptIn,
         bool termsAndConditionsAccepted,
-        bool privacyPolicyAccepted)
+        bool privacyPolicyAccepted,
+        string avatar,
+        string avatarThumbnail)
     {
         Id = id;
         Email = email;
@@ -45,6 +51,8 @@ public class User : AggregateRoot<UserId>
         MarketingOptIn = marketingOptIn;
         TermsAndConditionsAccepted = termsAndConditionsAccepted;
         PrivacyPolicyAccepted = privacyPolicyAccepted;
+        Avatar = avatar;
+        AvatarThumbnail = avatarThumbnail;
     }
 
     public static async Task<(DomainResult, User?)> NewAsync(
@@ -69,7 +77,9 @@ public class User : AggregateRoot<UserId>
             preferredLanguageId,
             marketingOptIn,
             termsAndConditionsAccepted,
-            privacyPolicyAccepted);
+            privacyPolicyAccepted,
+            string.Empty,
+            string.Empty);
 
         var result = entity.Validate();
 

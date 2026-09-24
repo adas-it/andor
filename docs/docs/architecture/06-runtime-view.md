@@ -86,8 +86,8 @@ sequenceDiagram
     ONB->>ONB: SignupActor generates 6-digit code
     ONB->>OBX: persist SignupRequest + OutboxMessage(SignupCodeGenerated)
     OBX->>SB: relay SignupCodeGenerated
-    SB->>COM: request-communication (SendNotificationInput)
-    COM->>V: e-mail with code (SMTP / InHousePartner)
+    SB->>COM: request-communication (RequestCommunicationInput)
+    COM->>V: e-mail with code (SMTP / InHousePartner, via send-communication)
 
     V->>ONB: POST /onboarding/verify { email, code, password }
     ONB->>ONB: validate code; hash password (PasswordHasher)
@@ -109,30 +109,37 @@ delivery). The password is hashed before it ever reaches the domain layer or an 
 ```mermaid
 sequenceDiagram
     autonumber
-    participant Mod as Any module
-    participant SB as Service Bus queue<br/>request-communication
-    participant Cons as RequestCommunicationConsumer<br/>(BackgroundService)
-    participant Mgr as RuleManagerActor
-    participant Act as RuleActor (per RuleId)
+    participant Mod as Any module (e.g. Onboarding)
+    participant Req as Service Bus queue<br/>request-communication
+    participant RCons as RequestCommunicationConsumer<br/>(Andor.Communications.Service)
+    participant Rec as Recipient projection
+    participant Send as Service Bus queue<br/>send-communication
+    participant Fn as SendCommunicationFunction<br/>(Andor.Communications.External)
     participant P as InHousePartner (SMTP)
 
-    Mod->>SB: SendNotificationInput { RuleId, RecipientEmail, TemplateTitle, ContentLanguage, Values }
-    Cons->>Mgr: IRuleCommandsService.SendNotificationAsync(input)
-    Mgr->>Act: forward (one child per RuleId ⇒ sequential per rule)
-    Act->>Act: load Rule + Templates; pick Template where Title == x && ContentLanguage == y
-    alt template found
-        Act->>P: render (string.Replace over Values on Subject + Value), send
-        P-->>Cons: success
-        Cons->>SB: CompleteMessageAsync
-    else RuleNotFound (5001)
-        Act-->>Cons: errors
-        Cons->>SB: AbandonMessageAsync (Service Bus retries, then dead-letters)
+    Mod->>Req: RequestCommunicationInput { RuleId, TemplateTitle, UserId | RecipientEmail, Values }
+    RCons->>Rec: enrich Email/ContentLanguage/"<name>" from UserId; gate Marketing on consent
+    alt allowed
+        RCons->>Send: SendNotificationInput
+        RCons->>Req: CompleteMessageAsync
+        Fn->>Fn: load Rule + Templates; pick Template where Title == x && ContentLanguage == y
+        alt template found
+            Fn->>P: render (string.Replace over Values on Subject + Value), send
+            Fn->>Send: CompleteMessageAsync
+        else template not found
+            Fn->>Send: AbandonMessageAsync (Service Bus retries, then dead-letters)
+        end
+    else RecipientNotFound / MarketingConsentRequired / RuleNotFound
+        RCons->>Req: AbandonMessageAsync (Service Bus retries, then dead-letters)
     end
 ```
 
-A REST endpoint (`POST /v1/Communications/notifications`) reaches the same
-`RuleManagerActor → RuleActor` path and is meant for operational one-offs; production traffic goes
-through the queue so delivery stays decoupled and retryable. See the
+`send-communication` is not a public entry point — `RequestCommunicationConsumer` is the only
+sanctioned producer, so `SendCommunicationFunction` never dispatches anything that hasn't passed
+the enrichment/consent gate. A REST endpoint (`POST /v1/Communications/notifications`) reaches a
+separate, actor-backed `RuleManagerActor → RuleActor` path and is meant for operational one-offs;
+production traffic from other modules goes through `request-communication` so delivery stays
+decoupled, retryable and consent-gated. See the
 [Communications domain page](../domains/communications.md) for `Rule`/`Template` details.
 
 ## 6.5 Error & recovery behaviour

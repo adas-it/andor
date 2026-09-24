@@ -1,4 +1,5 @@
 using Andor.Accounts.Contracts.Accounts.Responses;
+using Andor.Accounts.Contracts.Invites.Responses;
 using Andor.Accounts.Domain.Accounts.ValueObjects;
 using Andor.Foundation.Application.Queries;
 using Andor.Foundation.Contracts.Results;
@@ -11,6 +12,8 @@ public interface IAccountQueriesService
     Task<ApplicationResult<AccountOutput?>> GetByIdAsync(AccountId id, CancellationToken cancellationToken);
 
     Task<ApplicationResult<ListAccountOutput>> GetListAsync(SearchInput input, CancellationToken cancellationToken);
+
+    Task<ApplicationResult<ListInviteOutput>> GetInvitesAsync(AccountId id, CancellationToken cancellationToken);
 
     Task<ApplicationResult<CashFlowOutput>> GetCashFlowAsync(AccountId accountId, Month month, Year year,
         CancellationToken cancellationToken);

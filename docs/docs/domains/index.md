@@ -30,7 +30,9 @@ the shape and [ADR-0001](../architecture/adr/0001-modular-monolith.md) for why.
 - **Budget** publishes `Account*` events on `andor-accounts-events`; its own consumers seed a
   new account with default templates and maintain the CashFlow projection.
 - **Communications** is called by any other slice through the `request-communication` queue —
-  callers reference a pre-configured Rule/Template and pass only dynamic values.
+  callers reference a pre-configured Rule/Template and pass only dynamic values. Communications
+  itself enriches/consent-gates the request and republishes onto `send-communication`, which only
+  its own Azure Function consumes.
 - **Investing**, **Personal Assets** and **Goals** are independent slices; the placeholders
   describe how each would plug into the same event-driven model.
 

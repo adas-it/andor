@@ -11,11 +11,27 @@ public sealed record AccountCreatedDomainEvent : DomainEvent
     public static AccountCreatedDomainEvent FromAggregator(Account entity, Guid userId)
         => new AccountCreatedDomainEvent() with
         {
+            EventName = nameof(AccountCreatedDomainEvent),
             Id = entity.Id,
             Name = entity.Name!,
             UserId = userId
         };
 }
+
+public sealed record AccountDetailsUpdatedDomainEvent : DomainEvent
+{
+    public required string Name { get; init; }
+
+    public static AccountDetailsUpdatedDomainEvent FromAggregator(Account entity, Guid userId)
+        => new AccountDetailsUpdatedDomainEvent()
+        {
+            EventName = nameof(AccountDetailsUpdatedDomainEvent),
+            Id = entity.Id,
+            Name = entity.Name!,
+            UserId = userId
+        };
+}
+
 public sealed record AccountDeletedDomainEvent : DomainEvent
 {
     public string Name { get; init; }

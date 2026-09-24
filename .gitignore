@@ -367,3 +367,4 @@ docs/site/
 local.settings.json
 /Src/Tasks/Andor.Tasks.Service/appsettings.Development.json
 /Src/Users/Andor.Users.Service/appsettings.Development.json
+/Src/Goals/Andor.Goals.Service/appsettings.Development.json

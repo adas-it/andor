@@ -134,10 +134,8 @@ namespace Andor.Communications.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("PreferredLanguage")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                    b.Property<Guid>("PreferredLanguageId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("PrivacyPolicyAccepted")
                         .HasColumnType("bit");

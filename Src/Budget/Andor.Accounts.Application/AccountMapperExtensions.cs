@@ -2,12 +2,14 @@ using Andor.Accounts.Contracts.Accounts.Responses;
 using Andor.Accounts.Contracts.Categories.Response;
 using Andor.Accounts.Contracts.FinancialMovements.Response;
 using Andor.Accounts.Contracts.FinancialMovementStatuses;
+using Andor.Accounts.Contracts.Invites.Responses;
 using Andor.Accounts.Contracts.MovementTypes;
 using Andor.Accounts.Contracts.PaymentMethods.Responses;
 using Andor.Accounts.Contracts.SubCategories.Responses;
 using Andor.Accounts.Domain.Accounts;
 using Andor.Accounts.Domain.Categories;
 using Andor.Accounts.Domain.FinancialMovements;
+using Andor.Accounts.Domain.Invites;
 using Andor.Accounts.Domain.PaymentMethods;
 using Andor.Accounts.Domain.SubCategories;
 
@@ -26,8 +28,15 @@ internal static class AccountMapperExtensions
             Name = entity.Name,
             Description = entity.Description,
             Deleted = entity.IsDeleted,
+            Currency = new CurrencyOutput(entity.Currency.Id.ToString(), entity.Currency.Name, entity.Currency.Symbol),
             Participants = entity.Members
-                .Select(m => new ParticipantOutput() { Id = m.UserId.ToString() }).ToList()
+                .Select(m => new ParticipantOutput()
+                {
+                    Id = m.UserId.ToString(),
+                    PermissionType = new PermissionTypeOutput(m.PermissionType.Key, m.PermissionType.Name)
+
+                })
+                .ToList()
         };
     }
 
@@ -44,6 +53,7 @@ internal static class AccountMapperExtensions
             Category = entity.Category.ToCategoryOutput(null),
             DefaultPaymentMethod = entity.DefaultPaymentMethod?.ToPaymentMethodOutput(null),
             Order = order,
+            IsTemplate = entity.IsTemplate,
         };
     }
 
@@ -59,6 +69,7 @@ internal static class AccountMapperExtensions
             Description = entity.Description,
             Type = new CategoryTypeOutput(entity.Type.Key, entity.Type.Name),
             Order = order,
+            IsTemplate = entity.IsTemplate,
         };
     }
 
@@ -73,6 +84,25 @@ internal static class AccountMapperExtensions
             Name = entity.Name,
             Description = entity.Description,
             Order = order,
+            IsTemplate = entity.IsTemplate,
+        };
+    }
+
+    public static InviteOutput? ToInviteOutput(this Invite? entity)
+    {
+        if (entity == null)
+            return null;
+
+        return new InviteOutput()
+        {
+            Id = entity.Id.ToString(),
+            AccountId = entity.AccountId.ToString(),
+            Email = entity.Email?.Value,
+            UserId = entity.UserId?.ToString(),
+            PermissionKey = entity.Permission.Key,
+            PermissionName = entity.Permission.Name,
+            IsActive = entity.IsActive,
+            IsAccepted = entity.IsAccepted,
         };
     }
 

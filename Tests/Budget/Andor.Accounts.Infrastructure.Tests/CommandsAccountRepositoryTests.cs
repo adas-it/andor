@@ -5,6 +5,7 @@ using Andor.Accounts.Domain.FinancialMovements;
 using Andor.Accounts.Domain.MovementStatuses;
 using Andor.Accounts.Domain.MovementTypes;
 using Andor.Accounts.Domain.PermissionTypes;
+using Andor.Accounts.Domain.Users.ValueObjects;
 using Andor.Accounts.Infrastructure.Context;
 using Andor.Foundation.Domain.ValuesObjects;
 using Andor.TestsUtil;
@@ -74,6 +75,48 @@ public class CommandsAccountRepositoryTests
         persisted!.Categories.Should().ContainSingle();
         persisted.PaymentMethods.Should().ContainSingle();
         persisted.Invites.Should().ContainSingle();
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_RoundTrips_OwnerPermission_Correctly()
+    {
+        // Regression test for the PermissionType key collision (Editor/Owner used to share key
+        // 2): Enumeration.GetByKey always resolved the first declared match (Editor), so an
+        // Owner persisted before the fix would silently come back as Editor after a round-trip.
+        var (_, account) = await CreateValidAccountAsync();
+        var ownerId = account!.Members.Single().UserId;
+
+        await new CommandsAccountRepository(CreateContext()).PersistAsync(account, CancellationToken.None);
+
+        var persisted = await new CommandsAccountRepository(CreateContext())
+            .GetByIdAsync(account.Id, CancellationToken.None);
+
+        persisted!.Members.Single(m => m.UserId == ownerId).PermissionType.Should().Be(PermissionType.Owner);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_RoundTrips_AcceptedInviteWithOwnerPermission()
+    {
+        var (_, account) = await CreateValidAccountAsync();
+        var ownerId = account!.Members.Single().UserId;
+
+        var email = new Email("newowner@example.com");
+        account.InviteMemberByEmail(email, PermissionType.Owner, ownerId);
+
+        var newUserId = UserId.New();
+        account.LinkUserToInvite(email, newUserId, ownerId);
+
+        var inviteId = account.Invites.Single().Id;
+        account.RespondInvite(inviteId, newUserId.Value);
+
+        await new CommandsAccountRepository(CreateContext()).PersistAsync(account, CancellationToken.None);
+
+        var persisted = await new CommandsAccountRepository(CreateContext())
+            .GetByIdAsync(account.Id, CancellationToken.None);
+
+        persisted!.Members.Should().HaveCount(2);
+        persisted.Members.Single(m => m.UserId == newUserId.Value).PermissionType.Should().Be(PermissionType.Owner);
+        persisted.Invites.Single().IsAccepted.Should().BeTrue();
     }
 
     [Fact]

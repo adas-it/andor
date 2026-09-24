@@ -17,7 +17,7 @@ public class Recipient : Entity<RecipientId>
 {
     public string Name { get; private set; }
     public string Email { get; private set; }
-    public string PreferredLanguage { get; private set; }
+    public Guid PreferredLanguageId { get; private set; }
     public bool Active { get; private set; }
     public bool MarketingOptIn { get; private set; }
     public bool TermsAndConditionsAccepted { get; private set; }
@@ -27,14 +27,13 @@ public class Recipient : Entity<RecipientId>
     {
         Name = string.Empty;
         Email = string.Empty;
-        PreferredLanguage = string.Empty;
     }
 
     private Recipient(
         RecipientId id,
         string name,
         string email,
-        string preferredLanguage,
+        Guid preferredLanguageId,
         bool active,
         bool marketingOptIn,
         bool termsAndConditionsAccepted,
@@ -43,7 +42,7 @@ public class Recipient : Entity<RecipientId>
         Id = id;
         Name = name;
         Email = email;
-        PreferredLanguage = preferredLanguage;
+        PreferredLanguageId = preferredLanguageId;
         Active = active;
         MarketingOptIn = marketingOptIn;
         TermsAndConditionsAccepted = termsAndConditionsAccepted;
@@ -54,13 +53,13 @@ public class Recipient : Entity<RecipientId>
         RecipientId id,
         string name,
         string email,
-        string preferredLanguage,
+        Guid preferredLanguageId,
         bool active,
         bool marketingOptIn,
         bool termsAndConditionsAccepted,
         bool privacyPolicyAccepted)
     {
-        var entity = new Recipient(id, name, email, preferredLanguage, active,
+        var entity = new Recipient(id, name, email, preferredLanguageId, active,
             marketingOptIn, termsAndConditionsAccepted, privacyPolicyAccepted);
 
         var result = entity.Validate();
@@ -77,7 +76,7 @@ public class Recipient : Entity<RecipientId>
     public DomainResult Update(
         string name,
         string email,
-        string preferredLanguage,
+        Guid preferredLanguageId,
         bool active,
         bool marketingOptIn,
         bool termsAndConditionsAccepted,
@@ -85,7 +84,7 @@ public class Recipient : Entity<RecipientId>
     {
         Name = name;
         Email = email;
-        PreferredLanguage = preferredLanguage;
+        PreferredLanguageId = preferredLanguageId;
         Active = active;
         MarketingOptIn = marketingOptIn;
         TermsAndConditionsAccepted = termsAndConditionsAccepted;

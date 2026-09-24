@@ -5,6 +5,9 @@ internal static class AccountErrorMessages
     public const string AccountShouldHaveOneOwner = "At least one member must have owner permission.";
     public const string CurrencyNotFound = "Currency not found.";
 
+    public const string NameCannotBeNull = "Name cannot be null.";
+    public const string CurrencyCannotBeNull = "Currency cannot be null.";
+
     // AddTemplateCategory errors
     public const string CategoryCannotBeNull = "Category cannot be null.";
     public const string CategoryMustBeTemplate = "Only template categories can be added through this method.";
@@ -20,6 +23,8 @@ internal static class AccountErrorMessages
     public const string SubCategoryCategoryNotInAccount = "The subcategory's category must belong to this account.";
     public const string PaymentMethodShouldBeSameTypeAsCategory = "Default payment method must have the same movement type as the subcategory.";
     public const string SubCategoryPaymentMethodNotInAccount = "The subcategory's default payment method must belong to this account.";
+    public const string SubCategoryCategoryNotFound = "Category not found.";
+    public const string SubCategoryDefaultPaymentMethodNotFound = "Default payment method not found.";
 
     // AddTemplatePaymentMethod errors
     public const string PaymentMethodCannotBeNull = "PaymentMethod cannot be null.";

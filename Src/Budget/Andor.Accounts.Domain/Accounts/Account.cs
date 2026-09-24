@@ -158,6 +158,31 @@ public class Account : AggregateRoot<AccountId>, ISoftDeletableEntity
         return (result, result.IsSuccess ? entity : null);
     }
 
+    public async Task<DomainResult> UpdateAccountDetailsAsync(Name name, Description description, Currency currency, Guid userId,
+        IAccountValidator accountValidator, CancellationToken cancellationToken)
+    {
+        var notifications = await accountValidator.ValidateUpdateAsync(this, name, description,
+           currency, cancellationToken);
+
+        AddNotification(notifications);
+
+        var result = Validate();
+
+        if (result.IsFailure)
+        {
+            return result;
+        }
+
+        Name = name;
+        Description = description;
+        Currency = currency;
+        LastUpdate = DateTime.UtcNow;
+
+        RaiseDomainEvent(AccountDetailsUpdatedDomainEvent.FromAggregator(this, userId));
+
+        return result;
+    }
+
     /// <summary>
     /// Adds a template category to the account. Template categories are predefined categories
     /// that can be shared across multiple accounts.
@@ -453,12 +478,22 @@ public class Account : AggregateRoot<AccountId>, ISoftDeletableEntity
 
         if (result.IsSuccess)
         {
-            var nextOrder = GetNextOrder(_members, x => x.Order);
-            _members.Add(new AccountUser(this, user!, permissionType, nextOrder));
-            RaiseDomainEvent(AccountMemberAddedDomainEvent.FromAggregator(this, userId));
+            AddMemberRecord(user!, permissionType, userId);
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Adds a member record to the account and raises the corresponding domain event.
+    /// Shared by <see cref="LinkMember"/> and <see cref="RespondInvite"/> so both paths
+    /// (direct link and invite acceptance) produce the same membership state and event.
+    /// </summary>
+    private void AddMemberRecord(User user, PermissionType permissionType, Guid actingUserId)
+    {
+        var nextOrder = GetNextOrder(_members, x => x.Order);
+        _members.Add(new AccountUser(this, user, permissionType, nextOrder));
+        RaiseDomainEvent(AccountMemberAddedDomainEvent.FromAggregator(this, actingUserId));
     }
 
     /// <summary>
@@ -630,8 +665,9 @@ public class Account : AggregateRoot<AccountId>, ISoftDeletableEntity
 
     /// <summary>
     /// Accepts an invite to join this account. The user must have an active invite and
-    /// the invite must be linked to their user ID. A domain event is raised to trigger
-    /// the addition of the user as a member via an event handler.
+    /// the invite must be linked to their user ID. On success, the invited user is
+    /// synchronously added as a member with the invite's permission (see <see cref="AddMemberRecord"/>)
+    /// and both an invite-accepted and a member-added domain event are raised.
     /// </summary>
     /// <param name="inviteId">The ID of the invite to accept.</param>
     /// <param name="userId">The ID of the user accepting the invite. Must match the invite's user ID.</param>
@@ -652,6 +688,15 @@ public class Account : AggregateRoot<AccountId>, ISoftDeletableEntity
             return Validate();
         }
 
+        // Guard before mutating the invite: if the invitee is already a member (e.g. the invite
+        // is answered twice), fail here rather than marking the invite Accepted without actually
+        // adding a member.
+        if (_members.Any(x => x.UserId.Equals(userId)))
+        {
+            AddNotification(nameof(User), AccountErrorMessages.UserAlreadyMember, AccountErrorCode.UserAlreadyMember);
+            return Validate();
+        }
+
         var result = invite.Accept();
 
         if (result.IsSuccess)
@@ -661,6 +706,8 @@ public class Account : AggregateRoot<AccountId>, ISoftDeletableEntity
                 inviteId.Value,
                 userId,
                 userId));
+
+            AddMemberRecord(new User { Id = invite.UserId!.Value }, invite.Permission, userId);
         }
 
         return result;
