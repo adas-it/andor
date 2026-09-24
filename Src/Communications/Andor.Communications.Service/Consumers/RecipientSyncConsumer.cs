@@ -7,9 +7,12 @@ using Microsoft.Extensions.Options;
 
 namespace Andor.Communications.Service.Consumers;
 
-internal sealed record SignupVerifiedMessage(
-    Guid UserId, string Name, string Email, Guid PreferredLanguageId,
-    bool MarketingOptIn, bool TermsAndConditionsAccepted, bool PrivacyPolicyAccepted);
+internal sealed record UserCreatedMessage(
+    Guid UserId, string FirstName, string LastName, string Email, Guid PreferredLanguageId,
+    bool MarketingOptIn, bool TermsAndConditionsAccepted, bool PrivacyPolicyAccepted)
+{
+    public string Name => $"{FirstName} {LastName}".Trim();
+}
 
 public sealed class RecipientSyncSubscriptionOptions
 {
@@ -20,8 +23,8 @@ public sealed class RecipientSyncSubscriptionOptions
 }
 
 /// <summary>
-/// Consumes the "user-verified-events" topic (published by Onboarding once a signup is
-/// confirmed) and keeps the local Recipient projection in sync, so requesting a communication
+/// Consumes the Users module's "andor-users-events" topic (UserCreatedDomainEvent, published once
+/// the User aggregate is actually persisted) and keeps the local Recipient projection in sync, so requesting a communication
 /// doesn't need Name/Email/PreferredLanguage/consent resent on every call.
 /// </summary>
 public sealed class RecipientSyncConsumer : BackgroundService
@@ -71,7 +74,7 @@ public sealed class RecipientSyncConsumer : BackgroundService
     {
         var domainEvent = args.Message.Body.ToObjectFromJson<DomainEvent>();
 
-        if (domainEvent.EventName != "SignupVerifiedDomainEvent")
+        if (domainEvent.EventName != "UserCreatedDomainEvent")
         {
             _logger.LogDebug("Received unexpected event type: {EventType}.", domainEvent.EventName);
 
@@ -79,7 +82,7 @@ public sealed class RecipientSyncConsumer : BackgroundService
             return;
         }
 
-        var message = args.Message.Body.ToObjectFromJson<SignupVerifiedMessage>();
+        var message = args.Message.Body.ToObjectFromJson<UserCreatedMessage>();
 
         using var scope = _scopeFactory.CreateScope();
         var repository = scope.ServiceProvider.GetRequiredService<ICommandsRecipientRepository>();

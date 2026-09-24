@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <ProjectReference Include="..\..\..\Src\Communications\Andor.Communications.Domain\Andor.Communications.Domain.csproj" />
+    <ProjectReference Include="..\..\..\Src\Shared\Andor.Shared.Lookups\Andor.Shared.Lookups.csproj" />
     <ProjectReference Include="..\..\Common\Andor.TestsUtil\Andor.TestsUtil.csproj" />
   </ItemGroup>
 </Project>

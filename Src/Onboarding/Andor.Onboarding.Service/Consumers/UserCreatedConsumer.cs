@@ -5,26 +5,27 @@ using Microsoft.Extensions.Options;
 
 namespace Andor.Onboarding.Service.Consumers;
 
-internal sealed record SignupVerifiedMessage(Guid UserId, string Name, string Email, string PreferredLanguage);
+internal sealed record UserCreatedMessage(Guid UserId);
 
 /// <summary>
-/// Subscribes to the "user-verified-events" topic and, upon receiving a
-/// <see cref="SignupVerifiedDomainEvent"/>, requests the welcome email by publishing onto
-/// Communications' "request-communication" queue — passing only the UserId, since the consumer on
-/// the other end enriches Email/PreferredLanguage/"&lt;name&gt;" from its own Recipient projection
-/// instead of needing them resent here.
+/// Subscribes to the Users module's "andor-users-events" topic and, upon receiving a
+/// UserCreatedDomainEvent, requests the welcome email by publishing onto Communications'
+/// "request-communication" queue — passing only the UserId, since the consumer on the other end
+/// enriches Email/PreferredLanguage/"&lt;name&gt;" from its own Recipient projection instead of
+/// needing them resent here. Triggering on User creation (not on signup verification) means the
+/// welcome only goes out once the User actually exists.
 /// </summary>
-public sealed class SignupVerifiedConsumer : BackgroundService
+public sealed class UserCreatedConsumer : BackgroundService
 {
     private readonly ServiceBusProcessor _processor;
     private readonly IServiceScopeFactory _scopeFactory;
-    private readonly ILogger<SignupVerifiedConsumer> _logger;
+    private readonly ILogger<UserCreatedConsumer> _logger;
 
-    public SignupVerifiedConsumer(
+    public UserCreatedConsumer(
         ServiceBusClient client,
-        IOptions<SignupVerifiedSubscriptionOptions> options,
+        IOptions<UserCreatedSubscriptionOptions> options,
         IServiceScopeFactory scopeFactory,
-        ILogger<SignupVerifiedConsumer> logger)
+        ILogger<UserCreatedConsumer> logger)
     {
         _scopeFactory = scopeFactory;
         _logger = logger;
@@ -32,7 +33,7 @@ public sealed class SignupVerifiedConsumer : BackgroundService
         if (string.IsNullOrWhiteSpace(options.Value.TopicName) || string.IsNullOrWhiteSpace(options.Value.SubscriptionName))
         {
             throw new InvalidOperationException(
-                "SignupVerifiedSubscription:TopicName and SubscriptionName must be configured.");
+                "UserCreatedSubscription:TopicName and SubscriptionName must be configured.");
         }
 
         _processor = client.CreateProcessor(options.Value.TopicName, options.Value.SubscriptionName);
@@ -61,16 +62,15 @@ public sealed class SignupVerifiedConsumer : BackgroundService
     {
         var domainEvent = args.Message.Body.ToObjectFromJson<DomainEvent>();
 
-        if (domainEvent.EventName != "SignupVerifiedDomainEvent")
+        if (domainEvent.EventName != "UserCreatedDomainEvent")
         {
             _logger.LogDebug("Received unexpected event type: {EventType}.", domainEvent.EventName);
 
             await args.CompleteMessageAsync(args.Message, args.CancellationToken);
             return;
         }
-        ;
 
-        var message = args.Message.Body.ToObjectFromJson<SignupVerifiedMessage>();
+        var message = args.Message.Body.ToObjectFromJson<UserCreatedMessage>();
 
         using var scope = _scopeFactory.CreateScope();
         var communicationRequestClient = scope.ServiceProvider.GetRequiredService<ICommunicationRequestClient>();
@@ -99,7 +99,7 @@ public sealed class SignupVerifiedConsumer : BackgroundService
 
     private Task ProcessErrorAsync(ProcessErrorEventArgs args)
     {
-        _logger.LogError(args.Exception, "Error processing user-verified message.");
+        _logger.LogError(args.Exception, "Error processing user-created message.");
         return Task.CompletedTask;
     }
 

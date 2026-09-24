@@ -87,6 +87,9 @@ public class UsersUnitTests
         // Assert
         Assert.NotNull(user);
         var domainEvent = Assert.Single(user.Events.OfType<UserCreatedDomainEvent>());
+        // Onboarding's UserCreatedConsumer and Communications' RecipientSyncConsumer filter on these.
+        Assert.Equal(nameof(UserCreatedDomainEvent), domainEvent.EventName);
+        Assert.Equal((Guid)user.Id, domainEvent.UserId);
         Assert.Equal(email.Value, domainEvent.Email);
         Assert.Equal(firstName, domainEvent.FirstName);
         Assert.Equal(lastName, domainEvent.LastName);

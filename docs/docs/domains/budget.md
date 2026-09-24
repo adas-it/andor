@@ -300,7 +300,7 @@ All published to topic **`andor-accounts-events`** with the event type as the me
 
 | Consumer | Listens to | Action |
 |---|---|---|
-| `UserVerifiedConsumer` | `user-verified-events` (`SignupVerifiedDomainEvent` from Onboarding) | Auto-creates a personal `Account` (`"Conta de {name}"`, currency `BRL`) for the newly verified user. |
+| `AccountProvisioningConsumer` | `request-account-creation` queue (sent by `Andor.Users.Service` after it creates a User) | Auto-creates a personal `Account` (`"Conta de {name}"`, currency `BRL`) for the new user. |
 | `AccountCreatedConsumer` | `andor-accounts-events` (`AccountCreatedDomainEvent`) | Runs `SeedAccountDefaultsCommand` to attach the default templates. |
 | `CashFlowProjectionConsumer` | `andor-accounts-events` (`...Added` / `...Removed` / `...Edited`) | Maintains the monthly `CashFlow` rows: apply / reverse / reverse-then-apply, then cascade the balance forward. Pushes each updated row over the `/ws` WebSocket. |
 

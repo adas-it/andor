@@ -13,13 +13,19 @@ public record Language
         Name = name;
     }
 
+    public static Language Empty => new Language(Guid.Empty, string.Empty, string.Empty);
+
+    public static Language English => new Language(Guid.Parse("7ed018e8-f93e-4273-9f23-062763ecf68a"), "en", "English");
+    public static Language Portuguese => new Language(Guid.Parse("d47ccae3-428f-496c-b92a-6b821cc63bc7"), "br", "Português");
+    public static Language Spanish => new Language(Guid.Parse("ed9713b8-9f51-448a-ad74-8838ac480c5e"), "es", "Español");
+
     public static List<Language> GetAll()
     {
         var languages = new List<Language>();
 
-        languages.Add(new Language(Guid.Parse("7ed018e8-f93e-4273-9f23-062763ecf68a"), "en", "English"));
-        languages.Add(new Language(Guid.Parse("d47ccae3-428f-496c-b92a-6b821cc63bc7"), "br", "Portugues"));
-        languages.Add(new Language(Guid.Parse("ed9713b8-9f51-448a-ad74-8838ac480c5e"), "fr", "French"));
+        languages.Add(English);
+        languages.Add(Portuguese);
+        languages.Add(Spanish);
 
         return languages;
     }
